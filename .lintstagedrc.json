@@ -1,0 +1,11 @@
+{
+  "{apps,libs}/**/*.{ts,html}": [
+    "npm run lint"
+  ],
+  "{apps,libs}/**/*.scss": [
+    "npm run stylelint"
+  ],
+  "{libs,apps}/**/*.{ts,html,scss}": [
+    "npm run format"
+  ]
+}

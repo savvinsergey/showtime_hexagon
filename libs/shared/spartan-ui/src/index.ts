@@ -1,0 +1,1 @@
+export * from './lib/shared-spartan-ui/shared-spartan-ui';

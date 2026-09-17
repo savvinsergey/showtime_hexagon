@@ -1,0 +1,31 @@
+@reference "#styles";
+
+:host {
+  .sidebar {
+    &__icon {
+      @apply flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground;
+    }
+
+    &__title {
+      @apply grid flex-1 text-left text-sm leading-tight;
+
+      .title {
+        &__main-text {
+          @apply truncate font-medium;
+        }
+
+        &__sub-text {
+          @apply truncate text-xs;
+        }
+      }
+    }
+
+    &__menu {
+      .menu {
+        &__item {
+          @apply mr-2 ml-2;
+        }
+      }
+    }
+  }
+}

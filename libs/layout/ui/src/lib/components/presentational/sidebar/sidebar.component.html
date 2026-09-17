@@ -1,0 +1,32 @@
+<div hlmSidebarWrapper class="sidebar">
+  <hlm-sidebar sidebarContainerClass="top-(--header-height) h-[calc(100svh-var(--header-height))]">
+    <hlm-sidebar-header>
+      <ul hlmSidebarMenu>
+        <li hlmSidebarMenuItem>
+          <a hlmSidebarMenuButton size="lg" href="/">
+            <div class="sidebar__icon">
+              <ng-icon name="simpleShowtime" class="text-base" />
+            </div>
+            <div class="sidebar__title title">
+              <span class="title__main-text">{{ config().title }}</span>
+              <span class="title__sub-text"> {{ config().subtitle }} </span>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </hlm-sidebar-header>
+
+    <hlm-sidebar-content>
+      <ul hlmSidebarMenu class="sidebar__menu menu">
+        @for (item of config().menu; track $index) {
+          <li hlmSidebarMenuItem class="menu__item">
+            <a hlmSidebarMenuButton [routerLink]="item.link">
+              <ng-icon [svg]="item.icon" class="text-base" />
+              {{ item.text }}
+            </a>
+          </li>
+        }
+      </ul>
+    </hlm-sidebar-content>
+  </hlm-sidebar>
+</div>

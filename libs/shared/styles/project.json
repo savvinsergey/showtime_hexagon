@@ -1,0 +1,29 @@
+{
+  "name": "shared-styles",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/styles/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "tags": ["type:util", "scope:shared"],
+  "targets": {
+    "stylelint": {
+      "executor": "nx-stylelint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/shared/styles/**/*.scss"],
+        "formatter": "verbose"
+      }
+    },
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "angular",
+        "push": true,
+        "postTargets": [],
+        "trackDeps": true,
+        "commitMessageFormat": "chore(${projectName}): release version ${version}",
+        "tagPrefix": "${projectName}-v"
+      }
+    }
+  }
+}

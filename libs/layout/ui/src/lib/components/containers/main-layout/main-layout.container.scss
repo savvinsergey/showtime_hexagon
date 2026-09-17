@@ -1,0 +1,13 @@
+@reference "#styles";
+
+:host {
+  @apply block;
+
+  .layout {
+    @apply flex flex-1;
+
+    .content {
+      @apply flex flex-1 flex-col gap-4 p-4;
+    }
+  }
+}

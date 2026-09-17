@@ -1,0 +1,11 @@
+{
+  "include": [
+    "apps/**/*.ts",
+    "libs/**/*.ts"
+  ],
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.eslint.config.mjs",
+    "node_modules"
+  ]
+}

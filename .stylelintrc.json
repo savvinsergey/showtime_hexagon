@@ -1,0 +1,63 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-standard-scss",
+    "stylelint-config-idiomatic-order",
+    "stylelint-prettier/recommended"
+  ],
+  "plugins": [
+    "stylelint-order",
+    "stylelint-scss",
+    "stylelint-selector-bem-pattern",
+    "stylelint-use-nesting"
+  ],
+  "overrides": [
+    {
+      "files": ["**/*.css"],
+      "extends": ["stylelint-config-standard"],
+      "rules": {}
+    },
+    {
+      "files": ["**/*.scss"],
+      "extends": ["stylelint-config-standard-scss"],
+      "rules": {
+        "at-rule-no-unknown": null,
+        "scss/at-rule-no-unknown": [
+          true,
+          {
+            "ignoreAtRules": [
+              "tailwind",
+              "theme",
+              "utility",
+              "variant",
+              "layer",
+              "config",
+              "source",
+              "reference"
+            ]
+          }
+        ],
+
+        "csstools/use-nesting": "always",
+
+        "plugin/selector-bem-pattern": {
+          "componentName": "[a-Z]+",
+          "componentSelectors": {
+            "initial": "^\\.{componentName}(?:-[a-z0-9]+)*(?:__[a-z0-9]+(?:-[a-z0-9]+)*)*(?:--[a-z0-9]+(?:-[a-z0-9]+)*)?$"
+          }
+        },
+
+        "at-rule-empty-line-before": [
+          "always",
+          {
+            "except": ["blockless-after-same-name-blockless", "inside-block"],
+            "ignore": ["after-comment"]
+          }
+        ],
+        "no-descending-specificity": null,
+        "property-no-vendor-prefix": true,
+        "value-no-vendor-prefix": true
+      }
+    }
+  ]
+}
