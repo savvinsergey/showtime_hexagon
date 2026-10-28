@@ -1,1 +1,2 @@
-export * from './lib/shared-kernel';
+export * from './lib/domain-error';
+export * from './lib/result';
