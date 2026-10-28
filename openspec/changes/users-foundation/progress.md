@@ -56,3 +56,9 @@
   Files: libs/shared/ui/** (8 files: project.json, eslint.config.mjs, tsconfigs, empty src/index.ts, src/index.spec.ts, README.md); tsconfig.base.json (`@shared/ui` alias only; user `@shared/spartan-ui` left unstaged).
   Scenario coverage: shared-ui/Dependencies are limited -> `nx graph` :: `graph.dependencies["shared-ui"] === []` + tags `type:ui`/`scope:shared`; runner smoke -> libs/shared/ui/src/index.spec.ts :: `is importable`.
   Review suggestions (non-blocking): no generators OnPush default in project.json (lint enforces); leftover empty HTML rules stub in eslint.config.mjs; replace smoke spec in ST-0011.
+  Commit ST-0010: abac156.
+
+- ST-0011: done. Developer 1 run, Review: Approve (1), Tester hardened specs (dropped className asserts, deleted ST-0010 smoke spec).
+  Files: libs/shared/ui/src/lib/status-badge.ts, status-badge.spec.ts, src/index.ts; deleted src/index.spec.ts.
+  Scenario coverage (status-badge.spec.ts): Label is rendered -> `Scenario: Label is rendered - label text is visible to users and assistive technology`; Tone changes styling -> `Scenario: Tone changes styling - styling changes from success to danger while the label stays the same`; Default tone -> `Scenario: Default tone - uses the neutral tone when none is provided`.
+  Review warnings (non-blocking, tester fixed): className asserts. Suggestion: hlmBadge default variant primary (optional secondary).
