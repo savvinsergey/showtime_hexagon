@@ -29,7 +29,7 @@ Notes for all tasks: scaffold libraries with the `nx-generate` skill (never copy
 
 ## 5. Integration check
 
-- [ ] ST-0014 (after ST-0004, ST-0006, ST-0009, ST-0013) Run the full verification and fix leftovers only if it fails: `npm run test:lint`, `npx nx run-many -t lint,test -p shell layout shared-spartan-ui shared-styles shared-kernel shared-ui`, `npx nx build shell`; verify all green and that `npx nx graph --file` (or `nx show projects`) lists the new libraries with their tags. (covers: workspace-boundaries/Existing projects are tagged, shared-kernel/Kernel dependencies are empty, shared-ui/Dependencies are limited)
+- [x] ST-0014 (after ST-0004, ST-0006, ST-0009, ST-0013) Run the full verification and fix leftovers only if it fails: `npm run test:lint`, `npx nx run-many -t lint,test -p shell layout shared-spartan-ui shared-styles shared-kernel shared-ui`, `npx nx build shell`; verify all green and that `npx nx graph --file` (or `nx show projects`) lists the new libraries with their tags. (covers: workspace-boundaries/Existing projects are tagged, shared-kernel/Kernel dependencies are empty, shared-ui/Dependencies are limited)
 
 ## Workflow follow-up
 

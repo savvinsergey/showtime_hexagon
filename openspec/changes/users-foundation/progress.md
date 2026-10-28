@@ -74,3 +74,10 @@
   Files: libs/shared/ui/src/lib/query-state.ts, query-state.spec.ts, src/index.ts.
   Scenario coverage (query-state.spec.ts): Loading hides content -> `Scenario: Loading hides content - a loading indicator is shown and the content is not rendered`; Error is shown -> `Scenario: Error is shown - the message is shown and the content is not rendered`; Empty state is shown -> `Scenario: Empty state is shown - the empty state is shown and the content is not rendered`; Content is shown -> `Scenario: Content is shown - the projected content is rendered`; Loading takes precedence over error -> `Scenario: Loading takes precedence over error - only the loading indicator is shown`.
   Review suggestions (non-blocking): booleanAttribute on loading/empty if used as bare attributes.
+  Commit ST-0013: f0de0de.
+
+- Run 3 checkpoint after ST-0013 (STATUS: CONTINUE). Remaining: ST-0014 full verification, then tester final-run, analyst acceptance.
+
+- ST-0014: done. Developer 1 run. User decision B: `shell:test` is out of scope (pre-existing "No tests found"; `passWithNoTests` unsupported on `@angular/build:unit-test`). No dummy spec, no shell test-config change. Review/tester write not needed (verification-only; no production files). Final-run must exclude `shell:test` but still run `shell:lint` and `shell:build`.
+  Evidence: `npm run test:lint` pass (91 + lint:tags, 6 tagged / 63 hidden); lint green: shell layout shared-spartan-ui shared-styles shared-kernel shared-ui; test green: shared-kernel shared-ui (layout/shared-spartan-ui/shared-styles have no test target); `nx build shell` pass.
+  Scenario coverage: workspace-boundaries/Existing projects are tagged -> `nx show projects` lists shell layout shared-spartan-ui shared-styles shared-kernel shared-ui + tags in `nx show project --json`; shared-kernel/Kernel dependencies are empty -> graph `dependencies["shared-kernel"] === []`; shared-ui/Dependencies are limited -> graph `dependencies["shared-ui"] === ["shared-spartan-ui"]`.
