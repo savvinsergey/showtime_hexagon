@@ -12,7 +12,7 @@ Notes for all tasks: scaffold libraries with the `nx-generate` skill (never copy
 ## 2. Restricted imports and framework-free variant
 
 - [x] ST-0005 Add `pureConventions` to `eslint.conventions.mjs` (the `conventions` rules plus restricted `@angular/*` and `rxjs` imports) with JSDoc, and add `tools/lint/conventions.test.mjs` running the ESLint Node API on inline sources for `conventions`, `infrastructureConventions` and `pureConventions`; verify `node --test tools/lint/conventions.test.mjs` passes for: `@ngrx/signals` rejected by default and allowed by the infrastructure variant, `@ngrx/store` rejected by both, `@spartan-ng/helm/button` rejected while `@shared/spartan-ui` is accepted, `@showtime/users/application/mock` rejected in a regular file and accepted in `*.spec.ts` and `mock/` files, `@angular/core` and `rxjs` rejected by the pure variant. (after: ST-0003) (covers: workspace-boundaries/NgRx import in a regular library is rejected, NgRx Signals in the state infrastructure library is allowed, Other NgRx packages stay rejected in infrastructure, Direct helm import is rejected, Port mocks are importable only from specs, Angular import in domain is rejected, RxJS import in kernel is rejected)
-- [ ] ST-0006 (after ST-0005) Add npm script `test:lint` running all `tools/lint/*.test.mjs` and `lint:tags`, and make sure husky/CI-facing scripts can run it; verify `npm run test:lint` is green.
+- [x] ST-0006 (after ST-0005) Add npm script `test:lint` running all `tools/lint/*.test.mjs` and `lint:tags`, and make sure husky/CI-facing scripts can run it; verify `npm run test:lint` is green.
 
 ## 3. Shared kernel
 
