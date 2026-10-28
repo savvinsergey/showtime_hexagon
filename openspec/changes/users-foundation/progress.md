@@ -68,3 +68,9 @@
   Files: libs/shared/ui/src/lib/confirm-dialog.ts, confirm-dialog.spec.ts, src/index.ts.
   Scenario coverage (confirm-dialog.spec.ts): Dialog shows texts -> `Scenario: Dialog shows texts - title, description and confirm label are displayed when open`; Confirm is reported -> `Scenario: Confirm is reported - confirm emits confirmed and closes`; Cancel is reported -> `Scenario: Cancel is reported - cancel emits cancelled and closes`; Escape cancels -> `Scenario: Escape cancels - Escape emits cancelled and closes without confirmed`; Closed dialog is not shown -> `Scenario: Closed dialog is not shown - no dialog content is rendered when closed`; Components are accessible -> `Scenario: Components are accessible - dialog actions are reachable by role and name`.
   Review suggestions (non-blocking): JSDoc mentions overlay dismiss (alert-dialog may not close on outside click).
+  Commit ST-0012: c38c888.
+
+- ST-0013: done. Developer 1 run, Review: Approve (1), Tester added ''-error and error-over-empty extras.
+  Files: libs/shared/ui/src/lib/query-state.ts, query-state.spec.ts, src/index.ts.
+  Scenario coverage (query-state.spec.ts): Loading hides content -> `Scenario: Loading hides content - a loading indicator is shown and the content is not rendered`; Error is shown -> `Scenario: Error is shown - the message is shown and the content is not rendered`; Empty state is shown -> `Scenario: Empty state is shown - the empty state is shown and the content is not rendered`; Content is shown -> `Scenario: Content is shown - the projected content is rendered`; Loading takes precedence over error -> `Scenario: Loading takes precedence over error - only the loading indicator is shown`.
+  Review suggestions (non-blocking): booleanAttribute on loading/empty if used as bare attributes.
