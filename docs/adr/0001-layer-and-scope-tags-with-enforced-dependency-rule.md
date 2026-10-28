@@ -47,6 +47,7 @@ Risks:
 - Tagging may reveal existing violations; mitigated by running lint before and after tagging (current imports are allowed by the table).
 - Sibling infrastructure libraries (`api`, `state`) are not separated by this taxonomy.
 - Lint cache staleness when rule modules change (see Decision).
+- Projects hidden via `.nxignore` (the ~64 helm sub-libraries under `libs/shared/spartan-ui/<name>/`) are outside Nx boundary checks and are excluded from the tag check (`lint:tags` skips ignored `project.json` paths); only the visible `shared-spartan-ui` and `shared-styles` projects are tagged.
 
 ## Follow-ups
 

@@ -91,8 +91,17 @@ Why shared from the start: they carry no domain knowledge and are certain to be 
 
 `tsconfig.base.json` paths: `@showtime/shared/kernel` -> `libs/shared/kernel/src/index.ts`, `@shared/ui` -> `libs/shared/ui/src/index.ts`. Generators must be allowed to add them; no manual duplicates.
 
+### Hidden helm sub-libraries (.nxignore)
+
+Root `.nxignore` currently hides `libs/shared/spartan-ui/` and `libs/shared/styles/`, so Nx does not see `shared-spartan-ui` and `shared-styles`. Decision (user chose "Variant A"): make only the two root projects visible. `.nxignore` becomes `libs/shared/spartan-ui/*/` plus `!libs/shared/spartan-ui/src/`, and the `libs/shared/styles/` line is removed. The ~64 helm sub-libraries (`libs/shared/spartan-ui/<name>/project.json`, tags `[]`) stay hidden from Nx; they are only imported through `@spartan-ng/helm/*` inside the `@shared/spartan-ui` barrel.
+
+- ST-0001: the `.nxignore` edit is part of making `shared-spartan-ui` and `shared-styles` visible and taggable.
+- ST-0002: `tools/lint/check-tags.mjs` skips `project.json` files whose path is ignored by `.nxignore` (hidden projects); otherwise the helm sub-libs would fail the check.
+- Hidden projects are outside Nx module-boundary checks; this is accepted because only the `@shared/spartan-ui` barrel imports them.
+
 ## Risks / Trade-offs
 
+- [Hidden helm sub-libs are untagged and outside boundary checks] -> Only the `@shared/spartan-ui` barrel imports `@spartan-ng/helm/*` (the `.cursorrules` ban on direct helm imports stays); `check-tags` skips `.nxignore`d paths, so the 64 sub-libs do not fail ST-0002.
 - [Tagging reveals an existing violation] -> Run `npx nx lint` before and after tagging; current imports (`shell` -> `layout`, `layout` -> `shared-spartan-ui`) are allowed by the table.
 - [Negated import patterns behave differently across ESLint versions] -> The restricted-import test pins the behavior (already verified once for the `@ngrx` patterns).
 - [`type:ui` -> `type:ui` is broad] -> Scope constraints still stop cross-context UI imports; dumb-ness of context UI libs (no application/domain imports) is enforced by the layer table.
