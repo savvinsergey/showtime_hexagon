@@ -2,6 +2,8 @@ import nx from '@nx/eslint-plugin';
 import sonarjs from 'eslint-plugin-sonarjs';
 import unicorn from 'eslint-plugin-unicorn';
 import eslintConfigPrettier from 'eslint-config-prettier';
+// eslint-disable-next-line unicorn/name-replacements -- exported name of the rules module
+import { depConstraints } from './eslint.depconstraints.mjs';
 
 export default [
   ...nx.configs['flat/base'],
@@ -28,36 +30,7 @@ export default [
         {
           enforceBuildableLibDependency: true,
           allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
-          depConstraints: [
-            {
-              sourceTag: '*',
-              onlyDependOnLibsWithTags: ['*'],
-            },
-            /*
-            {
-              "sourceTag": "type:feature",
-              "allowedNavigatorTags": ["type:ui", "type:data-access", "type:util"]
-            },
-            {
-              "sourceTag": "type:data-access",
-              "allowedNavigatorTags": ["type:util"] // Стейт не может импортировать UI элементы!
-            },
-            {
-              "sourceTag": "type:ui",
-              "allowedNavigatorTags": ["type:util"] // UI-компоненты должны быть абсолютно независимыми
-            },
-            {
-              "sourceTag": "type:util",
-              "allowedNavigatorTags": [] // Утилиты не импортируют ничего из верхних слоев
-            },
-
-            // 2. Ограничения по ДОМЕНАМ (Безопасность изоляции модулей)
-            {
-              "sourceTag": "scope:auth",
-              "allowedNavigatorTags": ["scope:shared", "scope:auth"] // Домен Auth не имеет права заглядывать в домен Booking!
-            }
-            */
-          ],
+          depConstraints,
         },
       ],
 
