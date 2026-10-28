@@ -62,3 +62,9 @@
   Files: libs/shared/ui/src/lib/status-badge.ts, status-badge.spec.ts, src/index.ts; deleted src/index.spec.ts.
   Scenario coverage (status-badge.spec.ts): Label is rendered -> `Scenario: Label is rendered - label text is visible to users and assistive technology`; Tone changes styling -> `Scenario: Tone changes styling - styling changes from success to danger while the label stays the same`; Default tone -> `Scenario: Default tone - uses the neutral tone when none is provided`.
   Review warnings (non-blocking, tester fixed): className asserts. Suggestion: hlmBadge default variant primary (optional secondary).
+  Commit ST-0011: 047acb7.
+
+- ST-0012: done. Developer 1 run, Review: Approve (1), Tester hardened overlay/output assertions.
+  Files: libs/shared/ui/src/lib/confirm-dialog.ts, confirm-dialog.spec.ts, src/index.ts.
+  Scenario coverage (confirm-dialog.spec.ts): Dialog shows texts -> `Scenario: Dialog shows texts - title, description and confirm label are displayed when open`; Confirm is reported -> `Scenario: Confirm is reported - confirm emits confirmed and closes`; Cancel is reported -> `Scenario: Cancel is reported - cancel emits cancelled and closes`; Escape cancels -> `Scenario: Escape cancels - Escape emits cancelled and closes without confirmed`; Closed dialog is not shown -> `Scenario: Closed dialog is not shown - no dialog content is rendered when closed`; Components are accessible -> `Scenario: Components are accessible - dialog actions are reachable by role and name`.
+  Review suggestions (non-blocking): JSDoc mentions overlay dismiss (alert-dialog may not close on outside click).
