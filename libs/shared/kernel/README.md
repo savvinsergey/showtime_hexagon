@@ -1,7 +1,7 @@
 # shared-kernel
 
-Framework-free domain primitives shared by every bounded context: `Result`, `DomainError` and (next)
-branded ids, domain events and `Clock`. Import it as `@showtime/shared/kernel`.
+Framework-free domain primitives shared by every bounded context: `Result`, `DomainError`,
+branded `Id<Brand>`, `DomainEvent` and `Clock` (`systemClock`, `fixedClock`). Import it as `@showtime/shared/kernel`.
 
 - Tags: `type:kernel`, `scope:shared`. It may depend only on other `type:kernel` projects.
 - It must stay framework-free: no `@angular/*`, no `rxjs`, no other workspace libraries. The
