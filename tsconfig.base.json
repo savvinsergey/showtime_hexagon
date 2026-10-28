@@ -79,7 +79,8 @@
       "@spartan-ng/helm/toggle-group": ["./libs/shared/spartan-ui/toggle-group/src/index.ts"],
       "@spartan-ng/helm/tooltip": ["./libs/shared/spartan-ui/tooltip/src/index.ts"],
       "@spartan-ng/helm/typography": ["./libs/shared/spartan-ui/typography/src/index.ts"],
-      "@spartan-ng/helm/utils": ["./libs/shared/spartan-ui/utils/src/index.ts"]
+      "@spartan-ng/helm/utils": ["./libs/shared/spartan-ui/utils/src/index.ts"],
+      "@showtime/shared/kernel": ["./libs/shared/kernel/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

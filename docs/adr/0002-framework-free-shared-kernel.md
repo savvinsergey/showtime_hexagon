@@ -38,6 +38,7 @@ Positive:
 Negative:
 - A kernel change affects every context; changes must be backward compatible and small.
 - Application code needs a token wrapper for `Clock` in its own layer.
+- Kernel specs run on `@angular/build:unit-test` (vitest) via a `test-build` target, the same runner as `apps/shell`; this is test tooling only, the runtime code stays framework-free.
 
 Risks:
 - The kernel can become a dumping ground; mitigated by the rule above (second consumer first) and by the framework-free lint.

@@ -1,0 +1,29 @@
+{
+  "name": "shared-kernel",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/kernel/src",
+  "projectType": "library",
+  "tags": ["type:kernel", "scope:shared"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "buildTarget": "shared-kernel:test-build",
+        "tsConfig": "libs/shared/kernel/tsconfig.spec.json",
+        "runner": "vitest",
+        "watch": false
+      }
+    },
+    "test-build": {
+      "executor": "@angular/build:application",
+      "options": {
+        "outputPath": "dist/libs/shared/kernel",
+        "browser": "libs/shared/kernel/src/index.ts",
+        "tsConfig": "libs/shared/kernel/tsconfig.lib.json"
+      }
+    }
+  }
+}

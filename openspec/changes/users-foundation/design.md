@@ -87,6 +87,17 @@ Notes: `type:ui` -> `type:ui` is needed because shared UI and spartan UI are bot
 
 Why shared from the start: they carry no domain knowledge and are certain to be reused (see engineering conventions); `SearchField`, `Pagination`, `DataTable` wait for a second consumer (YAGNI).
 
+### Test runner for kernel and shared UI
+
+User decision: both new libraries use the SAME unit-test runner as `apps/shell`: `@angular/build:unit-test` (runner `vitest`), with NO new dependencies. The library generator's `@nx/vite`, `@nx/vitest`, `vite`, `@vitest/coverage-v8` and the `@nx/vitest` plugin were rolled back; `@nx/js:library --unitTestRunner=vitest` is not used for its tooling.
+
+Facts from the `shared-kernel` implementation:
+
+- The builder requires a build target, so the library has an extra minimal `test-build` target (`@angular/build:application`, entry `libs/shared/kernel/src/index.ts`, lib tsconfig) referenced by `test.buildTarget`. It is intentionally not named `build`, so `npm run build` (`run-many --target=build`) does not build the kernel as an app.
+- Spec tsconfig uses `types: ["vitest/globals"]` like shell; lib tsconfig uses `module: esnext`, `moduleResolution: bundler`, `types: []` (no Node globals).
+- `@showtime/*` aliases resolve in specs through tsconfig paths.
+- `shared-ui` follows the same pattern (Angular library generator, same runner).
+
 ### Aliases
 
 `tsconfig.base.json` paths: `@showtime/shared/kernel` -> `libs/shared/kernel/src/index.ts`, `@shared/ui` -> `libs/shared/ui/src/index.ts`. Generators must be allowed to add them; no manual duplicates.
@@ -106,6 +117,7 @@ Root `.nxignore` currently hides `libs/shared/spartan-ui/` and `libs/shared/styl
 - [Negated import patterns behave differently across ESLint versions] -> The restricted-import test pins the behavior (already verified once for the `@ngrx` patterns).
 - [`type:ui` -> `type:ui` is broad] -> Scope constraints still stop cross-context UI imports; dumb-ness of context UI libs (no application/domain imports) is enforced by the layer table.
 - [Sibling infrastructure libs are not separated yet] -> Documented non-goal; handled with an extra tag in the infrastructure change.
+- [A non-Angular lib depends on Angular's build tooling only for tests] -> `@angular/build` is already a devDependency; the kernel's runtime code stays framework-free, enforced by `pureConventions`.
 - [Constraints in a separate module are easy to forget in new configs] -> `eslint.config.mjs` is the single consumer; new libs inherit through the root config.
 - [Stale lint cache after editing rule modules] -> add `eslint.conventions.mjs` and `eslint.depconstraints.mjs` to the `@nx/eslint:lint` inputs in `nx.json` (ST-0003) and run lint once with `--skip-nx-cache` after the change.
 
