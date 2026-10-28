@@ -10,22 +10,7 @@ import { HlmAlertDialogImports } from '@shared/spartan-ui';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [HlmAlertDialogImports],
-  template: `
-    <hlm-alert-dialog [state]="dialogState()" (closed)="onClosed()">
-      <ng-template hlmAlertDialogPortal>
-        <hlm-alert-dialog-content>
-          <hlm-alert-dialog-header>
-            <h2 hlmAlertDialogTitle>{{ title() }}</h2>
-            <p hlmAlertDialogDescription>{{ description() }}</p>
-          </hlm-alert-dialog-header>
-          <hlm-alert-dialog-footer>
-            <button hlmAlertDialogCancel>Cancel</button>
-            <button hlmAlertDialogAction (click)="onConfirm()">{{ confirmLabel() }}</button>
-          </hlm-alert-dialog-footer>
-        </hlm-alert-dialog-content>
-      </ng-template>
-    </hlm-alert-dialog>
-  `,
+  templateUrl: './confirm-dialog.html',
 })
 export class ConfirmDialog {
   /**

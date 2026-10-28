@@ -10,27 +10,7 @@ import { HlmEmptyImports, HlmSpinnerImports } from '@shared/spartan-ui';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [HlmEmptyImports, HlmSpinnerImports],
-  template: `
-    @if (loading()) {
-      <div class="flex w-full items-center justify-center p-6">
-        <hlm-spinner />
-      </div>
-    } @else if (error(); as message) {
-      <hlm-empty role="alert">
-        <hlm-empty-header>
-          <div hlmEmptyDescription>{{ message }}</div>
-        </hlm-empty-header>
-      </hlm-empty>
-    } @else if (empty()) {
-      <hlm-empty role="status">
-        <hlm-empty-header>
-          <div hlmEmptyTitle>No results</div>
-        </hlm-empty-header>
-      </hlm-empty>
-    } @else {
-      <ng-content />
-    }
-  `,
+  templateUrl: './query-state.html',
 })
 export class QueryState {
   /**
