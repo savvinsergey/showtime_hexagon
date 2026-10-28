@@ -7,6 +7,7 @@
     "start:shell": "sudo nx serve shell",
     "commit": "cz",
     "lint": "nx run-many --target=lint --all --skip-nx-cache --fix --uncommitted",
+    "lint:tags": "node tools/lint/check-tags.mjs",
     "stylelint": "nx run-many --target=stylelint --all --skip-nx-cache --fix --uncommitted --verbose",
     "format": "nx format:write --libs-and-apps --skip-nx-cache --uncommitted",
     "build": "nx run-many --target=build --all --parallel",
