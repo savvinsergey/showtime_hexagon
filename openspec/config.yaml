@@ -1,0 +1,44 @@
+schema: spec-driven
+
+context: |
+  Stack: Angular 22 (standalone, Signals, zoneless-ready, strict TypeScript), Nx workspace,
+  spartan/ui via the local library `@shared/spartan-ui`, Tailwind CSS. Package manager: npm (run tasks with `npx nx`).
+  Architecture: Hexagonal / DDD (domain -> application (use cases, ports) -> adapters). Dependencies point inward.
+  Forms: Angular Signal Forms only. No reactive forms, no toSignal()/toObservable()/async pipe.
+  Async data: resource()/rxResource(); RxJS only for complex event streams.
+  Principles: SOLID, KISS, DRY, YAGNI. Full conventions: `.cursor/rules/engineering-conventions.mdc`.
+  Delivery pipeline: each task in tasks.md is implemented by developer, reviewed by reviewer and tested by tester;
+  after all tasks are done, analyst accepts the whole change against its artifacts. Many conventions are also
+  enforced by ESLint (`npx nx lint`).
+
+rules:
+  proposal:
+    - Always state what is out of scope.
+    - 'Add a `Breaking changes` section: list breaking changes (with the affected Nx projects, e.g. `shell`, `layout`) or write `None`. It drives the semver bump (`!` / `BREAKING CHANGE:` commits).'
+    - Keep it short; describe the why and the user-visible change, not the implementation.
+  specs:
+    - Each requirement must be testable and have at least one concrete WHEN/THEN scenario.
+    - Give every scenario a short unique name (it is used to name tests and to accept tasks).
+    - Cover error and edge cases (empty, invalid, failure), not only the happy path.
+  design:
+    - Describe layers, ports/adapters, affected libraries, data flow and risks.
+    - Apply YAGNI/KISS; justify any new abstraction, library or port.
+    - Mention a decision's alternatives only when the choice is non-obvious.
+    - 'End with a `## Decisions` section that links the relevant ADRs from `docs/adr/` by relative path, or states `ADRs: none`. Other agents read only the ADRs linked there.'
+  tasks:
+    - 'Prefix every item with an ID `ST-NNNN` (4 digits, sequential per change, starting at ST-0001), e.g. `- [ ] ST-0001 Add booking port (covers: booking/Create booking)`.'
+    - Each task is small and independently reviewable (one layer or one vertical slice, roughly under 300 changed lines).
+    - Scaffolding tasks must name the Nx generator, the expected tags/alias/conventions, and the test runner (`@angular/build:unit-test`, same as `apps/shell`, unless design.md says otherwise). Do not introduce a new test runner or extra root plugins without a `NEEDS_USER` decision.
+    - Do not put known out-of-scope failures (for example a pre-existing empty `shell:test`) into a verification task; record them in design.md instead.
+    - 'Order tasks by dependency (domain, application, adapters, UI/feature, routing/wiring) and list dependencies as `(after: ST-0001)`.'
+    - Each task names the requirement scenarios it covers and states expected tests; every scenario must be covered by at least one task.
+    - Include JSDoc for new public API in the definition of each task; do not add separate documentation tasks.
+
+operations:
+  apply:
+    guidance:
+      - The orchestrator ticks task checkboxes after the task passes review and tests; do not tick them yourself unless working outside the subagent pipeline.
+      - Keep test summaries concise.
+  archive:
+    guidance:
+      - Archive only after the analyst's acceptance of the whole change and the user's confirmation.
