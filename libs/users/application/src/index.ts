@@ -14,3 +14,9 @@ export {
   type UserRepositoryPort,
 } from './lib/ports/driven/user-repository/user-repo.port';
 export { USERS_STATE, type UsersStatePort } from './lib/ports/driven/users-state/users-state.port';
+export {
+  USERS_APPLICATION,
+  type UsersApplicationPort,
+} from './lib/ports/driving/users-app/users-app.port';
+export { provideUsersApplication } from './lib/providers/provide-users-app';
+export type { User } from '@showtime/users/domain';
