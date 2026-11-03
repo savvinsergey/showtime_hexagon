@@ -1,0 +1,32 @@
+{
+  "name": "users-application",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/users/application/src",
+  "projectType": "library",
+  "tags": [
+    "type:application",
+    "scope:users"
+  ],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "buildTarget": "users-application:test-build",
+        "tsConfig": "libs/users/application/tsconfig.spec.json",
+        "runner": "vitest",
+        "watch": false
+      }
+    },
+    "test-build": {
+      "executor": "@angular/build:application",
+      "options": {
+        "outputPath": "dist/libs/users/application",
+        "browser": "libs/users/application/src/index.ts",
+        "tsConfig": "libs/users/application/tsconfig.lib.json"
+      }
+    }
+  }
+}
