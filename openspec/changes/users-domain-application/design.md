@@ -38,15 +38,25 @@ Domain must stay framework-free (`pureConventions`). Application needs `inject`,
 
 `UsersDomainService` is a stateless object of functions (no `inject`): `createUserDraft`, `userRegistered`, `activate`, `deactivate`, `rename`, `changeRole`. Structural validators stay private in that file. No `policies/` folder.
 
+Use `Object.freeze` for records produced by the domain service, alongside readonly types, to satisfy the frozen-record requirement without class wrappers. A service input shape stays local to its function/file; the domain never imports application `NewUser`. Public email/full-name smart constructors delegate to the service-owned structural validation rather than duplicating its rules.
+
 ### Ports in application
 
 Driven: `UserRepositoryPort` + `USER_REPOSITORY`; `UsersStatePort` + `USERS_STATE`. Driving: `UsersApplicationPort` + `USERS_APPLICATION`. `UsersApplicationService` implements the driving port and is not exported from the barrel.
 
 Repository methods return `Promise<Result<T, UsersError>>`. No `remove`. State port: `users: Signal<User[]>`, `total: Signal<number>`, `setPage(users, total)`. Last `UsersQuery` for reload is a private field on the application service (not on the state port).
 
+The public barrel exports the driving contract and consumer models, plus driven contracts/tokens needed by later adapters and the clock token needed by composition/tests. It does not export the facade or use-case classes. `provideUsersApplication()` registers the facade and internal use-cases but does not bind repository or state implementations. Tests bind those separately through `provideUsersPortsMock()`.
+
+Alternatives considered: combining domain/application would couple structural rules to Angular; exporting individual use-cases would couple consumers to orchestration details. Separate libraries with one driving port preserve both boundaries with the existing Nx tag rules (ADR-0003).
+
 ### Statuses on the facade
 
 Each driving command returns `UseCaseCall<T>`. The service allocates a `signal<OperationStatus>` per call. Race: a generation counter on `load`; a stale result is `cancelled` and skips `setPage`. After successful `create` / `update` / `deactivate`, the service calls `load` with the last query (no-op reload if `load` was never called).
+
+The facade owns list request arbitration and is the only place that authorizes a loaded page to be written. Internal load use-cases return repository results without writing state before this check. Superseding a load marks the previous call cancelled immediately; its eventual result cannot change state or the latest `listStatus`. Cancellation is a call status, not a new `UsersError` kind. Mutation success reflects persistence; a subsequent reload failure is reported by `listStatus` and does not retroactively turn a saved mutation into failure.
+
+Use-cases orchestrate promised port results directly under the explicit `UseCaseCall` contract. No resource-driven automatic fetch, RxJS bridge, event bus, or event publishing is introduced. Registration events are constructed only after repository creation supplies the id; transition events remain domain facts returned internally until a real subscriber exists.
 
 `UpdateUser` (application model) is `{ id: UserId; fullName: string; role: string }`. The update use-case loads the user, applies `rename` and `changeRole`, then `save`.
 
@@ -135,5 +145,4 @@ None. Role/status literals, draft default `active`, and the update shape are fix
 
 - [ADR-0001](../../../docs/adr/0001-layer-and-scope-tags-with-enforced-dependency-rule.md): layer and scope tags; domain and application libraries inherit the existing `depConstraints`.
 - [ADR-0002](../../../docs/adr/0002-framework-free-shared-kernel.md): kernel stays framework-free; `CLOCK` token is declared in application.
-
-Candidate ADRs for the architect during `/ship` (not written now): anemic `User` with a stateless domain service; ports declared in `application/ports` and bound only in the composition root.
+- [ADR-0003](../../../docs/adr/0003-users-model-and-application-ports.md): immutable plain users models, pure domain behavior, and application-owned ports with composition-root binding.

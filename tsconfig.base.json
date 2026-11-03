@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "strict": true,
     "paths": {
+      "@showtime/users/domain": ["./libs/users/domain/src/index.ts"],
       "@showtime/layout/ui": ["./libs/layout/ui/src/index.ts"],
       "@shared/spartan-ui": ["./libs/shared/spartan-ui/src/index.ts"],
 
