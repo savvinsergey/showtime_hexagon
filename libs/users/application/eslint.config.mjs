@@ -14,10 +14,13 @@ export default [
     files: ['**/*.spec.ts', '**/mock/**/*.ts'],
     rules: {
       // The test-only secondary entry belongs to this project; retain all other boundary options.
-      '@nx/enforce-module-boundaries': [boundaryRule[0], {
-        ...boundaryRule[1],
-        allow: [...boundaryRule[1].allow, '^@showtime/users/application/mock$'],
-      }],
+      '@nx/enforce-module-boundaries': [
+        boundaryRule[0],
+        {
+          ...boundaryRule[1],
+          allow: [...boundaryRule[1].allow, '^@showtime/users/application/mock$'],
+        },
+      ],
     },
   },
 ];

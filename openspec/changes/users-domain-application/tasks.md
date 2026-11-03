@@ -34,7 +34,7 @@ Execution order follows dependencies, not numeric IDs (existing IDs are preserve
 
 ## 3. Internal use-cases and driving facade
 
-- [ ] ST-0009 (after: ST-0013) Implement internal create use-case: domain validation, domain-error mapping to application `validation` with known field issues, `repository.create`, and `userRegistered` after the assigned id exists. Return `Result<User, UsersError>` without state writes or publishing. Facade statuses/reloads are ST-0008. JSDoc on the use-case. (covers: users-application/Invalid email on create is validation, users-application/Unknown kind has an optional cause)
+- [x] ST-0009 (after: ST-0013) Implement internal create use-case: domain validation, domain-error mapping to application `validation` with known field issues, `repository.create`, and `userRegistered` after the assigned id exists. Return `Result<User, UsersError>` without state writes or publishing. Facade statuses/reloads are ST-0008. JSDoc on the use-case. (covers: users-application/Invalid email on create is validation, users-application/Unknown kind has an optional cause)
   - Tests with port mocks: assigned user on success, invalid email never calls repository, conflict/unknown cause preserved, registration uses persisted id/injected time. Driving-port status/reload tests follow in ST-0008.
 
 - [ ] ST-0010 (after: ST-0013) Implement internal load/get use-cases returning repository results without state writes. Facade race arbitration/listStatus are ST-0008. JSDoc on use-cases. (covers: users-application/Not-found is reported as kind)
