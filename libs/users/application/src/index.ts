@@ -9,3 +9,8 @@ export type { UsersPage } from './lib/models/users-page/users-page';
 export type { UsersError } from './lib/models/users-error/users-error';
 export type { OperationStatus } from './lib/models/operation-status/operation-status';
 export type { UseCaseCall } from './lib/models/use-case-call/use-case-call';
+export {
+  USER_REPOSITORY,
+  type UserRepositoryPort,
+} from './lib/ports/driven/user-repository/user-repo.port';
+export { USERS_STATE, type UsersStatePort } from './lib/ports/driven/users-state/users-state.port';
