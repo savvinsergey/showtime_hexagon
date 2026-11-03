@@ -1,0 +1,2 @@
+developer_instructions = "Read and execute .agents/roles/reviewer.md. Follow AGENTS.md and use available host tools."
+sandbox_mode = "read-only"

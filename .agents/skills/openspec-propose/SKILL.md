@@ -1,7 +1,6 @@
 ---
 name: openspec-propose
 description: Propose a new OpenSpec change with all artifacts generated in one step. Use when the user wants to quickly describe what they want to build and get a complete proposal with design, specs, and tasks ready for implementation. Also use when the user says "openspec propose" or "opsx propose".
-allowed-tools: Bash(openspec:*)
 license: MIT
 compatibility: Requires openspec CLI.
 metadata:
@@ -12,7 +11,7 @@ metadata:
 
 Propose a new change - create the change and generate all artifacts in one step.
 
-**Planning boundary**: This workflow creates planning artifacts only. The user request that selected or triggered this workflow authorizes planning only, even if it asks to build or fix something. Do not edit project code. After the planning artifacts are complete, stop. Do not start implementation in the same response, even if the initial request asks for it. Wait for a new user request after the artifacts are presented; then start the apply workflow.
+**Planning boundary**: This workflow creates planning artifacts only. The user request that selected or triggered this workflow authorizes planning only, even if it asks to build or fix something. Do not edit project code. After the planning artifacts are complete, stop. Do not start implementation in the same response, even if the initial request asks for it. Wait for a new user request after the artifacts are presented. Implementation starts only when the user runs `/ship`.
 
 I'll create a change with the artifacts your schema defines. With the default spec-driven schema that is:
 - proposal.md (what & why)
@@ -22,7 +21,7 @@ I'll create a change with the artifacts your schema defines. With the default sp
 
 `<capability-path>` is the spec directory relative to `specs/` (for example, `user-auth` or `identity/user-auth`). Preserve an existing capability's full path and follow the project's established organization for new capabilities.
 
-When the user is ready to implement, they must start the apply workflow explicitly.
+When the user is ready to implement, they must start `/ship` explicitly. Do not start it in this workflow.
 
 ---
 
@@ -153,7 +152,7 @@ After completing all artifacts, summarize:
 - Change name and location
 - List of artifacts created with brief descriptions, plus any conditional artifact you skipped and why
 - What's ready: "All artifacts needed for implementation are ready."
-- Prompt: "The artifacts are ready for review. When you are ready, run `/opsx-apply` or ask me to apply this change."
+- Prompt: "The artifacts are ready for review. When you are ready, run `/ship`."
 
 **Artifact Creation Guidelines**
 

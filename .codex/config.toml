@@ -8,3 +8,39 @@ multi_agent = true
 [agents.ci-monitor-subagent]
 description = "CI helper for /monitor-ci. Fetches CI status, retrieves fix details, or updates self-healing fixes. Executes one MCP tool call and returns the result."
 config_file = "agents/ci-monitor-subagent.toml"
+
+[agents.orchestrator]
+description = "Workflow orchestrator. Invoke ONLY after the user has approved the plan (the OpenSpec change) by running /ship or pressing Build; never before. Then it coordinates the architect (only for large changes or new layers/libs/ports), analyst, developer, reviewer and tester subagents, commits each finished task, and hands work from one stage to the next. Does not write code itself."
+config_file = "agents/orchestrator.toml"
+
+[agents.reviewer]
+description = "Code review specialist. Use proactively right after the developer subagent (or anyone) writes or modifies code. Reviews changes for correctness, architecture (Hexagonal/DDD), SOLID/KISS/DRY/YAGNI, Angular 22 Signals conventions, spartan/ui and Tailwind rules, JSDoc, tests, and security. Functional acceptance against OpenSpec is the analyst's job."
+config_file = "agents/reviewer.toml"
+
+[agents.architect]
+description = "Software architect specialist. Invoked by the orchestrator ONLY for large changes or when a new layer, library or port is introduced. Refines design.md of the OpenSpec change (DDD, Hexagonal, SOLID/KISS/DRY/YAGNI) and writes ADRs for decisions that outlive the change."
+config_file = "agents/architect.toml"
+
+[agents.analyst]
+description = "Business/system analyst. Invoked by the orchestrator. In prep mode, makes the OpenSpec tasks.md ready for execution (ST-NNNN IDs, small ordered tasks, scenario coverage). In acceptance mode, accepts or rejects the whole finished change once, after all tasks are done, by checking the implementation against the OpenSpec artifacts. Does not write production code or tests."
+config_file = "agents/analyst.toml"
+
+[agents.developer]
+description = "Senior Angular developer. Use proactively to implement a task from an OpenSpec change, fix bugs and refactor in this Nx workspace (Angular 22, Signals, spartan/ui, Tailwind). Use after the task is defined (tasks.md) or for any hands-on coding task."
+config_file = "agents/developer.toml"
+
+[agents.tester]
+description = "Test engineer. Use proactively right after the reviewer approves a task, to write and run unit/component tests derived from the OpenSpec scenarios (Angular 22, Signals, Nx). Also runs the final full verification at the end of a multi-task change (final-run mode). Use whenever code lacks test coverage."
+config_file = "agents/tester.toml"
+
+[mcp_servers.angular-cli]
+command = "npx"
+args = ["-y", "@angular/cli", "mcp"]
+
+[mcp_servers.spartan-ui]
+command = "npx"
+args = ["-y", "@spartan-ng/mcp"]
+
+[mcp_servers.chrome-devtools]
+command = "npx"
+args = ["chrome-devtools-mcp@latest"]

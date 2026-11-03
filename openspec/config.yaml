@@ -6,7 +6,7 @@ context: |
   Architecture: Hexagonal / DDD (domain -> application (use cases, ports) -> adapters). Dependencies point inward.
   Forms: Angular Signal Forms only. No reactive forms, no toSignal()/toObservable()/async pipe.
   Async data: resource()/rxResource(); RxJS only for complex event streams.
-  Principles: SOLID, KISS, DRY, YAGNI. Full conventions: `.cursor/rules/engineering-conventions.mdc`.
+  Principles: SOLID, KISS, DRY, YAGNI. Full conventions: `.agents/rules/engineering-conventions.md`.
   Delivery pipeline: each task in tasks.md is implemented by developer, reviewed by reviewer and tested by tester;
   after all tasks are done, analyst accepts the whole change against its artifacts. Many conventions are also
   enforced by ESLint (`npx nx lint`).
