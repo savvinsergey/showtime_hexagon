@@ -48,7 +48,7 @@ Execution order follows dependencies, not numeric IDs (existing IDs are preserve
 
 ## 4. Integration check
 
-- [ ] ST-0012 (after: ST-0008) Run `npm run test:lint`, `npx nx run-many -t lint,test -p users-domain,users-application,shared-kernel` and `npx nx build shell`; verify all green and `npx nx show projects` lists `users-domain` and `users-application` with their tags; assert graph edges: domain depends only on `shared-kernel`, application only on `users-domain` and `shared-kernel`. Do not run `shell:test` (pre-existing empty suite; see design.md). (covers: users-domain/Domain depends only on kernel, users-application/Application graph excludes infrastructure)
+- [x] ST-0012 (after: ST-0008) Run `npm run test:lint`, `npx nx run-many -t lint,test -p users-domain,users-application,shared-kernel` and `npx nx build shell`; verify all green and `npx nx show projects` lists `users-domain` and `users-application` with their tags; assert graph edges: domain depends only on `shared-kernel`, application only on `users-domain` and `shared-kernel`. Do not run `shell:test` (pre-existing empty suite; see design.md). (covers: users-domain/Domain depends only on kernel, users-application/Application graph excludes infrastructure)
   - Tests: listed integration commands, tags/graph evidence, documented shell:test exclusion.
 
 ## Workflow follow-up
