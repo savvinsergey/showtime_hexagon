@@ -125,7 +125,7 @@ export class HlmRadio<T = unknown> {
 
 			const labelElement =
 				this._elementRef.nativeElement.closest('label') ??
-				this._document.querySelector(`label[for="${CSS.escape(this.inputId())}"]`);
+				this._document.querySelector(`label[for="${CSS.escape(this.inputId() ?? '')}"]`);
 
 			if (!labelElement) return;
 			this._renderer.setAttribute(labelElement, 'data-disabled', isDisabled ? 'true' : 'false');

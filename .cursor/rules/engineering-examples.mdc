@@ -1,0 +1,6 @@
+---
+description: Shared project engineering guidance.
+alwaysApply: false
+---
+
+Read and follow `.agents/rules/engineering-examples.md` and root `AGENTS.md`.

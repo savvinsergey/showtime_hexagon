@@ -2,6 +2,9 @@ import nx from '@nx/eslint-plugin';
 import sonarjs from 'eslint-plugin-sonarjs';
 import unicorn from 'eslint-plugin-unicorn';
 import eslintConfigPrettier from 'eslint-config-prettier';
+import { conventions } from './eslint.conventions.mjs';
+
+export { conventions, infrastructureConventions, pureConventions } from './eslint.conventions.mjs';
 
 export default [
   ...nx.configs['flat/base'],
@@ -70,6 +73,8 @@ export default [
       'unicorn/no-null': 'off', // Разрешает использовать null (часто нужен в Angular/Forms)
     },
   },
+
+  ...conventions,
 
   // Отключает правила ESLint, которые конфликтуют с Prettier.
   // ВАЖНО: Этот конфиг всегда должен быть самым последним в массиве!

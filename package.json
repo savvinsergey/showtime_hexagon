@@ -41,6 +41,7 @@
     "clsx": "^2.1.1",
     "embla-carousel": ">=8.0.0 <9.0.0",
     "embla-carousel-angular": "^22.0.0",
+    "embla-carousel-reactive-utils": "^8.6.0",
     "es-module-shims": "^1.5.12",
     "ngx-scrollbar": "^19.1.5",
     "reflect-metadata": "^0.2.2",

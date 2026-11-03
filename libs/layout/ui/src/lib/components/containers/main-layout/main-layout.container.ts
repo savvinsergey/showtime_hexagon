@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
+import { HlmSidebarImports } from '@shared/spartan-ui';
 
 import { LAYOUT_UI_CONFIG_TOKEN } from '../../../constants';
 import type { ILayoutUiModuleConfig } from '../../../interfaces';

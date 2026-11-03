@@ -16,6 +16,7 @@
     "strict": true,
     "paths": {
       "@showtime/layout/ui": ["./libs/layout/ui/src/index.ts"],
+      "@shared/spartan-ui": ["./libs/shared/spartan-ui/src/index.ts"],
 
       "@spartan-ng/helm/accordion": ["./libs/shared/spartan-ui/accordion/src/index.ts"],
       "@spartan-ng/helm/alert": ["./libs/shared/spartan-ui/alert/src/index.ts"],
