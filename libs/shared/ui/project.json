@@ -1,0 +1,30 @@
+{
+  "name": "shared-ui",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/ui/src",
+  "prefix": "st",
+  "projectType": "library",
+  "tags": ["type:ui", "scope:shared"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "buildTarget": "shared-ui:test-build",
+        "tsConfig": "libs/shared/ui/tsconfig.spec.json",
+        "runner": "vitest",
+        "watch": false
+      }
+    },
+    "test-build": {
+      "executor": "@angular/build:application",
+      "options": {
+        "outputPath": "dist/libs/shared/ui",
+        "browser": "libs/shared/ui/src/index.ts",
+        "tsConfig": "libs/shared/ui/tsconfig.lib.json"
+      }
+    }
+  }
+}
