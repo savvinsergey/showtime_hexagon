@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import type { ModuleWithProviders } from '@angular/core';
 import { NgModule } from '@angular/core';
 
@@ -7,7 +6,7 @@ import { LAYOUT_UI_CONFIG_TOKEN } from './constants';
 import type { ILayoutUiModuleConfig } from './interfaces';
 
 @NgModule({
-  imports: [CommonModule, MainLayoutContainer],
+  imports: [MainLayoutContainer],
   exports: [MainLayoutContainer],
 })
 export class LayoutUiModule {

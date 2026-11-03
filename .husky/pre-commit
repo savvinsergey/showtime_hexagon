@@ -1,4 +1,12 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npx --no-install lint-staged
+# Isolated plugin workers wait on unix sockets under .nx/workspace-data/d.
+# If that directory is not writable (a leftover root daemon), createNodes
+# hangs until the 10-minute @nx/eslint/plugin timeout and the commit dies.
+export NX_DAEMON=false
+export NX_ISOLATE_PLUGINS=false
+export NX_WORKSPACE_DATA_DIRECTORY="${TMPDIR:-/tmp}/nx-ws-data-showtime"
+mkdir -p "$NX_WORKSPACE_DATA_DIRECTORY"
+
+npx --no-install lint-staged --no-stash

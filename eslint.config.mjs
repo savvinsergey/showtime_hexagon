@@ -44,6 +44,8 @@ export default [
     },
   },
 
+  ...conventions,
+
   // Отключает правила ESLint, которые конфликтуют с Prettier.
   // ВАЖНО: Этот конфиг всегда должен быть самым последним в массиве!
   eslintConfigPrettier,
