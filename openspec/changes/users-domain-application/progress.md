@@ -82,3 +82,38 @@
 - ST-0012 commit: e22704e. Final-run green at e22704e from base6864de74: nx affected tests (only shell:test excluded) + affected lint/build,13 targets passed6cachehits. Domain56,app54,kernel50,shared-ui16 tests; all8project lints and shell production build passed. No flaky/failing tests. Nonblocking existing warnings: draft _now, Nx lint executor deprecation, Angular test target normalization, shell federation module type.
 
 - Acceptance: analyst ACCEPT, all50scenarios satisfied, all13tasks complete. Reviewed6864de74..e22704e plus finalrun note; no required fixes, scope/design ADR0001/2/3 conform, no breaking changes. Final totals176project tests +91convention tests,8lints,shell build. Archive pending explicit user confirmation.
+
+## Approved review corrections
+Reopened ST-0001 (pure kernel structure and boundary), ST-0006 (shared clock and generic contracts), ST-0008 (Users facade API) and ST-0012 (Angular 22 conventions, owned components and integration verification) before implementation. Previous acceptance is superseded. Work branch change/users-domain-application, commit on, original base retained; correction baseline 3f58113. Separate developer/reviewer/tester stages for every reopened task, then final verification and whole-change acceptance. User deferred archive. Preserve pre-existing workflow, AGENTS.md and .gitignore edits.
+
+Correction planning: architecture and prep complete, strict validation green; ADRs 0001–0003 and four delta capabilities. ST-0001 in progress.
+
+ST-0001 complete. Reviewer approved after one fix cycle (constant-template lazy imports). Tester verified 14 boundary/grouping regressions in tools/lint/kernel-entry.spec.ts: Kernel dependencies are empty; Domain cannot reach the Angular kernel entry; Pure kernel cannot re-export its Angular integration; Angular/RxJS rejection. Sole domain graph edge shared-kernel; four uncached Nx targets green, 81 project tests, 105 lint-rule tests plus tag checks.
+Pending commit ST-0001 at 3f58113aedddd270e31036760653bdca1b38cfd1, message refactor(shared-kernel): consolidate primitives and enforce pure entry boundaries. Verified files (SHA-256; checklist and journal also included):
+- .agents/rules/engineering-conventions.md 139f655e407a4a66f1e3fa5d92fc73c72c93d79acbd5365cc8a930fceda8d53a
+- docs/adr/0001-layer-and-scope-tags-with-enforced-dependency-rule.md f279db6517a65435be76f01b877b84a5f91f50f1dfb160a5f809ae731bc50c62
+- docs/adr/0002-framework-free-shared-kernel.md ff48b033d7cf5352194ba643d5a78a311dfb538cce6c23065f305622d58065f5
+- docs/adr/0003-users-model-and-application-ports.md 0c1ce4808363100f4929dcb739a15e9e9cd9e419a4f01fad43633e04427ce4fb
+- eslint.conventions.mjs 2d72223efcfcad04c4bf107e6a6f9a97487c10137769f382527718468be2ff94
+- libs/shared/kernel/eslint.config.mjs 1dee287c23bc42821956607ae61c9a8d1186c6cd98cdb2b8577bb61dc69f8501
+- libs/shared/kernel/src/index.ts b6b611725bf7576a3f2158bd17e25929b4ac595e48f75ea4d34ee2149bf23ad1
+- libs/shared/kernel/src/lib/clock.spec.ts deleted
+- libs/shared/kernel/src/lib/clock.ts deleted
+- libs/shared/kernel/src/lib/clock/clock.ts e0c2f00b6f55a09c961ace188b069b7526732f94ad37ce6d5ab7e02fbfe2bae1
+- libs/shared/kernel/src/lib/domain-error.spec.ts deleted
+- libs/shared/kernel/src/lib/domain-error.ts deleted
+- libs/shared/kernel/src/lib/domain-event.spec.ts deleted
+- libs/shared/kernel/src/lib/domain-event.ts deleted
+- libs/shared/kernel/src/lib/id.spec.ts deleted
+- libs/shared/kernel/src/lib/id.ts deleted
+- libs/shared/kernel/src/lib/result.spec.ts deleted
+- libs/shared/kernel/src/lib/result.ts deleted
+- nx.json 61646c4c68b61d772537c667c824d802708fb925589639d1dceabe8575b21c83
+- openspec/changes/users-domain-application/design.md 7a748f508f32c258396637fe32719ae89da2ce06236a7aef4005395be2e4ae21
+- openspec/changes/users-domain-application/proposal.md af14087ef4c794758f2148888b2fedef251a29a44e564e775576f5dff441d087
+- openspec/changes/users-domain-application/specs/users-application/spec.md 858724d9233c23fd38c85f5ce881b5df5746aaa3b1384a21b99ba95bdbb2cab0
+- tools/lint/conventions.test.mjs 735c692c82da3be3397d0b96f46ceb0a8fe1f672a4c084352d71e3c9a9c2139c
+- openspec/changes/users-domain-application/specs/shared-kernel/spec.md 2f82d0ef3beb9d7927fd336a1631eadacff7001654c71e76b98006c106ec5432
+- openspec/changes/users-domain-application/specs/workspace-boundaries/spec.md a3b36c841e893969b36edb4363b715320ee6356142f6cef1d09105342e4ce95e
+- tools/lint/kernel-entry.mjs 4a3c02a281e7a280e5e9b231f62773a672ae3cd6cbc4e577f286da01d83971b3
+- tools/lint/kernel-entry.spec.ts 37f4b7bb223c5035ee62d8d38f0d95b06220a36bd9839eeb4e13eeb12ed588b3

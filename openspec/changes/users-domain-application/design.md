@@ -5,7 +5,7 @@
 See proposal.md for motivation. Constraints that shape the approach:
 
 - ADR-0001 already enforces `type:domain` → kernel only and `type:application` → domain + kernel (+ util/contracts, unused here). `scope:users` may depend on `scope:users` and `scope:shared`.
-- ADR-0002: kernel `Clock` has no DI token; domain functions take `now` as an argument; the token lives in application.
+- ADR-0002 separates the pure kernel entry from Angular integration. Domain functions receive `now` as an argument. Application services inject the shared token.
 - Engineering conventions: anemic `User`, one domain service, ports in application, single driving port, `UseCaseCall`, backend as source of truth, no DTO/mappers in application, mocks in `application/mock`.
 - Test runner for new libs is `@angular/build:unit-test` (same as `shared-kernel` / `shell`). Do not add vite/vitest workspace plugins.
 - Pre-existing: `shell:test` reports "No tests found". Do not put it in verification tasks.
@@ -46,19 +46,27 @@ Driven: `UserRepositoryPort` + `USER_REPOSITORY`; `UsersStatePort` + `USERS_STAT
 
 Repository methods return `Promise<Result<T, UsersError>>`. No `remove`. State port: `users: Signal<User[]>`, `total: Signal<number>`, `setPage(users, total)`. Last `UsersQuery` for reload is a private field on the application service (not on the state port).
 
-The public barrel exports the driving contract and consumer models, plus driven contracts/tokens needed by later adapters and the clock token needed by composition/tests. It does not export the facade or use-case classes. `provideUsersApplication()` registers the facade and internal use-cases but does not bind repository or state implementations. Tests bind those separately through `provideUsersPortsMock()`.
+The public barrel exports the driving contract and consumer models, plus driven contracts/tokens needed by later adapters. Consumers providing a fixed clock use the shared `CLOCK` token. Any compatibility re-export refers to the same declaration. It does not export the facade or use-case classes. `provideUsersApplication()` registers the facade and internal use-cases but does not bind repository or state implementations. Tests bind those separately through `provideUsersPortsMock()`.
 
 Alternatives considered: combining domain/application would couple structural rules to Angular; exporting individual use-cases would couple consumers to orchestration details. Separate libraries with one driving port preserve both boundaries with the existing Nx tag rules (ADR-0003).
 
 ### Statuses on the facade
 
-Each driving command returns `UseCaseCall<T>`. The service allocates a `signal<OperationStatus>` per call. Race: a generation counter on `load`; a stale result is `cancelled` and skips `setPage`. After successful `create` / `update` / `deactivate`, the service calls `load` with the last query (no-op reload if `load` was never called).
+Each Users command returns `UseCaseCall<T, UsersError>`. Its status and `listStatus` use `OperationStatus<UsersError>`. The facade allocates an independent signal per call. Race: a generation counter on `load`; a stale result is `cancelled` and skips `setPage`. After successful `create` / `update` / `deactivate`, the service calls `load` with the last query (no-op reload if `load` was never called).
 
 The facade owns list request arbitration and is the only place that authorizes a loaded page to be written. Internal load use-cases return repository results without writing state before this check. Superseding a load marks the previous call cancelled immediately; its eventual result cannot change state or the latest `listStatus`. Cancellation is a call status, not a new `UsersError` kind. Mutation success reflects persistence; a subsequent reload failure is reported by `listStatus` and does not retroactively turn a saved mutation into failure.
 
 Use-cases orchestrate promised port results directly under the explicit `UseCaseCall` contract. No resource-driven automatic fetch, RxJS bridge, event bus, or event publishing is introduced. Registration events are constructed only after repository creation supplies the id; transition events remain domain facts returned internally until a real subscriber exists.
 
 `UpdateUser` (application model) is `{ id: UserId; fullName: string; role: string }`. The update use-case loads the user, applies `rename` and `changeRole`, then `save`.
+
+### Shared kernel entry points
+
+Keep one Nx project and two public entry points. The existing `@showtime/shared/kernel` barrel exports the pure primitives, including the plain discriminated union `OperationStatus<E>`. The `@shared/kernel/angular` entry exports the root clock token, the signal-bearing `UseCaseCall<T, E>` and the same status type. `UseCaseCall<T, E>` exposes a read-only `Signal<OperationStatus<E>>` and a `Promise<Result<T, E>>`. Each definition and its tests live in a single named folder matching the Users application model convention. Remove the duplicate flat files when switching the pure barrel to the folder implementations.
+
+Nx sees both entry points as the same project. Enforce the finer boundary in lint: domain and pure kernel sources cannot import Angular, RxJS or the Angular entry, including via internal paths. Restrict the Angular exception to its own source tree. A cross-context neutral contract lives in shared/kernel; context-specific errors, events and ports stay with their owner. Another context imports only that owner’s public integration contracts.
+
+Keeping the clock and call shape in each context duplicates token identity and contract definitions. Splitting them into a new project would add a third dependency for Users. A secondary entry keeps the existing graph and allows consumers to opt into Angular.
 
 ### Clock token
 
@@ -69,7 +77,7 @@ export const CLOCK = new InjectionToken<Clock>('CLOCK', {
 });
 ```
 
-Use-cases `inject(CLOCK)` and pass `now` into the domain. Tests override `CLOCK` with `fixedClock(...)`. No `provideClock()`.
+Use-cases import `CLOCK` from `@shared/kernel/angular`, call `inject(CLOCK)` and pass `now` into the domain. Tests override `CLOCK` with `fixedClock(...)`. No `provideClock()`.
 
 ### Mocks as a path, not a third Nx project
 
@@ -108,19 +116,20 @@ libs/users/
     src/index.ts
   application/                    # users-application
     src/lib/
-      models/                     # new-user, update-user, users-query, users-page, users-error, operation-status, use-case-call
+      models/                     # new-user, update-user, users-query, users-page, users-error
       ports/driving/users-application.port.ts
       ports/driven/               # user.repository.port.ts, users-state.port.ts
       services/users-application.service.ts
       use-cases/commands/         # load-users, get-user, create-user, update-user, deactivate-user
       use-cases/queries/users-view.ts
-      clock/clock.token.ts
       providers/provide-users-application.ts
     src/mock/                     # @showtime/users/application/mock
     src/index.ts
 ```
 
 Each domain/application module that is more than a type alias lives in its own folder, matching the kernel layout.
+
+Owned Angular 22 components omit redundant `ChangeDetectionStrategy.OnPush` metadata and its unused import. Preserve explicit non-default overrides. Update lint and engineering guidance to accept the implicit default, and leave generated spartan code outside the migration.
 
 ## Risks / Trade-offs
 
@@ -134,7 +143,9 @@ Each domain/application module that is more than a type alias lives in its own f
 
 1. Generate domain, implement model/VOs/service/events, tests.
 2. Generate application, ports, facade, use-cases, mocks, tests.
-3. Wire aliases and confirm `nx lint/test` on the two projects plus `npm run test:lint`.
+3. Consolidate kernel definitions, wire the two public entries and their import boundaries, and update Users to consume the shared contracts.
+4. Align Angular component conventions, then verify impacted workspace projects.
+5. Wire aliases and confirm `nx lint/test` on the two projects plus `npm run test:lint`.
 Rollback: revert the commits; no runtime app is wired yet.
 
 ## Open Questions
@@ -144,5 +155,5 @@ None. Role/status literals, draft default `active`, and the update shape are fix
 ## Decisions
 
 - [ADR-0001](../../../docs/adr/0001-layer-and-scope-tags-with-enforced-dependency-rule.md): layer and scope tags; domain and application libraries inherit the existing `depConstraints`.
-- [ADR-0002](../../../docs/adr/0002-framework-free-shared-kernel.md): kernel stays framework-free; `CLOCK` token is declared in application.
+- [ADR-0002](../../../docs/adr/0002-framework-free-shared-kernel.md): the pure entry is framework-free and the Angular entry owns the shared token and call contract.
 - [ADR-0003](../../../docs/adr/0003-users-model-and-application-ports.md): immutable plain users models, pure domain behavior, and application-owned ports with composition-root binding.

@@ -1,3 +1,8 @@
+import { fileURLToPath } from 'node:url';
+import { kernelEntry } from './tools/lint/kernel-entry.mjs';
+
+const kernelRoot = fileURLToPath(new URL('./libs/shared/kernel', import.meta.url));
+
 /**
  * Builds the `no-restricted-imports` rule value.
  *
@@ -5,9 +10,10 @@
  * @param options.allowSignals - Allow `@ngrx/signals` imports (infrastructure/state only).
  * @param options.restrictMock - Forbid `@showtime/<context>/application/mock` (allowed only in specs and mock folders).
  * @param options.restrictFramework - Forbid every `@angular/*` and `rxjs` import (framework-free layers).
+ * @param options.kernelAngular - Limit the kernel integration to Angular core.
  * @returns ESLint rule entry.
  */
-const restrictedImports = ({ allowSignals, restrictMock, restrictFramework }) => [
+const restrictedImports = ({ allowSignals, restrictMock, restrictFramework, kernelAngular }) => [
   'error',
   {
     paths: [
@@ -73,12 +79,15 @@ const restrictedImports = ({ allowSignals, restrictMock, restrictFramework }) =>
           ]
         : []),
       // Flat-config rule entries replace each other, so the framework patterns live in this single list.
-      ...(restrictFramework
+      ...(restrictFramework || kernelAngular
         ? [
             {
-              group: ['@angular/*'],
-              message:
-                'Framework-free layer (domain, kernel): `@angular/*` imports are not allowed.',
+              regex: kernelAngular
+                ? `^@angular/(?!core$${restrictMock ? '' : '|core/testing$'})`
+                : '^@angular/',
+              message: kernelAngular
+                ? 'The kernel integration may use Angular core and its test helpers only.'
+                : 'Framework-free layer (domain, kernel): `@angular/*` imports are not allowed.',
             },
             {
               group: ['rxjs', 'rxjs/*'],
@@ -169,4 +178,30 @@ export const infrastructureConventions = buildConventions({ allowSignals: true }
  * (including subpaths such as `@angular/core/rxjs-interop`) and `rxjs` (including `rxjs/operators`) import
  * is forbidden. The restrictions are merged into the same `no-restricted-imports` entry, not layered on top.
  */
-export const pureConventions = buildConventions({ restrictFramework: true });
+export const pureConventions = [
+  ...buildConventions({ restrictFramework: true }),
+  {
+    files: ['**/*.ts'],
+    plugins: { workspace: { rules: { 'kernel-entry': kernelEntry } } },
+    rules: { 'workspace/kernel-entry': 'error' },
+  },
+];
+
+/** Kernel project overrides for its Angular integration entry and colocated specs only. */
+export const kernelAngularConventions = [
+  {
+    basePath: kernelRoot,
+    files: ['src/angular/**/*.ts'],
+    rules: {
+      'workspace/kernel-entry': ['error', 'angular'],
+      'no-restricted-imports': restrictedImports({ restrictMock: true, kernelAngular: true }),
+    },
+  },
+  {
+    basePath: kernelRoot,
+    files: ['src/angular/**/*.spec.ts'],
+    rules: {
+      'no-restricted-imports': restrictedImports({ restrictMock: false, kernelAngular: true }),
+    },
+  },
+];

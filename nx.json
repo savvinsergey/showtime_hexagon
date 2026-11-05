@@ -31,6 +31,7 @@
         "{workspaceRoot}/eslint.config.mjs",
         "{workspaceRoot}/eslint.conventions.mjs",
         "{workspaceRoot}/eslint.depconstraints.mjs",
+        "{workspaceRoot}/tools/lint/kernel-entry.mjs",
         "{workspaceRoot}/tools/eslint-rules/**/*"
       ]
     },

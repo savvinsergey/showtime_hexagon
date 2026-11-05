@@ -18,7 +18,11 @@ Callers SHALL reach users operations only through `UsersApplicationPort` (`USERS
 - **THEN** the barrel exports the driving port, token, application models, `provideUsersApplication` and type `User`, and does not export use-case classes
 
 ### Requirement: Each command returns a use-case call
-Every command SHALL return `{ status, result }` where `status` is a signal of `idle | loading | success | error | cancelled` (with `UsersError` on error) and `result` is a promise of `Result<T, UsersError>`. `status` SHALL go to `loading` at start, then `success` or `error` from the use-case outcome.
+Every command SHALL return the shared `UseCaseCall<T, UsersError>` where `status` is a signal of `idle | loading | success | error | cancelled` (with `UsersError` on error) and `result` is a promise of `Result<T, UsersError>`. `status` SHALL go to `loading` at start, then `success` or `error` from the use-case outcome.
+
+#### Scenario: Users specializes shared contracts
+- **WHEN** a caller reads a Users command or list status
+- **THEN** the call uses the shared result/status contracts with `UsersError` as the error type
 
 #### Scenario: Successful create reports success
 - **WHEN** `create` is called with valid input and the repository succeeds
@@ -110,7 +114,7 @@ Consumers of the driving port SHALL import `User` from `@showtime/users/applicat
 - **THEN** the import resolves and is the domain `User` type
 
 ### Requirement: Clock is injected in application
-Application code that needs the current time SHALL inject a `CLOCK` token whose value implements the kernel `Clock`. Domain functions SHALL receive `now` as an argument. The token SHALL default to the system clock.
+Application code that needs the current time SHALL inject the shared `CLOCK` token from `@shared/kernel/angular` whose value implements the kernel `Clock`. Domain functions SHALL receive `now` as an argument. The token SHALL default to the system clock.
 
 #### Scenario: System clock is the default
 - **WHEN** `CLOCK` is injected with no test override

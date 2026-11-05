@@ -2,7 +2,7 @@
  * Source of the current time.
  *
  * Code that needs the time depends on this contract instead of reading `Date` directly, so tests can
- * substitute {@link fixedClock}. The DI token for it belongs to the application layer, not the kernel.
+ * substitute {@link fixedClock}. The kernel's Angular entry owns the shared `CLOCK` token.
  */
 export type Clock = Readonly<{
   /**

@@ -7,9 +7,12 @@ The workspace now enforces layer tags, `depConstraints`, a framework-free kernel
 ## What Changes
 
 - Add `libs/users/domain` (`@showtime/users/domain`): anemic immutable `User` / `UserDraft`, branded value types, one `UsersDomainService` of pure functions, validation errors and domain events.
-- Add `libs/users/application` (`@showtime/users/application`): driving port `UsersApplicationPort`, driven ports `UserRepositoryPort` and `UsersStatePort`, application models (`NewUser`, `UsersQuery`, `UsersPage`, `UsersError`, `OperationStatus`, `UseCaseCall`), use-cases, `UsersApplicationService` facade, `provideUsersApplication()`, and a `CLOCK` token wrapping the kernel clock.
+- Add `libs/users/application` (`@showtime/users/application`): driving port `UsersApplicationPort`, driven ports `UserRepositoryPort` and `UsersStatePort`, application models (`NewUser`, `UsersQuery`, `UsersPage`, `UsersError`), use-cases, `UsersApplicationService` facade, `provideUsersApplication()`, and Users operations typed with shared contracts specialized to `UsersError`.
 - Add a separate entry `@showtime/users/application/mock` with port mocks and contract suites for application tests (application never imports infrastructure).
 - Register path aliases and Nx tags (`type:domain` / `type:application`, `scope:users`); domain lint uses `pureConventions`, application lint uses `conventions`.
+
+- Consolidate each kernel primitive in one named folder. Expose shared `CLOCK` and the signal-based call contract through `@shared/kernel/angular`. Keep pure primitives available through `@showtime/shared/kernel`.
+- Align workspace lint, rules, examples and owned components with Angular 22 default change detection. Preserve intentional strategy overrides.
 
 ## Capabilities
 
@@ -20,13 +23,14 @@ The workspace now enforces layer tags, `depConstraints`, a framework-free kernel
 
 ### Modified Capabilities
 
-None. Existing `workspace-boundaries` and `shared-kernel` requirements already constrain the new libraries; this change does not alter those requirement texts.
+- `shared-kernel`: split pure primitives from Angular integration and share generic operation contracts.
+- `workspace-boundaries`: enforce purity at entry-point level and permit owned components to use Angular 22 default change detection.
 
 ## Impact
 
 - New Nx projects: `users-domain`, `users-application`.
 - Affected files: `tsconfig.base.json` (aliases), generated `project.json` / eslint configs under `libs/users/`.
-- No change to the running `shell` app, layout, or shared UI. No HTTP, SignalStore, pages or federation in this change.
+- Owned Angular components in shell, layout and shared UI adopt the framework default where they explicitly selected OnPush.
 
 ## Out of scope
 
@@ -37,4 +41,4 @@ None. Existing `workspace-boundaries` and `shared-kernel` requirements already c
 
 ## Breaking changes
 
-None. New libraries and aliases only; no public API of `shell`, `layout`, `shared-kernel` or `shared-ui` changes.
+The pure kernel public path and its existing exports stay compatible. The new Angular path supplies the shared contracts to every application context.
