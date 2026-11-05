@@ -6,6 +6,7 @@ import {
   type Signal,
   type WritableSignal,
 } from '@angular/core';
+import type { OperationStatus, UseCaseCall } from '@shared/kernel/angular';
 import type { Result } from '@showtime/shared/kernel';
 import type { User, UserId } from '@showtime/users/domain';
 import type { NewUser } from '../../models/new-user/new-user';
@@ -13,8 +14,6 @@ import type { UpdateUser } from '../../models/update-user/update-user';
 import type { UsersQuery } from '../../models/users-query/users-query';
 import type { UsersPage } from '../../models/users-page/users-page';
 import type { UsersError } from '../../models/users-error/users-error';
-import type { OperationStatus } from '../../models/operation-status/operation-status';
-import type { UseCaseCall } from '../../models/use-case-call/use-case-call';
 import type { UsersApplicationPort as UsersAppPort } from '../../ports/driving/users-app/users-app.port';
 import { USERS_STATE } from '../../ports/driven/users-state/users-state.port';
 import { CreateUserUseCase } from '../../use-cases/commands/create-user/create-user';
@@ -37,10 +36,10 @@ export class UsersApplicationService implements UsersAppPort {
   private readonly deactivateUser = inject(DeactivateUserUseCase);
   private readonly view = inject(UsersViewUseCase);
   private readonly state = inject(USERS_STATE);
-  private readonly currentListStatus = signal<Signal<OperationStatus>>(
-    signal<OperationStatus>({ status: 'idle' }),
+  private readonly currentListStatus = signal<Signal<OperationStatus<UsersError>>>(
+    signal<OperationStatus<UsersError>>({ status: 'idle' }),
   );
-  private activeLoad: WritableSignal<OperationStatus> | undefined;
+  private activeLoad: WritableSignal<OperationStatus<UsersError>> | undefined;
   private loadGeneration = 0;
   private lastQuery: UsersQuery | undefined;
 
@@ -57,14 +56,14 @@ export class UsersApplicationService implements UsersAppPort {
    */
   readonly listStatus = computed(() => this.currentListStatus()());
 
-  private completedStatus<T>(outcome: Result<T, UsersError>): OperationStatus {
+  private completedStatus<T>(outcome: Result<T, UsersError>): OperationStatus<UsersError> {
     return outcome.ok ? { status: 'success' } : { status: 'error', error: outcome.error };
   }
 
   private async resolveLoad(
     query: UsersQuery,
     generation: number,
-    status: WritableSignal<OperationStatus>,
+    status: WritableSignal<OperationStatus<UsersError>>,
   ): Promise<Result<UsersPage, UsersError>> {
     const outcome = await this.loadUsers.execute(query);
     if (generation !== this.loadGeneration) return outcome;
@@ -75,7 +74,7 @@ export class UsersApplicationService implements UsersAppPort {
 
   private async resolveCall<T>(
     execute: () => Promise<Result<T, UsersError>>,
-    status: WritableSignal<OperationStatus>,
+    status: WritableSignal<OperationStatus<UsersError>>,
     shouldReload: boolean,
   ): Promise<Result<T, UsersError>> {
     const outcome = await execute();
@@ -87,8 +86,8 @@ export class UsersApplicationService implements UsersAppPort {
   private run<T>(
     execute: () => Promise<Result<T, UsersError>>,
     shouldReload = false,
-  ): UseCaseCall<T> {
-    const status = signal<OperationStatus>({ status: 'loading' });
+  ): UseCaseCall<T, UsersError> {
+    const status = signal<OperationStatus<UsersError>>({ status: 'loading' });
     return { status: status.asReadonly(), result: this.resolveCall(execute, status, shouldReload) };
   }
 
@@ -97,11 +96,11 @@ export class UsersApplicationService implements UsersAppPort {
    * @param query - Query to remember for successful mutation reloads.
    * @returns An independent call whose status is cancelled when superseded.
    */
-  load(query: UsersQuery): UseCaseCall<UsersPage> {
+  load(query: UsersQuery): UseCaseCall<UsersPage, UsersError> {
     if (this.activeLoad?.().status === 'loading') this.activeLoad.set({ status: 'cancelled' });
     const generation = ++this.loadGeneration;
     this.lastQuery = { ...query };
-    const status = signal<OperationStatus>({ status: 'loading' });
+    const status = signal<OperationStatus<UsersError>>({ status: 'loading' });
     this.activeLoad = status;
     this.currentListStatus.set(status.asReadonly());
     const result = this.resolveLoad(this.lastQuery, generation, status);
@@ -113,7 +112,7 @@ export class UsersApplicationService implements UsersAppPort {
    * @param id - User identity.
    * @returns This lookup's status and result.
    */
-  get(id: UserId): UseCaseCall<User> {
+  get(id: UserId): UseCaseCall<User, UsersError> {
     return this.run(() => this.getUser.execute(id));
   }
 
@@ -122,7 +121,7 @@ export class UsersApplicationService implements UsersAppPort {
    * @param input - Raw registration values.
    * @returns Persistence status/result unaffected by reload errors.
    */
-  create(input: NewUser): UseCaseCall<User> {
+  create(input: NewUser): UseCaseCall<User, UsersError> {
     return this.run(() => this.createUser.execute(input), true);
   }
 
@@ -131,7 +130,7 @@ export class UsersApplicationService implements UsersAppPort {
    * @param input - Identity and raw replacement values.
    * @returns Persistence status/result unaffected by reload errors.
    */
-  update(input: UpdateUser): UseCaseCall<User> {
+  update(input: UpdateUser): UseCaseCall<User, UsersError> {
     return this.run(() => this.updateUser.execute(input), true);
   }
 
@@ -140,7 +139,7 @@ export class UsersApplicationService implements UsersAppPort {
    * @param id - User identity.
    * @returns Persistence status/result unaffected by reload errors.
    */
-  deactivate(id: UserId): UseCaseCall<User> {
+  deactivate(id: UserId): UseCaseCall<User, UsersError> {
     return this.run(() => this.deactivateUser.execute(id), true);
   }
 }

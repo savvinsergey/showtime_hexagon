@@ -1,4 +1,5 @@
 import * as usersEntry from './index';
+import { CLOCK } from '@shared/kernel/angular';
 import type { User as DomainUser } from '@showtime/users/domain';
 import type { User } from './index';
 
@@ -21,5 +22,9 @@ describe('users-application scaffold', () => {
 
   it('Scenario: User type is exported from application', () => {
     expectTypeOf<User>().toEqualTypeOf<DomainUser>();
+  });
+
+  it('exports the shared kernel clock token by identity', () => {
+    expect(usersEntry.CLOCK).toBe(CLOCK);
   });
 });

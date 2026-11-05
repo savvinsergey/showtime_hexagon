@@ -1,7 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { fixedClock } from '@showtime/shared/kernel';
-import { CLOCK } from './clock.token';
+import { fixedClock, systemClock } from '../../index';
+import { CLOCK } from '../index';
 
 describe('CLOCK', () => {
   afterEach(() => TestBed.resetTestingModule());
@@ -9,7 +9,9 @@ describe('CLOCK', () => {
   it('Scenario: System clock is the default', () => {
     TestBed.configureTestingModule({ providers: [provideZonelessChangeDetection()] });
 
-    const value = TestBed.inject(CLOCK).now();
+    const clock = TestBed.inject(CLOCK);
+    expect(clock).toBe(systemClock);
+    const value = clock.now();
 
     expect(value).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
     expect(new Date(value).toISOString()).toBe(value);

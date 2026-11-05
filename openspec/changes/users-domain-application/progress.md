@@ -89,31 +89,35 @@ Reopened ST-0001 (pure kernel structure and boundary), ST-0006 (shared clock and
 Correction planning: architecture and prep complete, strict validation green; ADRs 0001–0003 and four delta capabilities. ST-0001 in progress.
 
 ST-0001 complete. Reviewer approved after one fix cycle (constant-template lazy imports). Tester verified 14 boundary/grouping regressions in tools/lint/kernel-entry.spec.ts: Kernel dependencies are empty; Domain cannot reach the Angular kernel entry; Pure kernel cannot re-export its Angular integration; Angular/RxJS rejection. Sole domain graph edge shared-kernel; four uncached Nx targets green, 81 project tests, 105 lint-rule tests plus tag checks.
-Pending commit ST-0001 at 3f58113aedddd270e31036760653bdca1b38cfd1, message refactor(shared-kernel): consolidate primitives and enforce pure entry boundaries. Verified files (SHA-256; checklist and journal also included):
-- .agents/rules/engineering-conventions.md 139f655e407a4a66f1e3fa5d92fc73c72c93d79acbd5365cc8a930fceda8d53a
-- docs/adr/0001-layer-and-scope-tags-with-enforced-dependency-rule.md f279db6517a65435be76f01b877b84a5f91f50f1dfb160a5f809ae731bc50c62
-- docs/adr/0002-framework-free-shared-kernel.md ff48b033d7cf5352194ba643d5a78a311dfb538cce6c23065f305622d58065f5
-- docs/adr/0003-users-model-and-application-ports.md 0c1ce4808363100f4929dcb739a15e9e9cd9e419a4f01fad43633e04427ce4fb
-- eslint.conventions.mjs 2d72223efcfcad04c4bf107e6a6f9a97487c10137769f382527718468be2ff94
-- libs/shared/kernel/eslint.config.mjs 1dee287c23bc42821956607ae61c9a8d1186c6cd98cdb2b8577bb61dc69f8501
-- libs/shared/kernel/src/index.ts b6b611725bf7576a3f2158bd17e25929b4ac595e48f75ea4d34ee2149bf23ad1
-- libs/shared/kernel/src/lib/clock.spec.ts deleted
-- libs/shared/kernel/src/lib/clock.ts deleted
-- libs/shared/kernel/src/lib/clock/clock.ts e0c2f00b6f55a09c961ace188b069b7526732f94ad37ce6d5ab7e02fbfe2bae1
-- libs/shared/kernel/src/lib/domain-error.spec.ts deleted
-- libs/shared/kernel/src/lib/domain-error.ts deleted
-- libs/shared/kernel/src/lib/domain-event.spec.ts deleted
-- libs/shared/kernel/src/lib/domain-event.ts deleted
-- libs/shared/kernel/src/lib/id.spec.ts deleted
-- libs/shared/kernel/src/lib/id.ts deleted
-- libs/shared/kernel/src/lib/result.spec.ts deleted
-- libs/shared/kernel/src/lib/result.ts deleted
-- nx.json 61646c4c68b61d772537c667c824d802708fb925589639d1dceabe8575b21c83
-- openspec/changes/users-domain-application/design.md 7a748f508f32c258396637fe32719ae89da2ce06236a7aef4005395be2e4ae21
-- openspec/changes/users-domain-application/proposal.md af14087ef4c794758f2148888b2fedef251a29a44e564e775576f5dff441d087
-- openspec/changes/users-domain-application/specs/users-application/spec.md 858724d9233c23fd38c85f5ce881b5df5746aaa3b1384a21b99ba95bdbb2cab0
-- tools/lint/conventions.test.mjs 735c692c82da3be3397d0b96f46ceb0a8fe1f672a4c084352d71e3c9a9c2139c
-- openspec/changes/users-domain-application/specs/shared-kernel/spec.md 2f82d0ef3beb9d7927fd336a1631eadacff7001654c71e76b98006c106ec5432
-- openspec/changes/users-domain-application/specs/workspace-boundaries/spec.md a3b36c841e893969b36edb4363b715320ee6356142f6cef1d09105342e4ce95e
-- tools/lint/kernel-entry.mjs 4a3c02a281e7a280e5e9b231f62773a672ae3cd6cbc4e577f286da01d83971b3
-- tools/lint/kernel-entry.spec.ts 37f4b7bb223c5035ee62d8d38f0d95b06220a36bd9839eeb4e13eeb12ed588b3
+Commit 4c2583f.
+ST-0006 in progress.
+
+ST-0006 complete. Reviewer approved first pass. Generic errors stay with their consumer -> shared/kernel/src/angular/use-case-call/use-case-call.spec.ts (independent status/result errors); clock default/fixed -> angular/clock/clock.token.spec.ts; Users compatibility token identity -> users/application/src/index.spec.ts; Unknown kind optional cause -> services/users-app/users-app.service.spec.ts. Kernel 30, Users application 52 tests uncached, both lints green; 105 rule tests and tags pass.
+Pending commit ST-0006 at 4c2583f205b042f30d1428af32a3e8cf3ee402a0, message refactor(shared-kernel): share operation contracts and clock across contexts. Verified files (SHA-256; checklist and journal also included):
+- .agents/rules/engineering-conventions.md 352cf3432901a47cd72c26e63757fa7e0fb56b009cd3674ef93b58b30ec0fd78
+- libs/shared/kernel/src/index.ts 41b89eda26d4a5e382511416f7dde0b652baed1b89a6f65f69b78881fb21a186
+- libs/users/application/src/index.spec.ts 654276dbd2e3b5d7880c3f2995e1e7e40960594f2ef069eb1e0e4d5bd71230d8
+- libs/users/application/src/index.ts bd191354c5057c89ae6687dc19bf9d039d60b7e19fd9519c53fc274b76734cd3
+- libs/users/application/src/lib/clock/clock.token.spec.ts deleted
+- libs/users/application/src/lib/clock/clock.token.ts deleted
+- libs/users/application/src/lib/models/operation-status/operation-status.ts deleted
+- libs/users/application/src/lib/models/use-case-call/use-case-call.spec.ts deleted
+- libs/users/application/src/lib/models/use-case-call/use-case-call.ts deleted
+- libs/users/application/src/lib/ports/driving/users-app/users-app.port.ts 7b7fe725e4798798ef85dbd4abb697f568def382755fc3fe8d2620e38fcd54a0
+- libs/users/application/src/lib/services/users-app/users-app.service.spec.ts 5bb28d9282435144cfb5ff6161b87815f344e17ffd2cc978c2192f41dd797a85
+- libs/users/application/src/lib/services/users-app/users-app.service.ts aeca1afd67ea93ed87948e92ec24787b93ed7c1719b9bfcef9e5a3a0eaae7d94
+- libs/users/application/src/lib/use-cases/commands/create-user/create-user.spec.ts 2485fe794855497ebe1d464436fb92b28fdc811143ecb1fb5b25d1a73e453f90
+- libs/users/application/src/lib/use-cases/commands/create-user/create-user.ts c20edc7b8e292dded38bf1ff8cf9974cc1819fcc226c195ff2cb6fb0be79d659
+- libs/users/application/src/lib/use-cases/commands/deactivate-user/deactivate-user.spec.ts ead568c0f313754e7201b7bff3e163e7a2ff18f3f951c09dc03cec90124e318b
+- libs/users/application/src/lib/use-cases/commands/deactivate-user/deactivate-user.ts 3f579390b0a8e203b668d6d9e5937eb112bc52a6396588e3d28989b6863b7f7c
+- libs/users/application/src/lib/use-cases/commands/update-user/update-user.spec.ts dc9267269ec0352846bfc5243a9b2e4c09f82a3536fa59585da9c51df85ae759
+- libs/users/application/src/lib/use-cases/commands/update-user/update-user.ts 557b59ca5be4118686011b3c20a2b05b068d511dab3242984f3c754b73a64e0d
+- tools/lint/kernel-entry.spec.ts 5c7371ac7525323739b7bcbe86eaddeb7bb7fe4750571bc553cf04e8d0c57455
+- tsconfig.base.json 2bc5dea9c9da514f8ba04bf52f1579085ba47ca0074e359828aaf7a5e3f51a5d
+- libs/shared/kernel/src/angular/clock/clock.token.spec.ts 9035b05b54df88aabe3bd8f5a0df55c49d60c0ca839a7a4c5288cc4157da897d
+- libs/shared/kernel/src/angular/clock/clock.token.ts b26666d4c048de7be1a92aa5340212f972ed9473b6cfc5d8f9ee5450cd1a5f5f
+- libs/shared/kernel/src/angular/index.ts 129e83b1b31990e8951f8179613f0bf418a296cd062b95b0fe4025a3a781ffcf
+- libs/shared/kernel/src/angular/use-case-call/use-case-call.spec.ts 56d27ba1399bf3bf04db4a8aaf48a44d884a70ee42d8a63e692d290e9b7c4607
+- libs/shared/kernel/src/angular/use-case-call/use-case-call.ts 6fe399f938ebac391cde8d57a81c87a2ead5e4413f845211e1a5f36658fe8a1a
+- libs/shared/kernel/src/lib/operation-status/operation-status.spec.ts eebb7d62ebf97a9b0772ed0fb3726e458c5591f8d780fca005eb9425a3a0339f
+- libs/shared/kernel/src/lib/operation-status/operation-status.ts c1f6a8a046bd5a234042c6e465cbfe544fcf87f5a0b145301f22c0392a27b21b

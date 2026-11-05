@@ -1,5 +1,5 @@
 import { InjectionToken } from '@angular/core';
-import { systemClock, type Clock } from '@showtime/shared/kernel';
+import { systemClock, type Clock } from '../../lib/clock/clock';
 
 /**
  * Application time source; domain operations receive its timestamp explicitly.

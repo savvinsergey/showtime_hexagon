@@ -6,7 +6,7 @@ import {
   UserRepositoryMock as UserRepoMock,
   provideUsersPortsMock,
 } from '@showtime/users/application/mock';
-import { CLOCK } from '../../../clock/clock.token';
+import { CLOCK } from '@shared/kernel/angular';
 import type { UsersError } from '../../../models/users-error/users-error';
 import { CreateUserUseCase } from './create-user';
 

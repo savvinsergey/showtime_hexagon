@@ -129,6 +129,20 @@ describe('UsersApplication driving port', () => {
     expect(app.listStatus()).toEqual({ status: 'idle' });
   });
 
+  it('Scenario: Unknown kind has an optional cause', async () => {
+    const cause = new Error('Repository unavailable');
+    const failure: UsersError = { kind: 'unknown', message: 'Lookup failed', cause };
+    vi.spyOn(repo, 'findById').mockResolvedValue(err(failure));
+
+    const call = app.get(asUserId('u-1'));
+    const result = await call.result;
+
+    if (result.ok || result.error.kind !== 'unknown')
+      return expect.unreachable('Expected unknown error');
+    expect(result.error.cause).toBe(cause);
+    expect(call.status()).toEqual({ status: 'error', error: failure });
+  });
+
   it('Scenario: Create reloads the last page', async () => {
     const query = { page: 1, pageSize: 10 };
     await app.load(query).result;

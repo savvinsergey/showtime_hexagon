@@ -121,7 +121,14 @@ describe('Kernel dependencies are empty', () => {
       for (const dependency of imports) visit(resolve(dependency.fileName, file));
     }
     visit(root);
-    for (const name of ['clock', 'domain-error', 'domain-event', 'id', 'result']) {
+    for (const name of [
+      'clock',
+      'domain-error',
+      'domain-event',
+      'id',
+      'operation-status',
+      'result',
+    ]) {
       const grouped = path.join(kernelSource, 'lib', name, name);
       assert.ok(visited.has(grouped + '.ts'), `Pure entry must reach ${name}`);
       assert.ok(existsSync(grouped + '.spec.ts'), `Missing colocated spec for ${name}`);
