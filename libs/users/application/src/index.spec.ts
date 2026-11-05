@@ -1,7 +1,16 @@
 import * as usersEntry from './index';
-import { CLOCK } from '@shared/kernel/angular';
-import type { User as DomainUser } from '@showtime/users/domain';
-import type { User } from './index';
+import type { Signal } from '@angular/core';
+import { CLOCK, type OperationStatus, type UseCaseCall } from '@shared/kernel/angular';
+import type { User as DomainUser, UserId } from '@showtime/users/domain';
+import type {
+  NewUser,
+  UpdateUser,
+  User,
+  UsersApplicationPort as UsersAppPort,
+  UsersError,
+  UsersPage,
+  UsersQuery,
+} from './index';
 
 describe('users-application scaffold', () => {
   it('loads the public entry point', () => {
@@ -22,6 +31,25 @@ describe('users-application scaffold', () => {
 
   it('Scenario: User type is exported from application', () => {
     expectTypeOf<User>().toEqualTypeOf<DomainUser>();
+  });
+
+  it('Scenario: Users specializes shared contracts', () => {
+    expectTypeOf<UsersAppPort['load']>().toEqualTypeOf<
+      (query: UsersQuery) => UseCaseCall<UsersPage, UsersError>
+    >();
+    expectTypeOf<UsersAppPort['get']>().toEqualTypeOf<
+      (id: UserId) => UseCaseCall<User, UsersError>
+    >();
+    expectTypeOf<UsersAppPort['create']>().toEqualTypeOf<
+      (input: NewUser) => UseCaseCall<User, UsersError>
+    >();
+    expectTypeOf<UsersAppPort['update']>().toEqualTypeOf<
+      (input: UpdateUser) => UseCaseCall<User, UsersError>
+    >();
+    expectTypeOf<UsersAppPort['deactivate']>().toEqualTypeOf<
+      (id: UserId) => UseCaseCall<User, UsersError>
+    >();
+    expectTypeOf<UsersAppPort['listStatus']>().toEqualTypeOf<Signal<OperationStatus<UsersError>>>();
   });
 
   it('exports the shared kernel clock token by identity', () => {

@@ -93,31 +93,9 @@ Commit 4c2583f.
 ST-0006 in progress.
 
 ST-0006 complete. Reviewer approved first pass. Generic errors stay with their consumer -> shared/kernel/src/angular/use-case-call/use-case-call.spec.ts (independent status/result errors); clock default/fixed -> angular/clock/clock.token.spec.ts; Users compatibility token identity -> users/application/src/index.spec.ts; Unknown kind optional cause -> services/users-app/users-app.service.spec.ts. Kernel 30, Users application 52 tests uncached, both lints green; 105 rule tests and tags pass.
-Pending commit ST-0006 at 4c2583f205b042f30d1428af32a3e8cf3ee402a0, message refactor(shared-kernel): share operation contracts and clock across contexts. Verified files (SHA-256; checklist and journal also included):
-- .agents/rules/engineering-conventions.md 352cf3432901a47cd72c26e63757fa7e0fb56b009cd3674ef93b58b30ec0fd78
-- libs/shared/kernel/src/index.ts 41b89eda26d4a5e382511416f7dde0b652baed1b89a6f65f69b78881fb21a186
-- libs/users/application/src/index.spec.ts 654276dbd2e3b5d7880c3f2995e1e7e40960594f2ef069eb1e0e4d5bd71230d8
-- libs/users/application/src/index.ts bd191354c5057c89ae6687dc19bf9d039d60b7e19fd9519c53fc274b76734cd3
-- libs/users/application/src/lib/clock/clock.token.spec.ts deleted
-- libs/users/application/src/lib/clock/clock.token.ts deleted
-- libs/users/application/src/lib/models/operation-status/operation-status.ts deleted
-- libs/users/application/src/lib/models/use-case-call/use-case-call.spec.ts deleted
-- libs/users/application/src/lib/models/use-case-call/use-case-call.ts deleted
-- libs/users/application/src/lib/ports/driving/users-app/users-app.port.ts 7b7fe725e4798798ef85dbd4abb697f568def382755fc3fe8d2620e38fcd54a0
-- libs/users/application/src/lib/services/users-app/users-app.service.spec.ts 5bb28d9282435144cfb5ff6161b87815f344e17ffd2cc978c2192f41dd797a85
-- libs/users/application/src/lib/services/users-app/users-app.service.ts aeca1afd67ea93ed87948e92ec24787b93ed7c1719b9bfcef9e5a3a0eaae7d94
-- libs/users/application/src/lib/use-cases/commands/create-user/create-user.spec.ts 2485fe794855497ebe1d464436fb92b28fdc811143ecb1fb5b25d1a73e453f90
-- libs/users/application/src/lib/use-cases/commands/create-user/create-user.ts c20edc7b8e292dded38bf1ff8cf9974cc1819fcc226c195ff2cb6fb0be79d659
-- libs/users/application/src/lib/use-cases/commands/deactivate-user/deactivate-user.spec.ts ead568c0f313754e7201b7bff3e163e7a2ff18f3f951c09dc03cec90124e318b
-- libs/users/application/src/lib/use-cases/commands/deactivate-user/deactivate-user.ts 3f579390b0a8e203b668d6d9e5937eb112bc52a6396588e3d28989b6863b7f7c
-- libs/users/application/src/lib/use-cases/commands/update-user/update-user.spec.ts dc9267269ec0352846bfc5243a9b2e4c09f82a3536fa59585da9c51df85ae759
-- libs/users/application/src/lib/use-cases/commands/update-user/update-user.ts 557b59ca5be4118686011b3c20a2b05b068d511dab3242984f3c754b73a64e0d
-- tools/lint/kernel-entry.spec.ts 5c7371ac7525323739b7bcbe86eaddeb7bb7fe4750571bc553cf04e8d0c57455
-- tsconfig.base.json 2bc5dea9c9da514f8ba04bf52f1579085ba47ca0074e359828aaf7a5e3f51a5d
-- libs/shared/kernel/src/angular/clock/clock.token.spec.ts 9035b05b54df88aabe3bd8f5a0df55c49d60c0ca839a7a4c5288cc4157da897d
-- libs/shared/kernel/src/angular/clock/clock.token.ts b26666d4c048de7be1a92aa5340212f972ed9473b6cfc5d8f9ee5450cd1a5f5f
-- libs/shared/kernel/src/angular/index.ts 129e83b1b31990e8951f8179613f0bf418a296cd062b95b0fe4025a3a781ffcf
-- libs/shared/kernel/src/angular/use-case-call/use-case-call.spec.ts 56d27ba1399bf3bf04db4a8aaf48a44d884a70ee42d8a63e692d290e9b7c4607
-- libs/shared/kernel/src/angular/use-case-call/use-case-call.ts 6fe399f938ebac391cde8d57a81c87a2ead5e4413f845211e1a5f36658fe8a1a
-- libs/shared/kernel/src/lib/operation-status/operation-status.spec.ts eebb7d62ebf97a9b0772ed0fb3726e458c5591f8d780fca005eb9425a3a0339f
-- libs/shared/kernel/src/lib/operation-status/operation-status.ts c1f6a8a046bd5a234042c6e465cbfe544fcf87f5a0b145301f22c0392a27b21b
+Commit eb5f23d.
+ST-0008 in progress.
+
+ST-0008 complete. Reviewer approved first pass. Users specializes shared contracts -> libs/users/application/src/index.spec.ts :: Users specializes shared contracts (all five exact command signatures + listStatus). Existing public-entry and facade suites cover all 12 assigned scenarios. Uncached application lint and all 53 tests passed.
+Pending commit ST-0008 at eb5f23d494b63ed338aa5d28262d3c84e5bf2a22, message chore(users-application): verify shared driving port contracts. Verified files (SHA-256; checklist and journal also included):
+- libs/users/application/src/index.spec.ts 8671463cf9b56ed41e46677a53f07ee751a33b348e4aaa66206ab857c24c1320
