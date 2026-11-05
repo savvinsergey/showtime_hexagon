@@ -34,7 +34,6 @@ Good: container wires use case to a presentational component; mapping/rules live
 /** Smart component: connects the use case to the UI. */
 @Component({
   selector: 'st-shows-page',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ShowListComponent],
   template: `
     @if (shows.hasValue()) {
@@ -348,17 +347,17 @@ For side effects that depend on signals use `effect()` (not for deriving state: 
 
 ## 13. Change detection and immutability
 
-Bad: default change detection and in-place mutation.
+Bad: mutating an input array in place.
 
 ```ts
-@Component({ /* no changeDetection */ })
+@Component({ template: '' })
 class List { items = input.required<Item[]>(); add(i: Item) { this.items().push(i); } }
 ```
 
-Good:
+Good: rely on Angular 22’s implicit OnPush strategy and update the signal immutably. Preserve an explicit override when the component requires it.
 
 ```ts
-@Component({ changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ template: '' })
 class List { private readonly state = signal<readonly Item[]>([]); add(i: Item) { this.state.update((xs) => [...xs, i]); } }
 ```
 

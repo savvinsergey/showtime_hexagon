@@ -9,6 +9,7 @@ import jsdoc from 'eslint-plugin-jsdoc';
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
 
 import baseConfig from '../../eslint.config.mjs'; // Проверьте расширение базового конфига
+import { changeDetectionRules } from '../../eslint.conventions.mjs';
 
 export default tseslint.config(
   ...baseConfig,
@@ -51,6 +52,7 @@ export default tseslint.config(
       },
     },
     rules: {
+      ...changeDetectionRules,
       // Правила RxJS из нового плагина (синтаксис 'rxjs-x/...')
       'rxjs-x/no-floating-observables': 'error',
       'rxjs-x/no-ignored-subscription': 'warn',

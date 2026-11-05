@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, model, output } from '@angular/core';
+import { Component, computed, input, model, output } from '@angular/core';
 import { HlmAlertDialogImports } from '@shared/spartan-ui';
 
 /**
@@ -7,7 +7,6 @@ import { HlmAlertDialogImports } from '@shared/spartan-ui';
  */
 @Component({
   selector: 'st-confirm-dialog',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [HlmAlertDialogImports],
   templateUrl: './confirm-dialog.html',

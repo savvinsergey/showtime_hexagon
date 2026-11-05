@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { HlmBadgeImports, hlm } from '@shared/spartan-ui';
 
 /**
@@ -21,7 +21,6 @@ const TONE_CLASS: Record<StatusBadgeTone, string> = {
  */
 @Component({
   selector: 'st-status-badge',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [HlmBadgeImports],
   template: `<span hlmBadge [attr.data-tone]="tone()" [class]="toneClass()">{{ label() }}</span>`,

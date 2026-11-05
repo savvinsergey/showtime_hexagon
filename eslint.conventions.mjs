@@ -99,6 +99,11 @@ const restrictedImports = ({ allowSignals, restrictMock, restrictFramework, kern
   },
 ];
 
+/** Allow Angular 22's implicit default and intentional component-level overrides. */
+export const changeDetectionRules = {
+  '@angular-eslint/prefer-on-push-component-change-detection': 'off',
+};
+
 /**
  * Project conventions enforced by ESLint (see `.cursor/rules/engineering-conventions.mdc`).
  *
@@ -128,7 +133,7 @@ const buildConventions = ({ allowSignals = false, restrictFramework = false }) =
       '@typescript-eslint/no-explicit-any': 'error',
       '@angular-eslint/prefer-inject': 'error',
       '@angular-eslint/prefer-standalone': 'error',
-      '@angular-eslint/prefer-on-push-component-change-detection': 'error',
+      ...changeDetectionRules,
     },
   },
   {

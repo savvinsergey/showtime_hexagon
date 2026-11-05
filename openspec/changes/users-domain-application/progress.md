@@ -97,5 +97,21 @@ Commit eb5f23d.
 ST-0008 in progress.
 
 ST-0008 complete. Reviewer approved first pass. Users specializes shared contracts -> libs/users/application/src/index.spec.ts :: Users specializes shared contracts (all five exact command signatures + listStatus). Existing public-entry and facade suites cover all 12 assigned scenarios. Uncached application lint and all 53 tests passed.
-Pending commit ST-0008 at eb5f23d494b63ed338aa5d28262d3c84e5bf2a22, message chore(users-application): verify shared driving port contracts. Verified files (SHA-256; checklist and journal also included):
-- libs/users/application/src/index.spec.ts 8671463cf9b56ed41e46677a53f07ee751a33b348e4aaa66206ab857c24c1320
+Commit 96925a3.
+ST-0012 in progress.
+
+ST-0012 complete. Installed Angular 22.1.6 verified; removed seven redundant declarations and documented implicit OnPush. One tester fix cycle: real Angular ESLint configs inherited OnPush rule. Reviewer approved explicit override after preset; tester verified Owned component omits redundant metadata and Explicit strategy override is preserved -> tools/lint/change-detection.spec.ts (all three real project configs with autofix). 107 lint tests and tags green; 155 Angular tests, 6 project lints, shell build uncached; exact Users graph/tags verified. shell:test excluded (empty suite), layout has no test target.
+Pending commit ST-0012 at 96925a3ddb73c3af90fc2e48f14bcbaae41afba7, message refactor(shell): use angular default change detection. Verified files (SHA-256; checklist and journal also included):
+- .agents/rules/engineering-conventions.md 6df0d4ad736c270bdee107c35988ba115f7bce07cc11be8ab742207faebe3fc7
+- .agents/rules/engineering-examples.md 7fbdb8ec09f3841ea502740857b2fc28b484d18cf33fa6cf9dfe803d92f64baa
+- apps/shell/eslint.config.mjs 737ba85262940fe20928bbc0095864a9010b8a2d5b41bc7930c4f85b6ed5b4a9
+- apps/shell/src/app/app.ts 6815c5da0ebda684b36e1c09bdce02fc13f030be08e6c712590b0c631239f302
+- eslint.conventions.mjs e5cb90e266b7c327f67260b544398f77aa8821420ed3fa88f93fb28712676bee
+- libs/layout/ui/src/lib/components/presentational/header/header.component.ts f8da7e5a562380567b38b6f50a5b6519d8769ca5e1c2e63da9f711bd1e86e1a7
+- libs/layout/ui/src/lib/components/presentational/sidebar/sidebar.component.ts 5b6289e5018e1e606d260439a46440f5ccca2a6d9b6ce2861351d33d4c420a8b
+- libs/shared/ui/src/lib/confirm-dialog/confirm-dialog.ts 0951ae1dd42834a4e867e2fbaa99ec08d825e51bda11c89ba63ab94beed1a366
+- libs/shared/ui/src/lib/query-state/query-state.spec.ts 0ab36476001f3383c882ce9a4d820b0308a2a3e1653604d4fb227433023b1307
+- libs/shared/ui/src/lib/query-state/query-state.ts 5ada527f903baba7221afac88584f3778c48c2f7188facc207b91587f99b3db5
+- libs/shared/ui/src/lib/status-badge/status-badge.ts 1e0344b7c17cbd790e2063ac1f5461e3d43b9f2b52a9a113b3bfc6d54a5ae5cd
+- tools/lint/conventions.test.mjs b30a82209a639927cd6da34f6d32e286ddb3e85d4c37256a23eb7490582884bf
+- tools/lint/change-detection.spec.ts 3aace70927a040a4c823d901c8da161b200c88d57f0f3d5cb0c0864191be7aed
