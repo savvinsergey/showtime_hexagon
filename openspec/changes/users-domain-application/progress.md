@@ -101,17 +101,13 @@ Commit 96925a3.
 ST-0012 in progress.
 
 ST-0012 complete. Installed Angular 22.1.6 verified; removed seven redundant declarations and documented implicit OnPush. One tester fix cycle: real Angular ESLint configs inherited OnPush rule. Reviewer approved explicit override after preset; tester verified Owned component omits redundant metadata and Explicit strategy override is preserved -> tools/lint/change-detection.spec.ts (all three real project configs with autofix). 107 lint tests and tags green; 155 Angular tests, 6 project lints, shell build uncached; exact Users graph/tags verified. shell:test excluded (empty suite), layout has no test target.
-Pending commit ST-0012 at 96925a3ddb73c3af90fc2e48f14bcbaae41afba7, message refactor(shell): use angular default change detection. Verified files (SHA-256; checklist and journal also included):
-- .agents/rules/engineering-conventions.md 6df0d4ad736c270bdee107c35988ba115f7bce07cc11be8ab742207faebe3fc7
-- .agents/rules/engineering-examples.md 7fbdb8ec09f3841ea502740857b2fc28b484d18cf33fa6cf9dfe803d92f64baa
-- apps/shell/eslint.config.mjs 737ba85262940fe20928bbc0095864a9010b8a2d5b41bc7930c4f85b6ed5b4a9
-- apps/shell/src/app/app.ts 6815c5da0ebda684b36e1c09bdce02fc13f030be08e6c712590b0c631239f302
-- eslint.conventions.mjs e5cb90e266b7c327f67260b544398f77aa8821420ed3fa88f93fb28712676bee
-- libs/layout/ui/src/lib/components/presentational/header/header.component.ts f8da7e5a562380567b38b6f50a5b6519d8769ca5e1c2e63da9f711bd1e86e1a7
-- libs/layout/ui/src/lib/components/presentational/sidebar/sidebar.component.ts 5b6289e5018e1e606d260439a46440f5ccca2a6d9b6ce2861351d33d4c420a8b
-- libs/shared/ui/src/lib/confirm-dialog/confirm-dialog.ts 0951ae1dd42834a4e867e2fbaa99ec08d825e51bda11c89ba63ab94beed1a366
-- libs/shared/ui/src/lib/query-state/query-state.spec.ts 0ab36476001f3383c882ce9a4d820b0308a2a3e1653604d4fb227433023b1307
-- libs/shared/ui/src/lib/query-state/query-state.ts 5ada527f903baba7221afac88584f3778c48c2f7188facc207b91587f99b3db5
-- libs/shared/ui/src/lib/status-badge/status-badge.ts 1e0344b7c17cbd790e2063ac1f5461e3d43b9f2b52a9a113b3bfc6d54a5ae5cd
-- tools/lint/conventions.test.mjs b30a82209a639927cd6da34f6d32e286ddb3e85d4c37256a23eb7490582884bf
-- tools/lint/change-detection.spec.ts 3aace70927a040a4c823d901c8da161b200c88d57f0f3d5cb0c0864191be7aed
+Commit e8d7fe9.
+All reopened tasks complete. Final-run in progress at e8d7fe9 from 6864de74.
+
+Final-run complete at e8d7fe9603bb70002b1561fb9c5d6672ef25cf3f from original base 6864de74cdcff370130c2b9deb1e38f53fdaae60. Scoped --files to 116 changed/task-owned paths, excluding unrelated workflow edits. All eight project lints and shell production build passed (0/9 cache hits). Affected tests passed 155 across 30 files: kernel30/domain56/application53 cached, shared-ui16 fresh. Only shell:test excluded per empty-suite design exception. npm test:lint107 and eight-project tag checks passed. Strict OpenSpec validation passed. Nonblocking existing warnings: unused _now, Nx ESLint deprecation, Angular compiler normalization, module-type/color notices. Whole-change acceptance in progress.
+
+Acceptance complete: analyst ACCEPT for 6864de74..e8d7fe9 plus final-run note. All 59 scenarios satisfied, all 13 tasks checked, no required fixes. Confirmed four user corrections: authoritative grouped kernel primitives, Angular 22 implicit OnPush with explicit Eager preserved, single shared CLOCK through Angular entry and protected pure entry, generic operation contracts specialized with UsersError. Updated proposal/delta specs/design and ADR0001–3 conform. All corrective commits are local on change/users-domain-application; archive deferred by explicit user instruction.
+Correction commits: ST-0001 4c2583f (one review fix cycle); ST-0006 eb5f23d (first-pass approval); ST-0008 96925a3 (first-pass approval); ST-0012 e8d7fe9 (one tester fix cycle). Pre-existing workflow/.gitignore/AGENTS.md changes preserved and excluded from task commits.
+Telemetry: orchestrator empty wait timeouts 1 during final acceptance; model calls, input tokens and cached input counters unavailable. Specialist and dispatcher telemetry unavailable here.
+
+Final acceptance evidence persisted.
