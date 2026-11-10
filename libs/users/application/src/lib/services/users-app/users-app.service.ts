@@ -6,7 +6,11 @@ import {
   type Signal,
   type WritableSignal,
 } from '@angular/core';
-import type { OperationStatus, UseCaseCall } from '@showtime/shared/kernel';
+import {
+  OperationStatusEnum,
+  type OperationStatus,
+  type UseCaseCall,
+} from '@showtime/shared/kernel';
 import type { Result } from '@showtime/shared/kernel';
 import type { User, UserId } from '@showtime/users/domain';
 import type { NewUser } from '../../models/new-user/new-user';
@@ -37,7 +41,7 @@ export class UsersApplicationService implements UsersAppPort {
   private readonly view = inject(UsersViewUseCase);
   private readonly state = inject(USERS_STATE);
   private readonly currentListStatus = signal<Signal<OperationStatus<UsersError>>>(
-    signal<OperationStatus<UsersError>>({ status: 'idle' }),
+    signal<OperationStatus<UsersError>>({ status: OperationStatusEnum.Idle }),
   );
   private activeLoad: WritableSignal<OperationStatus<UsersError>> | undefined;
   private loadGeneration = 0;
@@ -57,7 +61,9 @@ export class UsersApplicationService implements UsersAppPort {
   readonly listStatus = computed(() => this.currentListStatus()());
 
   private completedStatus<T>(outcome: Result<T, UsersError>): OperationStatus<UsersError> {
-    return outcome.ok ? { status: 'success' } : { status: 'error', error: outcome.error };
+    return outcome.ok
+      ? { status: OperationStatusEnum.Success }
+      : { status: OperationStatusEnum.Error, error: outcome.error };
   }
 
   private async resolveLoad(
@@ -87,7 +93,7 @@ export class UsersApplicationService implements UsersAppPort {
     execute: () => Promise<Result<T, UsersError>>,
     shouldReload = false,
   ): UseCaseCall<T, UsersError> {
-    const status = signal<OperationStatus<UsersError>>({ status: 'loading' });
+    const status = signal<OperationStatus<UsersError>>({ status: OperationStatusEnum.Loading });
     return { status: status.asReadonly(), result: this.resolveCall(execute, status, shouldReload) };
   }
 
@@ -97,10 +103,11 @@ export class UsersApplicationService implements UsersAppPort {
    * @returns An independent call whose status is cancelled when superseded.
    */
   load(query: UsersQuery): UseCaseCall<UsersPage, UsersError> {
-    if (this.activeLoad?.().status === 'loading') this.activeLoad.set({ status: 'cancelled' });
+    if (this.activeLoad?.().status === OperationStatusEnum.Loading)
+      this.activeLoad.set({ status: OperationStatusEnum.Cancelled });
     const generation = ++this.loadGeneration;
     this.lastQuery = { ...query };
-    const status = signal<OperationStatus<UsersError>>({ status: 'loading' });
+    const status = signal<OperationStatus<UsersError>>({ status: OperationStatusEnum.Loading });
     this.activeLoad = status;
     this.currentListStatus.set(status.asReadonly());
     const result = this.resolveLoad(this.lastQuery, generation, status);

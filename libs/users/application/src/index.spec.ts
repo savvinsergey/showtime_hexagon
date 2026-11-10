@@ -1,6 +1,11 @@
 import * as usersEntry from './index';
 import type { Signal } from '@angular/core';
-import { CLOCK, type OperationStatus, type UseCaseCall } from '@showtime/shared/kernel';
+import {
+  CLOCK,
+  OperationStatusEnum,
+  type OperationStatus,
+  type UseCaseCall,
+} from '@showtime/shared/kernel';
 import type { User as DomainUser, UserId } from '@showtime/users/domain';
 import type {
   NewUser,
@@ -50,6 +55,15 @@ describe('users-application scaffold', () => {
       (id: UserId) => UseCaseCall<User, UsersError>
     >();
     expectTypeOf<UsersAppPort['listStatus']>().toEqualTypeOf<Signal<OperationStatus<UsersError>>>();
+    expectTypeOf<
+      ReturnType<UsersAppPort['listStatus']>['status']
+    >().toEqualTypeOf<OperationStatusEnum>();
+    expectTypeOf<
+      Extract<
+        ReturnType<UsersAppPort['listStatus']>,
+        { status: OperationStatusEnum.Error }
+      >['error']
+    >().toEqualTypeOf<UsersError>();
   });
 
   it('exports the shared kernel clock token by identity', () => {

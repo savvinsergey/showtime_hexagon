@@ -25,9 +25,9 @@ Several bounded contexts need the same domain primitives: `Result`, `DomainError
 
 Use one Nx library tagged `type:kernel` and `scope:shared`, with the single public entry `@showtime/shared/kernel`. This supersedes the earlier secondary Angular entry decision.
 
-- Export pure `Result<T, E>`, `ok`, `err`, `DomainError`, `Id<Brand>`, `DomainEvent`, `Clock`, `systemClock`, `fixedClock` and `OperationStatus<E>` alongside Angular application contracts.
+- Export pure `Result<T, E>`, `ok`, `err`, `DomainError`, `Id<Brand>`, `DomainEvent`, `Clock`, `systemClock`, `fixedClock` and `OperationStatus<E>` and the pure `OperationStatusEnum` alongside Angular application contracts.
 - Export one root-provided `CLOCK` token backed by `systemClock`, and `UseCaseCall<T, E>` with a read-only status signal and a promised result. Application supplies its own error type. Domain receives time as an argument.
-- Organize `src/lib` by purpose: `types/`, `tokens/`, `constants/`. Each entity has one named folder and colocated tests. `Clock`/`fixedClock` live in `types/clock`, `CLOCK` in `tokens/clock`, `systemClock` in `constants/clock`.
+- Organize `src/lib` by purpose: `types/`, `enums/`, `tokens/`, `constants/`. Each entity has one named folder and colocated tests. `Clock`/`fixedClock` live in `types/clock`, `CLOCK` in `tokens/clock`, `systemClock` in `constants/clock`.
 - Domain and framework-free kernel implementations may consume only named symbols with no transitive Angular/RxJS dependency. Lint follows imports/re-exports through intermediary modules and renamed symbols. Namespace imports and export-all from the mixed barrel are conservatively rejected there.
 - The public barrel may re-export Angular contracts. Angular core is permitted only in tokens and UseCaseCall, with core testing helpers in their specs. RxJS remains forbidden throughout kernel.
 - Context-neutral shared contracts belong in kernel; entities, context-specific errors and integration events stay with their owner.
@@ -41,3 +41,5 @@ Project graphs cannot distinguish pure and Angular-dependent symbols. Pair graph
 ## Follow-ups
 
 Run purity probes when changing entry points or path aliases. Add a context-neutral primitive only for an established cross-context contract.
+
+The approved operation lifecycle enum is defined in `enums/operation-status/operation-status.enum.ts` with `Idle`, `Loading`, `Success`, `Error` and `Cancelled` members preserving the lowercase runtime values. `OperationStatus<E>` uses these members as discriminants; only `Error` carries the mandatory `error: E`. This exception does not change domain `UserRole` or `UserStatus` string-literal unions.

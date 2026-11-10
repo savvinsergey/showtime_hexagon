@@ -7,3 +7,4 @@ export type { UseCaseCall } from './lib/types/use-case-call/use-case-call';
 export type { OperationStatus } from './lib/types/operation-status/operation-status';
 export { CLOCK } from './lib/tokens/clock/clock.token';
 export { systemClock } from './lib/constants/clock/clock';
+export { OperationStatusEnum } from './lib/enums/operation-status/operation-status.enum';

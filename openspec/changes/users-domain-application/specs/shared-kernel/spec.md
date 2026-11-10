@@ -12,8 +12,13 @@ The kernel SHALL have one public entry, `@showtime/shared/kernel`, exporting pur
 ## ADDED Requirements
 
 ### Requirement: Applications share generic operation contracts
-The kernel SHALL expose `OperationStatus<E>` as a pure type. The same public entry SHALL expose `UseCaseCall<T, E>` and one root-provided `CLOCK` token. Each contract SHALL have one authoritative definition in its named folder under its purpose group (`types/`, `tokens/` or `constants/`), with colocated tests.
+The kernel SHALL expose the pure string enum `OperationStatusEnum` with `Idle = 'idle'`, `Loading = 'loading'`, `Success = 'success'`, `Error = 'error'` and `Cancelled = 'cancelled'` from `enums/operation-status/operation-status.enum.ts`. `OperationStatus<E>` SHALL remain a pure discriminated union using those enum members and requiring `error: E` only for the error variant. The same public entry SHALL expose `UseCaseCall<T, E>` and one root-provided `CLOCK` token. Each contract SHALL have one authoritative definition in its named folder under its purpose group (`types/`, `enums/`, `tokens/` or `constants/`), with colocated tests.
 
 #### Scenario: Generic errors stay with their consumer
 - **WHEN** two callers instantiate the shared contracts with different error types
 - **THEN** each status signal and promised result preserve their caller's error type without importing Users
+
+#### Scenario: Lifecycle enum preserves serialized statuses
+- **WHEN** a caller constructs operation statuses with `OperationStatusEnum`
+- **THEN** their runtime values remain `idle`, `loading`, `success`, `error` and `cancelled`
+- **AND** the error variant requires the caller's error payload while other variants do not expose one

@@ -62,9 +62,9 @@ Use-cases orchestrate promised port results directly under the explicit `UseCase
 
 ### Shared kernel public entry
 
-Keep one Nx project and one public entry, `@showtime/shared/kernel`. Export pure primitives and `OperationStatus<E>` alongside the root `CLOCK` token and `UseCaseCall<T, E>`. The call contract exposes a read-only `Signal<OperationStatus<E>>` and a `Promise<Result<T, E>>`.
+Keep one Nx project and one public entry, `@showtime/shared/kernel`. Export pure primitives and `OperationStatus<E>` and the pure `OperationStatusEnum` alongside the root `CLOCK` token and `UseCaseCall<T, E>`. The call contract exposes a read-only `Signal<OperationStatus<E>>` and a `Promise<Result<T, E>>`.
 
-Group definitions by purpose under `src/lib/types/`, `tokens/` and `constants/`, with one named folder and colocated tests per entity. `Clock` and `fixedClock` remain in `types/clock`, `CLOCK` lives in `tokens/clock`, and `systemClock` in `constants/clock`. The barrel exports these authoritative definitions.
+Group definitions by purpose under `src/lib/types/`, `enums/`, `tokens/` and `constants/`, with one named folder and colocated tests per entity. `Clock` and `fixedClock` remain in `types/clock`, `CLOCK` lives in `tokens/clock`, and `systemClock` in `constants/clock`. The barrel exports these authoritative definitions.
 
 Nx tags enforce project boundaries; lint additionally follows named symbols and their transitive dependencies, including renamed imports and intermediary re-exports. Domain and framework-free kernel sources cannot reach Angular or RxJS. Namespace imports and export-all from the mixed barrel are conservatively rejected there. Angular core is permitted only in tokens and the `UseCaseCall` contract, with core testing helpers in their specs. RxJS is forbidden throughout kernel. The public barrel may re-export the Angular contracts.
 
@@ -159,3 +159,5 @@ None. Role/status literals, draft default `active`, and the update shape are fix
 - [ADR-0001](../../../docs/adr/0001-layer-and-scope-tags-with-enforced-dependency-rule.md): layer and scope tags; domain and application libraries inherit the existing `depConstraints`.
 - [ADR-0002](../../../docs/adr/0002-framework-free-shared-kernel.md): one public entry exports shared contracts with symbol-level purity enforcement.
 - [ADR-0003](../../../docs/adr/0003-users-model-and-application-ports.md): immutable plain users models, pure domain behavior, and application-owned ports with composition-root binding.
+
+The approved operation lifecycle enum is defined in `enums/operation-status/operation-status.enum.ts` with `Idle`, `Loading`, `Success`, `Error` and `Cancelled` members preserving the lowercase runtime values. `OperationStatus<E>` uses these members as discriminants; only `Error` carries the mandatory `error: E`. This exception does not change domain `UserRole` or `UserStatus` string-literal unions.
