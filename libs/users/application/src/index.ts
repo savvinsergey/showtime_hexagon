@@ -1,7 +1,7 @@
 /**
  * Public contracts for users application orchestration.
  */
-export { CLOCK, type OperationStatus, type UseCaseCall } from '@shared/kernel/angular';
+export { CLOCK, type OperationStatus, type UseCaseCall } from '@showtime/shared/kernel';
 export type { NewUser } from './lib/models/new-user/new-user';
 export type { UpdateUser } from './lib/models/update-user/update-user';
 export type { UsersQuery } from './lib/models/users-query/users-query';

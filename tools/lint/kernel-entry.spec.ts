@@ -1,140 +1,97 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
-
 import { ESLint } from 'eslint';
-import ts from 'typescript';
+import { reachesFramework } from './kernel-entry.mjs';
 
 const workspace = fileURLToPath(new URL('../../', import.meta.url));
-const kernelSource = path.join(workspace, 'libs/shared/kernel/src');
 const domain = 'libs/users/domain/src/index.ts';
-const pure = 'libs/shared/kernel/src/index.ts';
-const integration = 'libs/shared/kernel/src/angular/index.ts';
+const pure = 'libs/shared/kernel/src/lib/types/id/id.ts';
+const integration = 'libs/shared/kernel/src/lib/tokens/clock/clock.token.ts';
 const eslint = new ESLint({ cwd: workspace });
 
-/** Obtain framework boundary errors from the real project config for this virtual source. */
 async function boundaryErrors(filePath: string, source: string) {
   const [result] = await eslint.lintText(source, { filePath });
-  assert.deepEqual(
-    result.messages.filter(message => message.fatal || !message.ruleId),
-    [],
-  );
+  assert.deepEqual(result.messages.filter(message => message.fatal || !message.ruleId), []);
   return result.messages.filter(message =>
-    ['no-restricted-imports', 'workspace/kernel-entry'].includes(message.ruleId ?? ''),
-  );
+    ['no-restricted-imports', 'workspace/kernel-entry'].includes(message.ruleId ?? ''));
 }
 
-describe('Framework-free layers', () => {
+describe('Unified kernel framework boundary', () => {
   const rejected = [
-    ['Angular import in domain is rejected', domain, "import { signal } from '@angular/core';"],
-    [
-      'Domain cannot reach the Angular kernel entry',
-      domain,
-      "import type { UseCaseCall } from '@shared/kernel/angular';",
-    ],
-    [
-      'Domain cannot reach the Angular kernel entry via internals',
-      domain,
-      "export type { UseCaseCall } from '../../../shared/kernel/src/angular/use-case-call';",
-    ],
-    ['Pure kernel cannot re-export its Angular integration', pure, "export * from './angular';"],
-    [
-      'Pure kernel cannot re-export an integration type via alias',
-      pure,
-      "export type { UseCaseCall } from '@shared/kernel/angular';",
-    ],
-    [
-      'Pure kernel rejects a transitive relative re-export',
-      'libs/shared/kernel/src/lib/id/id.ts',
-      "export type { UseCaseCall } from '../../angular/use-case-call';",
-    ],
-    ['RxJS import in kernel is rejected', pure, "export type { Observable } from 'rxjs';"],
-    [
-      'Backtick dynamic RxJS import is rejected',
-      pure,
-      'export const load = () => import(`rxjs/operators`);',
-    ],
-    [
-      'Angular core testing stays in integration specs',
-      integration,
-      "export { TestBed } from '@angular/core/testing';",
-    ],
-    [
-      'Integration rejects other Angular packages',
-      integration,
-      "export type { Location } from '@angular/common';",
-    ],
+    [domain, "import { signal } from '@angular/core';"],
+    [domain, "import { CLOCK as clock } from '@showtime/shared/kernel';"],
+    [domain, "import type { UseCaseCall as Call } from '@showtime/shared/kernel';"],
+    [domain, "export type { UseCaseCall as Call } from '@showtime/shared/kernel';"],
+    [domain, "import * as kernel from '@showtime/shared/kernel';"],
+    [domain, "export * from '@showtime/shared/kernel';"],
+    [domain, "export type { UseCaseCall } from '../../../shared/kernel/src/lib/types/use-case-call/use-case-call';"],
+    [pure, "export { CLOCK } from '../../../index';"],
+    [pure, "export type { UseCaseCall } from '../use-case-call/use-case-call';"],
+    [pure, "export type { Observable } from 'rxjs';"],
+    [pure, 'export const load = () => import(`rxjs/operators`);'],
+    [pure, "type Call = import('@showtime/shared/kernel').UseCaseCall<string, string>;"],
+    [integration, "export { TestBed } from '@angular/core/testing';"],
+    [integration, "export type { Location } from '@angular/common';"],
   ];
-  for (const [name, file, source] of rejected) {
-    it(name, async () => {
+  for (const [file, source] of rejected) {
+    it(`rejects ${source} in ${file}`, async () => {
       assert.ok((await boundaryErrors(file, source)).length, source);
     });
   }
-  const allowed = [
-    [
-      'Domain may import a pure kernel type',
-      domain,
-      "import type { Result } from '@showtime/shared/kernel';",
-    ],
-    ['Integration may use core', integration, "export { InjectionToken } from '@angular/core';"],
-    [
-      'Integration specs may use core testing',
-      'libs/shared/kernel/src/angular/clock.spec.ts',
-      "export { TestBed } from '@angular/core/testing';",
-    ],
-  ];
-  for (const [name, file, source] of allowed) {
-    it(name, async () => {
+  for (const [file, source] of [
+    [domain, "import type { Result, Clock, OperationStatus } from '@showtime/shared/kernel';"],
+    [domain, "export { fixedClock as testClock } from '@showtime/shared/kernel';"],
+    [pure, "import type { Clock } from '@showtime/shared/kernel';"],
+    [integration, "export { InjectionToken } from '@angular/core';"],
+    [integration.replace('.ts', '.spec.ts'), "export { TestBed } from '@angular/core/testing';"],
+    ['libs/shared/kernel/src/index.ts', "export { CLOCK } from './lib/tokens/clock/clock.token';"],
+  ]) {
+    it(`allows ${source} in ${file}`, async () => {
       assert.deepEqual(await boundaryErrors(file, source), []);
     });
   }
 });
 
-describe('Kernel dependencies are empty', () => {
-  it('resolves the public entry and follows its imports and re-exports only to pure kernel sources', () => {
-    const config = ts.getParsedCommandLineOfConfigFile(
-      path.join(workspace, 'tsconfig.base.json'),
-      {},
-      {
-        ...ts.sys,
-        onUnRecoverableConfigFileDiagnostic: diagnostic =>
-          assert.fail(String(diagnostic.messageText)),
-      },
-    );
-    assert.ok(config);
-    const { options } = config;
-    function resolve(name: string, from: string): string {
-      const resolved = ts.resolveModuleName(name, from, options, ts.sys).resolvedModule;
-      assert.ok(resolved, `${from} cannot resolve ${name}`);
-      return resolved.resolvedFileName;
+describe('Kernel source organization and transitive purity', () => {
+  it('rejects Angular symbols re-exported through a workspace intermediary', async () => {
+    const directory = mkdtempSync(path.join(workspace, 'tools/lint/kernel-fixture-'));
+    try {
+      const intermediary = path.join(directory, 'bridge.ts');
+      writeFileSync(intermediary, "export { CLOCK as clock } from '@showtime/shared/kernel';\n");
+      assert.equal(reachesFramework('./bridge', path.join(directory, 'consumer.ts'), ['clock']), true);
+      const reference = path.relative(path.dirname(path.join(workspace, domain)), intermediary).replace(/\.ts$/, '');
+      assert.ok((await boundaryErrors(domain, `import { clock } from '${reference}';`)).length);
+      assert.ok((await boundaryErrors(domain, `export { clock as timeSource } from '${reference}';`)).length);
+
+      writeFileSync(intermediary, "export { fixedClock as clock } from '@showtime/shared/kernel';\n");
+      assert.deepEqual(await boundaryErrors(domain, `import { clock } from '${reference}';`), []);
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
     }
-    const root = resolve('@showtime/shared/kernel', path.join(workspace, domain));
-    const visited = new Set<string>();
-    function visit(file: string) {
-      if (visited.has(file)) return;
-      const relative = path.relative(kernelSource, file);
-      assert.ok(relative === 'index.ts' || relative.startsWith('lib' + path.sep), file);
-      visited.add(file);
-      const imports = ts.preProcessFile(readFileSync(file, 'utf8'), true, true).importedFiles;
-      for (const dependency of imports) visit(resolve(dependency.fileName, file));
-    }
-    visit(root);
-    for (const name of [
-      'clock',
-      'domain-error',
-      'domain-event',
-      'id',
-      'operation-status',
-      'result',
-    ]) {
-      const grouped = path.join(kernelSource, 'lib', name, name);
-      assert.ok(visited.has(grouped + '.ts'), `Pure entry must reach ${name}`);
-      assert.ok(existsSync(grouped + '.spec.ts'), `Missing colocated spec for ${name}`);
+  });
+  const from = path.join(workspace, domain);
+  for (const name of ['Clock', 'fixedClock', 'systemClock', 'DomainError', 'DomainEvent', 'Id', 'OperationStatus', 'Result']) {
+    it(`${name} reaches no framework dependency`, () => {
+      assert.equal(reachesFramework('@showtime/shared/kernel', from, [name]), false);
+    });
+  }
+  for (const name of ['CLOCK', 'UseCaseCall']) {
+    it(`${name} transitively reaches Angular`, () => {
+      assert.equal(reachesFramework('@showtime/shared/kernel', from, [name]), true);
+    });
+  }
+  it('keeps one implementation and colocated spec per contract', () => {
+    for (const name of ['clock', 'domain-error', 'domain-event', 'id', 'operation-status', 'result', 'use-case-call']) {
+      const root = path.join(workspace, 'libs/shared/kernel/src/lib');
       for (const suffix of ['.ts', '.spec.ts']) {
-        assert.equal(existsSync(path.join(kernelSource, 'lib', name + suffix)), false);
+        assert.ok(existsSync(path.join(root, 'types', name, name + suffix)));
+        assert.equal(existsSync(path.join(root, name + suffix)), false);
+        assert.equal(existsSync(path.join(root, name, name + suffix)), false);
       }
     }
+    assert.equal(existsSync(path.join(workspace, 'libs/shared/kernel/src/angular/index.ts')), false);
   });
 });

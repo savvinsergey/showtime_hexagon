@@ -1,5 +1,5 @@
 import { InjectionToken, type Signal } from '@angular/core';
-import type { OperationStatus, UseCaseCall } from '@shared/kernel/angular';
+import type { OperationStatus, UseCaseCall } from '@showtime/shared/kernel';
 import type { User, UserId } from '@showtime/users/domain';
 import type { NewUser } from '../../../models/new-user/new-user';
 import type { UpdateUser } from '../../../models/update-user/update-user';

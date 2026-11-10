@@ -1,7 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { fixedClock, systemClock } from '../../index';
-import { CLOCK } from '../index';
+import { CLOCK, fixedClock, systemClock } from '../../../index';
 
 describe('CLOCK', () => {
   afterEach(() => TestBed.resetTestingModule());

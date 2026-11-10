@@ -6,7 +6,7 @@ import {
   UserRepositoryMock as UserRepoMock,
   provideUsersPortsMock,
 } from '@showtime/users/application/mock';
-import { CLOCK } from '@shared/kernel/angular';
+import { CLOCK } from '@showtime/shared/kernel';
 import { DeactivateUserUseCase } from './deactivate-user';
 
 describe('DeactivateUserUseCase', () => {

@@ -42,7 +42,7 @@ use-case implementations remain internal. Application re-exports the User type f
 The shared kernel owns the generic call/status contracts. Users ports and facade use
 `UseCaseCall<T, UsersError>` and `OperationStatus<UsersError>` explicitly. The error union
 belongs to Users. Application use-cases import the shared `CLOCK` token from
-`@shared/kernel/angular`, so a fixed-clock override applies to each use-case.
+`@showtime/shared/kernel`, so a fixed-clock override applies to each use-case.
 
 Port mocks and reusable contract suites live in application/mock, restricted to test/mock imports.
 There is no event bus or integration contract library until a real subscriber requires publishing.

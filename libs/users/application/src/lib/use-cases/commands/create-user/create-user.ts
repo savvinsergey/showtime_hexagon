@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { err, type Result } from '@showtime/shared/kernel';
 import { UsersDomainService, type User } from '@showtime/users/domain';
-import { CLOCK } from '@shared/kernel/angular';
+import { CLOCK } from '@showtime/shared/kernel';
 import type { NewUser } from '../../../models/new-user/new-user';
 import type { UsersError } from '../../../models/users-error/users-error';
 import { USER_REPOSITORY } from '../../../ports/driven/user-repository/user-repo.port';

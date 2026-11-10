@@ -1,6 +1,11 @@
 import { signal, type Signal } from '@angular/core';
-import { err as failure, ok, type OperationStatus as PureStatus, type Result } from '../../index';
-import type { OperationStatus, UseCaseCall } from '../index';
+import {
+  err as failure,
+  ok,
+  type OperationStatus as PureStatus,
+  type Result,
+} from '../../../index';
+import type { OperationStatus, UseCaseCall } from '../../../index';
 
 describe('UseCaseCall contracts', () => {
   it('exposes status as a signal separately from a typed promised result', async () => {

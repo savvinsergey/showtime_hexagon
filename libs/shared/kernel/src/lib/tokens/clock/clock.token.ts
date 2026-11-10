@@ -1,5 +1,6 @@
 import { InjectionToken } from '@angular/core';
-import { systemClock, type Clock } from '../../lib/clock/clock';
+import type { Clock } from '../../types/clock/clock';
+import { systemClock } from '../../constants/clock/clock';
 
 /**
  * Application time source; domain operations receive its timestamp explicitly.

@@ -6,7 +6,7 @@ import {
   type Signal,
   type WritableSignal,
 } from '@angular/core';
-import type { OperationStatus, UseCaseCall } from '@shared/kernel/angular';
+import type { OperationStatus, UseCaseCall } from '@showtime/shared/kernel';
 import type { Result } from '@showtime/shared/kernel';
 import type { User, UserId } from '@showtime/users/domain';
 import type { NewUser } from '../../models/new-user/new-user';

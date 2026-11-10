@@ -3,7 +3,7 @@
 ## MODIFIED Requirements
 
 ### Requirement: Framework-free layers
-Domain and pure kernel sources SHALL reject Angular, RxJS and imports of the Angular kernel entry or its internals. Only the kernel Angular integration entry MAY import Angular core within the kernel. Lint SHALL enforce these restrictions for type and value imports.
+Domain and framework-free kernel sources SHALL reject Angular, RxJS and symbols with transitive framework dependencies, including through renamed imports and intermediary re-exports. The single kernel barrel MAY export Angular application contracts. Only kernel tokens and the UseCaseCall contract MAY import Angular core, with core testing helpers allowed in their colocated specs. RxJS SHALL remain forbidden throughout kernel. Lint SHALL enforce the boundaries for type and value imports; namespace imports and export-all from the mixed barrel SHALL be rejected in framework-free sources.
 
 #### Scenario: Angular import in domain is rejected
 - **WHEN** a `type:domain` library imports from `@angular/core`
@@ -13,12 +13,12 @@ Domain and pure kernel sources SHALL reject Angular, RxJS and imports of the Ang
 - **WHEN** a `type:kernel` library imports from `rxjs`
 - **THEN** lint reports a restricted import error
 
-#### Scenario: Domain cannot reach the Angular kernel entry
-- **WHEN** domain source imports a contract from `@shared/kernel/angular`
+#### Scenario: Domain cannot reach Angular-dependent kernel symbols
+- **WHEN** domain source imports CLOCK or UseCaseCall from `@showtime/shared/kernel`, directly or through an intermediary
 - **THEN** lint rejects the import even though the kernel project is an allowed dependency
 
-#### Scenario: Pure kernel cannot re-export its Angular integration
-- **WHEN** a pure kernel source or barrel references the Angular integration through its alias or a relative import
+#### Scenario: Pure kernel sources cannot re-export Angular-dependent symbols
+- **WHEN** a framework-free kernel implementation re-exports an Angular-dependent symbol through the public barrel or an internal path
 - **THEN** lint rejects the dependency
 
 ## ADDED Requirements

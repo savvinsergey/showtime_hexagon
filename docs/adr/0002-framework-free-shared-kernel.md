@@ -1,11 +1,12 @@
-# ADR-0002: Pure shared kernel with a separate Angular entry point
+# ADR-0002: Single shared kernel entry with symbol-level purity boundaries
 
 - Status: Accepted
 - Date: 2026-10-28
+- Updated: 2026-11-10 (user-approved single public entry)
 
 ## Context
 
-Several bounded contexts need the same domain primitives: `Result`, `DomainError`, branded `Id`, `DomainEvent`, a time source. Without a shared place each context would invent its own, and domains would either duplicate them or depend on each other. The domain layer must stay pure TypeScript (engineering conventions), so the shared place cannot pull in Angular or RxJS, and ADR-0001 only lets `type:domain` depend on `type:domain` and `type:kernel`.
+Several bounded contexts need the same domain primitives: `Result`, `DomainError`, branded `Id`, `DomainEvent`, a time source. Without a shared place each context would invent its own, and domains would either duplicate them or depend on each other. The domain layer must stay pure TypeScript (engineering conventions), so imported domain primitives cannot transitively depend on Angular or RxJS, and ADR-0001 only lets `type:domain` depend on `type:domain` and `type:kernel`.
 
 ## Decision Drivers
 
@@ -22,18 +23,20 @@ Several bounded contexts need the same domain primitives: `Result`, `DomainError
 
 ## Decision
 
-Use one Nx library tagged `type:kernel` and `scope:shared`, with two public entries. This refines option 3 to support Angular application consumers while keeping the domain import surface pure.
+Use one Nx library tagged `type:kernel` and `scope:shared`, with the single public entry `@showtime/shared/kernel`. This supersedes the earlier secondary Angular entry decision.
 
-- The existing `@showtime/shared/kernel` entry exports `Result<T, E>`, `ok`, `err`, `DomainError`, `Id<Brand>`, `DomainEvent`, `Clock`, `systemClock`, `fixedClock` and the plain discriminated union `OperationStatus<E>`. Its transitive imports are pure TypeScript.
-- `@shared/kernel/angular` owns one root-provided `CLOCK` token with a system-clock factory and the type `UseCaseCall<T, E>` with a status signal and a promised result. It re-exports the pure status type. Application code supplies the context error type explicitly. Domain functions receive time as an argument.
-- Keep each declaration and its tests in one named folder. Public barrels refer to those declarations. Framework-neutral contracts used across contexts belong to the shared kernel. Entities, context error unions and versioned integration events belong to their bounded context.
-- Use `pureConventions` in domain and the pure kernel. Restrict access to the Angular entry and its internals from both. Permit Angular core in the integration entry only. Whole-project dependency graphs cannot distinguish entries (see ADR-0001).
+- Export pure `Result<T, E>`, `ok`, `err`, `DomainError`, `Id<Brand>`, `DomainEvent`, `Clock`, `systemClock`, `fixedClock` and `OperationStatus<E>` alongside Angular application contracts.
+- Export one root-provided `CLOCK` token backed by `systemClock`, and `UseCaseCall<T, E>` with a read-only status signal and a promised result. Application supplies its own error type. Domain receives time as an argument.
+- Organize `src/lib` by purpose: `types/`, `tokens/`, `constants/`. Each entity has one named folder and colocated tests. `Clock`/`fixedClock` live in `types/clock`, `CLOCK` in `tokens/clock`, `systemClock` in `constants/clock`.
+- Domain and framework-free kernel implementations may consume only named symbols with no transitive Angular/RxJS dependency. Lint follows imports/re-exports through intermediary modules and renamed symbols. Namespace imports and export-all from the mixed barrel are conservatively rejected there.
+- The public barrel may re-export Angular contracts. Angular core is permitted only in tokens and UseCaseCall, with core testing helpers in their specs. RxJS remains forbidden throughout kernel.
+- Context-neutral shared contracts belong in kernel; entities, context-specific errors and integration events stay with their owner.
 
 ## Consequences
 
-A fixed-clock override targets the same token for every context. Domain tests can import the pure barrel without initializing Angular. Consumers can use the shared status union with different error types.
+A fixed-clock override targets the same token for every context. Consumers share one public path and authoritative definitions. Domain code cannot consume Angular-dependent symbols even though they share the barrel with pure primitives.
 
-Both public entries share one Nx node, so a graph check must be paired with lint checks against real import paths. Keep the pure entry from re-exporting Angular contracts, including type-only exports.
+Project graphs cannot distinguish pure and Angular-dependent symbols. Pair graph checks with transitive symbol-level lint regressions; the entire barrel is intentionally not framework-free. Named imports are required for framework-free consumers.
 
 ## Follow-ups
 

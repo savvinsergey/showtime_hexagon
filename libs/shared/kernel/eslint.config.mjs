@@ -10,4 +10,5 @@ export default [
   // Framework-free layer: `@angular/*` and `rxjs` imports are forbidden.
   ...pureConventions,
   ...kernelAngularConventions,
+  { files: ['**/src/index.ts'], rules: { 'workspace/kernel-entry': ['error', 'barrel'] } },
 ];

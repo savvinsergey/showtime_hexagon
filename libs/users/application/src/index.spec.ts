@@ -1,6 +1,6 @@
 import * as usersEntry from './index';
 import type { Signal } from '@angular/core';
-import { CLOCK, type OperationStatus, type UseCaseCall } from '@shared/kernel/angular';
+import { CLOCK, type OperationStatus, type UseCaseCall } from '@showtime/shared/kernel';
 import type { User as DomainUser, UserId } from '@showtime/users/domain';
 import type {
   NewUser,

@@ -114,7 +114,7 @@ Consumers of the driving port SHALL import `User` from `@showtime/users/applicat
 - **THEN** the import resolves and is the domain `User` type
 
 ### Requirement: Clock is injected in application
-Application code that needs the current time SHALL inject the shared `CLOCK` token from `@shared/kernel/angular` whose value implements the kernel `Clock`. Domain functions SHALL receive `now` as an argument. The token SHALL default to the system clock.
+Application code that needs the current time SHALL inject the shared `CLOCK` token from `@showtime/shared/kernel` whose value implements the kernel `Clock`. Domain functions SHALL receive `now` as an argument. The token SHALL default to the system clock.
 
 #### Scenario: System clock is the default
 - **WHEN** `CLOCK` is injected with no test override

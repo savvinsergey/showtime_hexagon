@@ -2,7 +2,7 @@
 
 ## Why
 
-The workspace now enforces layer tags, `depConstraints`, a framework-free kernel and shared presentational UI, but the `users` bounded context still has no domain or application libraries. Later infrastructure, feature and the remote app cannot bind ports or reuse one `User` model until those layers exist.
+The workspace now enforces layer tags, `depConstraints`, shared kernel primitives with framework-free domain dependencies and shared presentational UI, but the `users` bounded context still has no domain or application libraries. Later infrastructure, feature and the remote app cannot bind ports or reuse one `User` model until those layers exist.
 
 ## What Changes
 
@@ -11,7 +11,7 @@ The workspace now enforces layer tags, `depConstraints`, a framework-free kernel
 - Add a separate entry `@showtime/users/application/mock` with port mocks and contract suites for application tests (application never imports infrastructure).
 - Register path aliases and Nx tags (`type:domain` / `type:application`, `scope:users`); domain lint uses `pureConventions`, application lint uses `conventions`.
 
-- Consolidate each kernel primitive in one named folder. Expose shared `CLOCK` and the signal-based call contract through `@shared/kernel/angular`. Keep pure primitives available through `@showtime/shared/kernel`.
+- Consolidate kernel definitions under `types/`, `tokens/` and `constants/`, with one named folder and colocated tests per entity. Expose all contracts and `CLOCK` through the single `@showtime/shared/kernel` entry; enforce framework-free domain imports per symbol.
 - Align workspace lint, rules, examples and owned components with Angular 22 default change detection. Preserve intentional strategy overrides.
 
 ## Capabilities
@@ -23,8 +23,8 @@ The workspace now enforces layer tags, `depConstraints`, a framework-free kernel
 
 ### Modified Capabilities
 
-- `shared-kernel`: split pure primitives from Angular integration and share generic operation contracts.
-- `workspace-boundaries`: enforce purity at entry-point level and permit owned components to use Angular 22 default change detection.
+- `shared-kernel`: provide one public entry with symbol-level purity boundaries and shared generic operation contracts.
+- `workspace-boundaries`: enforce transitive purity at imported-symbol level and permit owned components to use Angular 22 default change detection.
 
 ## Impact
 
@@ -41,4 +41,4 @@ The workspace now enforces layer tags, `depConstraints`, a framework-free kernel
 
 ## Breaking changes
 
-The pure kernel public path and its existing exports stay compatible. The new Angular path supplies the shared contracts to every application context.
+The existing `@showtime/shared/kernel` path supplies pure primitives and Angular application contracts. Remove the former secondary Angular alias and migrate its consumers to this single entry. Framework-free consumers use named pure symbols only.

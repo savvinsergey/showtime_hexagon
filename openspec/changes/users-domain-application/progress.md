@@ -111,3 +111,79 @@ Correction commits: ST-0001 4c2583f (one review fix cycle); ST-0006 eb5f23d (fir
 Telemetry: orchestrator empty wait timeouts 1 during final acceptance; model calls, input tokens and cached input counters unavailable. Specialist and dispatcher telemetry unavailable here.
 
 Final acceptance evidence persisted.
+
+## User-approved single-entry correction (commit: off)
+
+Branch change/users-domain-application; unchanged HEAD 0daf26c. User explicitly superseded the two-entry kernel design with one public @showtime/shared/kernel entry and retained their lib/types, lib/tokens/clock and lib/constants/clock organization. No stage, commit, archive or other Git writes performed; existing staged user moves and unrelated workflow/AGENTS/.gitignore edits preserved.
+
+Developer repaired unified exports and consumers, removed obsolete alias, corrected clock imports/spec placement, adapted ESLint and symbol-transitive purity checks. Reviewer approved after one fix cycle: clock spec relative path, kernel self-imports, workspace intermediary traversal and Nx barrel glob. Tester strengthened the actual-ESLint intermediary regression (renamed CLOCK import/re-export rejected; fixedClock accepted). Scenario evidence: tools/lint/kernel-entry.spec.ts (single implementation, neutral exports, framework boundary, intermediary); clock.token.spec.ts (default/override); use-case-call.spec.ts (generic errors); application index.spec.ts (shared contracts/token identity).
+
+Verification: fresh kernel/domain/application lint and tests passed (30/56/53), tooling 125 tests plus tags passed. Final-run: all eight project lints; kernel30/domain56/application53/shared-ui16 =155 tests; shell production build passed on authorized host retry after sandbox Nx Cloud DNS failure. shell:test excluded (empty suite); layout has no test target. Graph domain->kernel, application->domain/kernel, kernel has no workspace dependencies. Logs /tmp/kernel-final-verification.log, /tmp/kernel-final-build-host.log, /tmp/kernel-tester-lint-final.log. Existing domain _now warning remains.
+
+Analyst ACCEPT technical correction against explicit user decision; no required implementation fixes. Old proposal/design/tasks/delta specs/ADRs and engineering-conventions still describe two entries. No broad rule text or artifact revisions applied: narrow proposed text and exact stale artifact list returned to dispatcher for user review. Archive remains deferred; all correction work uncommitted.
+
+User approved kernel rules on 2026-11-10: documented the single public entry, purpose-group folders, authoritative definitions and transitive symbol-level purity. Aligned current change proposal/design/tasks/delta specs and ADR0001–3. Historical progress entries retain the earlier two-entry decision as history; the current rules supersede it. Documentation-only follow-up; no commit or archive.
+
+## Authorized correction commit
+
+User authorized commit on 2026-11-10; accepted single-entry implementation and approved rules/documentation. Existing review, tests, final-run and acceptance evidence above remains applicable; archive deferred.
+
+Pending commit record:
+```json
+{
+  "tasks": [
+    "ST-0001",
+    "ST-0006"
+  ],
+  "pre_commit_head": "0daf26c2bac6020eafd9e5abbd272963e55b6456",
+  "files": {
+    ".agents/rules/engineering-conventions.md": "c039579ed75c974b873130de40455caafe30a7d5929ea30b559325a486494933",
+    "docs/adr/0001-layer-and-scope-tags-with-enforced-dependency-rule.md": "d30f52a72a0cb88dc4c5b412ad30e46a2795762c746da9f85e53e55e54609f6b",
+    "docs/adr/0002-framework-free-shared-kernel.md": "1be64ca7f329a06cdb38293291f8f37652038192bb4b2903cb5db287da8b6118",
+    "docs/adr/0003-users-model-and-application-ports.md": "bfd1883b4b1142f09bc8c096b044bd02c60d1c114f0f27f0bd93e02744196f51",
+    "eslint.conventions.mjs": "938de5e7da08f38bdc89f4570173036bbccf448abcb3d181b623ef5bcf96c720",
+    "libs/shared/kernel/eslint.config.mjs": "e03487dd727e2d80da8d0c315f52da6b533c0f2be60945ec4792f5ea4ba195dd",
+    "libs/shared/kernel/src/angular/index.ts": "deleted or mutable journal/checklist",
+    "libs/shared/kernel/src/index.ts": "c7acaa667170cd880d2a53550d5b5d90faab722f856048ad7c02d7de415094de",
+    "libs/shared/kernel/src/lib/constants/clock/clock.spec.ts": "79eea603547ddcf7fd10515e0f7ed36a1e8384840a6dd8472a3d00bbb8e691f4",
+    "libs/shared/kernel/src/lib/constants/clock/clock.ts": "d901eda7502cfd2f57c23edf254f5eaf4b14a945c116523868f7deb319daac26",
+    "libs/shared/kernel/src/lib/tokens/clock/clock.token.spec.ts": "f8172d616c264b7ed6ec75ffafc6e7beae9e4dff0f13d11558850352d8450449",
+    "libs/shared/kernel/src/lib/tokens/clock/clock.token.ts": "711d5e0fd61f4f99edf3549603308d1452745cec39e9baeaa6ddfbc5b2189a89",
+    "libs/shared/kernel/src/lib/types/clock/clock.spec.ts": "6d93f9c5fefb465245f5e6e527d785a5033e6f8a251b87b2e063cbad3e762808",
+    "libs/shared/kernel/src/lib/types/clock/clock.ts": "6351d094d8e3fa212bf772176a5e45a7fa8eb91c07608582443b2c3638f6a53a",
+    "libs/shared/kernel/src/lib/types/domain-error/domain-error.spec.ts": "b6a4046bcaa951bab6f5107ea0b3ddd3ad9ccb0a25262092d1e1194915ac6522",
+    "libs/shared/kernel/src/lib/types/domain-error/domain-error.ts": "fe46fa34c0757b2178713715a8450862a45d347f49733f8afe84d53eef3ac3cd",
+    "libs/shared/kernel/src/lib/types/domain-event/domain-event.spec.ts": "cfe8762210142fc98fc43e06f3955b67cb1c3c2705a3fb39cb33581eefd8a8ca",
+    "libs/shared/kernel/src/lib/types/domain-event/domain-event.ts": "f9c8e2865ed40ea2459276fa5e86b8ce6427ddbf1d96092c525198e67a310362",
+    "libs/shared/kernel/src/lib/types/id/id.spec.ts": "ed2c46bc4a147ec6da2dd4581ac557043e99f01e8f4ff28767bd38fa2b688d84",
+    "libs/shared/kernel/src/lib/types/id/id.ts": "ceac58a46b4087d7f0d410739e0a08bf3331f61861e28c3145be8b88a5872b4f",
+    "libs/shared/kernel/src/lib/types/operation-status/operation-status.spec.ts": "eebb7d62ebf97a9b0772ed0fb3726e458c5591f8d780fca005eb9425a3a0339f",
+    "libs/shared/kernel/src/lib/types/operation-status/operation-status.ts": "c1f6a8a046bd5a234042c6e465cbfe544fcf87f5a0b145301f22c0392a27b21b",
+    "libs/shared/kernel/src/lib/types/result/result.spec.ts": "4e250647adc89ac5b1be0907ba64ac205b44b7e3c2a4db71a11014931d491432",
+    "libs/shared/kernel/src/lib/types/result/result.ts": "d5dcb917139d4044a126f0e16ae2609ce5404b5e0590d547b6122624415f26d6",
+    "libs/shared/kernel/src/lib/types/use-case-call/use-case-call.spec.ts": "45c7fc8bb02784a571688dd2a0526863b63a215d938f5c1257a266085dce02a3",
+    "libs/shared/kernel/src/lib/types/use-case-call/use-case-call.ts": "bd6061b05cac2bb9a07fc38d0eaa3f739c33e0f76a5e93ba7bdd0d893115b42c",
+    "libs/users/application/src/index.spec.ts": "8c341ce5584169cecd668e7bfe03ded3e8c13f91850db8705f9582aca74b9c9c",
+    "libs/users/application/src/index.ts": "72b15622363097e390c96d8c8fbdf5a9939cf9829860763222a3df9505e9ce4b",
+    "libs/users/application/src/lib/ports/driving/users-app/users-app.port.ts": "9d76271bfa90e7f044fe7c01c02661e94e414ef0ad887ee3cd38d8493356a6f9",
+    "libs/users/application/src/lib/services/users-app/users-app.service.ts": "031143fe896c15d8645c22c29f296daf6b1cf5adad454a606567875e3e8f67ab",
+    "libs/users/application/src/lib/use-cases/commands/create-user/create-user.spec.ts": "485723026c99dad97cfd38bb112b7147d142d66b1d08c324a9f9fcc67393009a",
+    "libs/users/application/src/lib/use-cases/commands/create-user/create-user.ts": "15657aca690100009df79a621ab1ca0d1860788385894af41bcac63172e37f59",
+    "libs/users/application/src/lib/use-cases/commands/deactivate-user/deactivate-user.spec.ts": "132bb737c770d036f1caf5d3a16ca05d89f98788f6a066a2a91de3d7274d3e4b",
+    "libs/users/application/src/lib/use-cases/commands/deactivate-user/deactivate-user.ts": "c06469e9153ba0c77766024aa4ef8cc09d506c92eba0cf237c59ef73f3751867",
+    "libs/users/application/src/lib/use-cases/commands/update-user/update-user.spec.ts": "405b5fd9fd83257448d50bff79fbfa14a405046aeb9b57bf1f7263bea931936f",
+    "libs/users/application/src/lib/use-cases/commands/update-user/update-user.ts": "1da87fea6ff3855d02608f4e85eedf175bd8848f231ef151cc1dd557741700a3",
+    "openspec/changes/users-domain-application/design.md": "c40b3ccff2e6f4ee19a2444933fdd59eadb5487a0916c02565c37db3c594bd20",
+    "openspec/changes/users-domain-application/progress.md": "deleted or mutable journal/checklist",
+    "openspec/changes/users-domain-application/proposal.md": "fb132379fdb12e2b8b72a254816768baf2b8aeba3620cdd1e42aed03ef55fbbc",
+    "openspec/changes/users-domain-application/specs/shared-kernel/spec.md": "2430de64cbbfc7fc6b7ad42a3c16bd5b28fd0b065892a27189598a4b3a0aae60",
+    "openspec/changes/users-domain-application/specs/users-application/spec.md": "75f89993eb4af6426bb3bd056ea9e35230a0753ab4da4b3b254fecc2bdfe595f",
+    "openspec/changes/users-domain-application/specs/workspace-boundaries/spec.md": "4551eae0f17a70de6c9663af2cadcac05f3fa5aa6c96a7050f3b5c253a7ab342",
+    "openspec/changes/users-domain-application/tasks.md": "deleted or mutable journal/checklist",
+    "tools/lint/kernel-entry.mjs": "72a7fd95b270cace77003cb191359b2aba03ccb1f7fd5c539a67cda3bfcbef48",
+    "tools/lint/kernel-entry.spec.ts": "453f2d994b669d1b4e3f6900bd2b24ab23a4554870e9474aa7a0366a6df5198e",
+    "tsconfig.base.json": "108995119a69e933605a33ea5afed7da8a25f6a8e4aa65d04bd8951015d2f00c"
+  },
+  "message": "refactor(shared-kernel): consolidate the single public entry\n\nST-0001 consolidate kernel primitives and enforce framework boundaries\nST-0006 share clock and generic operation contracts through the public entry\n\nChange: users-domain-application\n"
+}
+```

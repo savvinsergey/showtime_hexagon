@@ -5,7 +5,7 @@
 See proposal.md for motivation. Constraints that shape the approach:
 
 - ADR-0001 already enforces `type:domain` → kernel only and `type:application` → domain + kernel (+ util/contracts, unused here). `scope:users` may depend on `scope:users` and `scope:shared`.
-- ADR-0002 separates the pure kernel entry from Angular integration. Domain functions receive `now` as an argument. Application services inject the shared token.
+- ADR-0002 defines one kernel entry with symbol-level purity checks. Domain functions receive `now` as an argument. Application services inject the shared token.
 - Engineering conventions: anemic `User`, one domain service, ports in application, single driving port, `UseCaseCall`, backend as source of truth, no DTO/mappers in application, mocks in `application/mock`.
 - Test runner for new libs is `@angular/build:unit-test` (same as `shared-kernel` / `shell`). Do not add vite/vitest workspace plugins.
 - Pre-existing: `shell:test` reports "No tests found". Do not put it in verification tasks.
@@ -60,13 +60,15 @@ Use-cases orchestrate promised port results directly under the explicit `UseCase
 
 `UpdateUser` (application model) is `{ id: UserId; fullName: string; role: string }`. The update use-case loads the user, applies `rename` and `changeRole`, then `save`.
 
-### Shared kernel entry points
+### Shared kernel public entry
 
-Keep one Nx project and two public entry points. The existing `@showtime/shared/kernel` barrel exports the pure primitives, including the plain discriminated union `OperationStatus<E>`. The `@shared/kernel/angular` entry exports the root clock token, the signal-bearing `UseCaseCall<T, E>` and the same status type. `UseCaseCall<T, E>` exposes a read-only `Signal<OperationStatus<E>>` and a `Promise<Result<T, E>>`. Each definition and its tests live in a single named folder matching the Users application model convention. Remove the duplicate flat files when switching the pure barrel to the folder implementations.
+Keep one Nx project and one public entry, `@showtime/shared/kernel`. Export pure primitives and `OperationStatus<E>` alongside the root `CLOCK` token and `UseCaseCall<T, E>`. The call contract exposes a read-only `Signal<OperationStatus<E>>` and a `Promise<Result<T, E>>`.
 
-Nx sees both entry points as the same project. Enforce the finer boundary in lint: domain and pure kernel sources cannot import Angular, RxJS or the Angular entry, including via internal paths. Restrict the Angular exception to its own source tree. A cross-context neutral contract lives in shared/kernel; context-specific errors, events and ports stay with their owner. Another context imports only that owner’s public integration contracts.
+Group definitions by purpose under `src/lib/types/`, `tokens/` and `constants/`, with one named folder and colocated tests per entity. `Clock` and `fixedClock` remain in `types/clock`, `CLOCK` lives in `tokens/clock`, and `systemClock` in `constants/clock`. The barrel exports these authoritative definitions.
 
-Keeping the clock and call shape in each context duplicates token identity and contract definitions. Splitting them into a new project would add a third dependency for Users. A secondary entry keeps the existing graph and allows consumers to opt into Angular.
+Nx tags enforce project boundaries; lint additionally follows named symbols and their transitive dependencies, including renamed imports and intermediary re-exports. Domain and framework-free kernel sources cannot reach Angular or RxJS. Namespace imports and export-all from the mixed barrel are conservatively rejected there. Angular core is permitted only in tokens and the `UseCaseCall` contract, with core testing helpers in their specs. RxJS is forbidden throughout kernel. The public barrel may re-export the Angular contracts.
+
+This keeps one token identity and one call contract without a secondary alias or an additional project. A cross-context neutral contract belongs in kernel; context-specific errors, events and ports stay with their owner.
 
 ### Clock token
 
@@ -77,7 +79,7 @@ export const CLOCK = new InjectionToken<Clock>('CLOCK', {
 });
 ```
 
-Use-cases import `CLOCK` from `@shared/kernel/angular`, call `inject(CLOCK)` and pass `now` into the domain. Tests override `CLOCK` with `fixedClock(...)`. No `provideClock()`.
+Use-cases import `CLOCK` from `@showtime/shared/kernel`, call `inject(CLOCK)` and pass `now` into the domain. Tests override `CLOCK` with `fixedClock(...)`. No `provideClock()`.
 
 ### Mocks as a path, not a third Nx project
 
@@ -143,7 +145,7 @@ Owned Angular 22 components omit redundant `ChangeDetectionStrategy.OnPush` meta
 
 1. Generate domain, implement model/VOs/service/events, tests.
 2. Generate application, ports, facade, use-cases, mocks, tests.
-3. Consolidate kernel definitions, wire the two public entries and their import boundaries, and update Users to consume the shared contracts.
+3. Consolidate kernel definitions, wire the single public entry and symbol-level import boundaries, and update Users to consume the shared contracts.
 4. Align Angular component conventions, then verify impacted workspace projects.
 5. Wire aliases and confirm `nx lint/test` on the two projects plus `npm run test:lint`.
 Rollback: revert the commits; no runtime app is wired yet.
@@ -155,5 +157,5 @@ None. Role/status literals, draft default `active`, and the update shape are fix
 ## Decisions
 
 - [ADR-0001](../../../docs/adr/0001-layer-and-scope-tags-with-enforced-dependency-rule.md): layer and scope tags; domain and application libraries inherit the existing `depConstraints`.
-- [ADR-0002](../../../docs/adr/0002-framework-free-shared-kernel.md): the pure entry is framework-free and the Angular entry owns the shared token and call contract.
+- [ADR-0002](../../../docs/adr/0002-framework-free-shared-kernel.md): one public entry exports shared contracts with symbol-level purity enforcement.
 - [ADR-0003](../../../docs/adr/0003-users-model-and-application-ports.md): immutable plain users models, pure domain behavior, and application-owned ports with composition-root binding.

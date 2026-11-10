@@ -2,7 +2,7 @@
  * Source of the current time.
  *
  * Code that needs the time depends on this contract instead of reading `Date` directly, so tests can
- * substitute {@link fixedClock}. The kernel's Angular entry owns the shared `CLOCK` token.
+ * substitute {@link fixedClock}. The kernel owns the shared `CLOCK` token.
  */
 export type Clock = Readonly<{
   /**
@@ -12,13 +12,6 @@ export type Clock = Readonly<{
    */
   now(): string;
 }>;
-
-/**
- * Clock backed by the real system time.
- */
-export const systemClock: Clock = {
-  now: () => new Date().toISOString(),
-};
 
 /**
  * Creates a clock that returns the same time on every call, for deterministic tests.

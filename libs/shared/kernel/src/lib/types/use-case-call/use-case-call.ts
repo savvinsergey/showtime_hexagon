@@ -1,6 +1,6 @@
 import type { Signal } from '@angular/core';
-import type { OperationStatus } from '../../lib/operation-status/operation-status';
-import type { Result } from '../../lib/result/result';
+import type { OperationStatus } from '../operation-status/operation-status';
+import type { Result } from '../result/result';
 
 /**
  * Read-only progress and the eventual outcome of a single application command.
