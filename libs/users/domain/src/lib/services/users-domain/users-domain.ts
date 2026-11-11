@@ -1,3 +1,4 @@
+import { UsersEventsEnum } from '../../enums/users-events/users-events.enum';
 import { domainError, err, ok, type Result } from '@showtime/shared/kernel';
 import type { Email, FullName } from '../../value-objects';
 import { isUserRole } from '../../value-objects/user-role/user-role';
@@ -86,7 +87,7 @@ function createUserDraft(input: DraftInput, _now: string): Result<UserDraft> {
  * @returns The frozen registration fact.
  */
 function userRegistered(user: User, now: string): UserRegistered {
-  return Object.freeze({ type: 'users.user-registered', userId: user.id, occurredAt: now });
+  return Object.freeze({ type: UsersEventsEnum.UserRegistered, userId: user.id, occurredAt: now });
 }
 
 /**
@@ -99,7 +100,11 @@ function activate(user: User, now: string): UserChange<UserActivated> {
   return Object.freeze({
     user: Object.freeze({ ...user, status: 'active' }),
     events: Object.freeze([
-      Object.freeze({ type: 'users.user-activated' as const, userId: user.id, occurredAt: now }),
+      Object.freeze({
+        type: UsersEventsEnum.UserActivated as const,
+        userId: user.id,
+        occurredAt: now,
+      }),
     ]),
   });
 }
@@ -114,7 +119,11 @@ function deactivate(user: User, now: string): UserChange<UserDeactivated> {
   return Object.freeze({
     user: Object.freeze({ ...user, status: 'inactive' }),
     events: Object.freeze([
-      Object.freeze({ type: 'users.user-deactivated' as const, userId: user.id, occurredAt: now }),
+      Object.freeze({
+        type: UsersEventsEnum.UserDeactivated as const,
+        userId: user.id,
+        occurredAt: now,
+      }),
     ]),
   });
 }
@@ -128,12 +137,16 @@ function deactivate(user: User, now: string): UserChange<UserDeactivated> {
  */
 function rename(user: User, rawFullName: string, now: string): Result<UserChange<UserRenamed>> {
   const fullName = parseFullName(rawFullName);
-  if (!fullName.ok) return fullName;
+  if (!fullName.ok) {
+    return fullName;
+  }
+
   const event: UserRenamed = Object.freeze({
-    type: 'users.user-renamed',
+    type: UsersEventsEnum.UserRenamed,
     userId: user.id,
     occurredAt: now,
   });
+
   return ok(
     Object.freeze({
       user: Object.freeze({ ...user, fullName: fullName.value }),
@@ -153,11 +166,13 @@ function changeRole(user: User, rawRole: string, now: string): Result<UserChange
   if (!isUserRole(rawRole)) {
     return err(domainError(UserErrorsEnum.InvalidRole, 'Role must be admin or member.'));
   }
+
   const event: UserRoleChanged = Object.freeze({
-    type: 'users.user-role-changed',
+    type: UsersEventsEnum.UserRoleChanged,
     userId: user.id,
     occurredAt: now,
   });
+
   return ok(
     Object.freeze({
       user: Object.freeze({ ...user, role: rawRole }),
