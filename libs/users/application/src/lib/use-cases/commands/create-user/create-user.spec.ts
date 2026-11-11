@@ -1,3 +1,4 @@
+import { UserRoleEnum } from '@showtime/users/domain';
 import { ErrorKindEnum } from '@showtime/shared/kernel';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
@@ -12,7 +13,7 @@ import type { UsersError } from '../../../models/users-error/users-error';
 import { CreateUserUseCase } from './create-user';
 
 const timestamp = '2026-01-31T10:15:30.000Z';
-const input = { email: 'ada@example.com', fullName: 'Ada Lovelace', role: 'member' };
+const input = { email: 'ada@example.com', fullName: 'Ada Lovelace', role: UserRoleEnum.Member };
 
 describe('CreateUserUseCase', () => {
   beforeEach(() => {

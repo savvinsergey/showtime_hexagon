@@ -1,7 +1,7 @@
 import { ErrorKindEnum } from '@showtime/shared/kernel';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { asUserId, UsersDomainService } from '@showtime/users/domain';
+import { asUserId, UserRoleEnum, UsersDomainService } from '@showtime/users/domain';
 import {
   UserRepositoryMock as UserRepoMock,
   UsersStateMock,
@@ -36,7 +36,7 @@ describe('GetUserUseCase', () => {
       {
         email: 'ada@example.com',
         fullName: 'Ada Lovelace',
-        role: 'member',
+        role: UserRoleEnum.Member,
       },
       '2026-01-31T10:15:30.000Z',
     );

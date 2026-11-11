@@ -34,7 +34,7 @@ Domain must stay framework-free (`pureConventions`). Application needs `inject`,
 
 ### Anemic `User` plus one domain service
 
-`User` is `Readonly<{ id: UserId; email: Email; fullName: FullName; role: UserRole; status: UserStatus }>`. `UserDraft` is `Omit<User, 'id'>`. Value types: `Email` / `FullName` (smart constructors → `Result`), `UserId` (`asUserId` cast), `UserRole` = `'admin' | 'member'`, `UserStatus` = `'active' | 'inactive'` (type guards, no constructor).
+`User` is `Readonly<{ id: UserId; email: Email; fullName: FullName; role: UserRole; status: UserStatus }>`. `UserDraft` is `Omit<User, 'id'>`. Value types: `Email` / `FullName` (smart constructors → `Result`), `UserId` (`asUserId` cast), `UserRole` = `UserRoleEnum` (`Admin = 'admin'`, `Member = 'member'`), `UserStatus` = `'active' | 'inactive'` (type guards, no constructor).
 
 `UsersDomainService` is a stateless object of functions (no `inject`): `createUserDraft`, `userRegistered`, `activate`, `deactivate`, `rename`, `changeRole`. Structural validators stay private in that file. No `policies/` folder.
 
@@ -160,4 +160,4 @@ None. Role/status literals, draft default `active`, and the update shape are fix
 - [ADR-0002](../../../docs/adr/0002-framework-free-shared-kernel.md): one public entry exports shared contracts with symbol-level purity enforcement.
 - [ADR-0003](../../../docs/adr/0003-users-model-and-application-ports.md): immutable plain users models, pure domain behavior, and application-owned ports with composition-root binding.
 
-The approved operation lifecycle enum is defined in `enums/operation-status/operation-status.enum.ts` with `Idle`, `Loading`, `Success`, `Error` and `Cancelled` members preserving the lowercase runtime values. `OperationStatus<E>` uses these members as discriminants; only `Error` carries the mandatory `error: E`. This exception does not change domain `UserRole` or `UserStatus` string-literal unions.
+The approved operation lifecycle enum is defined in `enums/operation-status/operation-status.enum.ts` with `Idle`, `Loading`, `Success`, `Error` and `Cancelled` members preserving the lowercase runtime values. `OperationStatus<E>` uses these members as discriminants; only `Error` carries the mandatory `error: E`. The separately approved Users-owned `UserRoleEnum` preserves `admin` and `member`; `UserRole` aliases it and application re-exports the same enum. `UserStatus` remains a string-literal union.

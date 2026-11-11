@@ -2,7 +2,7 @@ import { ErrorKindEnum } from '@showtime/shared/kernel';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { err, fixedClock, ok, type Result } from '@showtime/shared/kernel';
-import { asUserId, UsersDomainService } from '@showtime/users/domain';
+import { asUserId, UserRoleEnum, UsersDomainService } from '@showtime/users/domain';
 import {
   UserRepositoryMock as UserRepoMock,
   UsersStateMock,
@@ -35,7 +35,7 @@ function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void } {
   };
 }
 
-const input = { email: 'ada@example.com', fullName: 'Ada Lovelace', role: 'member' };
+const input = { email: 'ada@example.com', fullName: 'Ada Lovelace', role: UserRoleEnum.Member };
 const timestamp = '2026-01-31T10:15:30.000Z';
 
 describe('UsersApplication driving port', () => {
@@ -195,7 +195,7 @@ describe('UsersApplication driving port', () => {
       const findAll = vi.spyOn(repo, 'findAll');
       const call =
         command === 'update'
-          ? app.update({ id: user.id, fullName: 'Grace Hopper', role: 'admin' })
+          ? app.update({ id: user.id, fullName: 'Grace Hopper', role: UserRoleEnum.Admin })
           : app.deactivate(user.id);
 
       expect(call.status()).toEqual({ status: 'loading' });
@@ -224,7 +224,11 @@ describe('UsersApplication driving port', () => {
     const findAll = vi.spyOn(repo, 'findAll');
     const created = await app.create(input).result;
     if (!created.ok) return expect.unreachable('Expected persisted user');
-    await app.update({ id: created.value.id, fullName: 'Grace Hopper', role: 'admin' }).result;
+    await app.update({
+      id: created.value.id,
+      fullName: 'Grace Hopper',
+      role: UserRoleEnum.Admin,
+    }).result;
     await app.deactivate(created.value.id).result;
 
     expect(findAll).not.toHaveBeenCalled();

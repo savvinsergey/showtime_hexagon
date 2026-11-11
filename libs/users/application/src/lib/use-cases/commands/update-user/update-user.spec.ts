@@ -1,3 +1,4 @@
+import { UserRoleEnum } from '@showtime/users/domain';
 import { ErrorKindEnum } from '@showtime/shared/kernel';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
@@ -25,7 +26,7 @@ describe('UpdateUserUseCase', () => {
       {
         email: 'ada@example.com',
         fullName: 'Ada Lovelace',
-        role: 'member',
+        role: UserRoleEnum.Member,
       },
       '2026-01-31T10:15:30.000Z',
     );
@@ -44,7 +45,7 @@ describe('UpdateUserUseCase', () => {
     const result = await TestBed.inject(UpdateUserUseCase).execute({
       id: user.id,
       fullName: 'Grace Hopper',
-      role: 'admin',
+      role: UserRoleEnum.Admin,
     });
 
     expect(result).toEqual({
@@ -65,7 +66,7 @@ describe('UpdateUserUseCase', () => {
     const result = await TestBed.inject(UpdateUserUseCase).execute({
       id: user.id,
       fullName: ' ',
-      role: 'admin',
+      role: UserRoleEnum.Admin,
     });
 
     expect(result).toMatchObject({
@@ -102,7 +103,7 @@ describe('UpdateUserUseCase', () => {
       await TestBed.inject(UpdateUserUseCase).execute({
         id: user.id,
         fullName: 'Grace Hopper',
-        role: 'admin',
+        role: UserRoleEnum.Admin,
       }),
     ).toBe(failure);
     expect(save).not.toHaveBeenCalled();
@@ -116,7 +117,7 @@ describe('UpdateUserUseCase', () => {
       await TestBed.inject(UpdateUserUseCase).execute({
         id: user.id,
         fullName: 'Grace Hopper',
-        role: 'admin',
+        role: UserRoleEnum.Admin,
       }),
     ).toBe(failure);
   });

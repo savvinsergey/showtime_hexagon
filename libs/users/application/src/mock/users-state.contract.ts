@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { asUserId, UsersDomainService } from '@showtime/users/domain';
+import { asUserId, UserRoleEnum, UsersDomainService } from '@showtime/users/domain';
 import type { UsersStatePort } from '../lib/ports/driven/users-state/users-state.port';
 
 type StateFactory = () => UsersStatePort | Promise<UsersStatePort>;
@@ -14,7 +14,7 @@ export function usersStateContract(name: string, createPort: StateFactory): void
     it('Scenario: Set page replaces the list', async () => {
       const port = await createPort();
       const draft = UsersDomainService.createUserDraft(
-        { email: 'ada@example.com', fullName: 'Ada Lovelace', role: 'member' },
+        { email: 'ada@example.com', fullName: 'Ada Lovelace', role: UserRoleEnum.Member },
         '2026-01-31T10:15:30.000Z',
       );
       if (!draft.ok) throw new Error('Invalid contract fixture.');

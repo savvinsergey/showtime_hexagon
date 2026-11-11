@@ -1,7 +1,13 @@
-import { asUserId, UsersDomainService, type User, type UserChange } from '../../../index';
+import {
+  UserRoleEnum,
+  asUserId,
+  UsersDomainService,
+  type User,
+  type UserChange,
+} from '../../../index';
 
 const now = '2026-01-31T10:15:30.000Z';
-const input = { email: 'ada@example.com', fullName: 'Ada Lovelace', role: 'member' };
+const input = { email: 'ada@example.com', fullName: 'Ada Lovelace', role: UserRoleEnum.Member };
 
 /**
  * Gives transition tests a validated persisted user without reading a clock.
@@ -159,5 +165,39 @@ describe('UsersDomainService', () => {
 
     expect(event).toEqual({ type: 'users.user-registered', userId: user.id, occurredAt: now });
     expect(Object.isFrozen(event)).toBe(true);
+  });
+});
+
+describe('raw role compatibility', () => {
+  it.each([
+    ['admin', UserRoleEnum.Admin],
+    ['member', UserRoleEnum.Member],
+  ])('Scenario: Raw supported roles still validate (%s)', (rawRole, expected) => {
+    const original = userFixture();
+    const draft = UsersDomainService.createUserDraft({ ...input, role: rawRole }, now);
+    const change = UsersDomainService.changeRole(original, rawRole, now);
+    if (!draft.ok || !change.ok) return expect.unreachable('Expected valid raw roles');
+    expect(draft.value.role).toBe(expected);
+    expect(draft.value.status).toBe('active');
+    expect(change.value.user.role).toBe(expected);
+    expect(change.value.events).toEqual([
+      { type: 'users.user-role-changed', userId: original.id, occurredAt: now },
+    ]);
+    expect(original.role).toBe(UserRoleEnum.Member);
+    expectFrozenChange(change.value);
+  });
+
+  it.each(['', ' ', 'superuser'])('Scenario: Invalid roles remain rejected (%j)', role => {
+    const original = userFixture();
+    const results = [
+      UsersDomainService.createUserDraft({ ...input, role }, now),
+      UsersDomainService.changeRole(original, role, now),
+    ];
+    for (const result of results) {
+      expect(result).toMatchObject({ ok: false, error: { code: 'invalid-role' } });
+      expect(result).not.toHaveProperty('value');
+      expect(result).not.toHaveProperty('events');
+    }
+    expect(original.role).toBe(UserRoleEnum.Member);
   });
 });

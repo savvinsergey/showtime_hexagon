@@ -43,4 +43,4 @@ Project graphs cannot distinguish pure and Angular-dependent symbols. Pair graph
 
 Run purity probes when changing entry points or path aliases. Add a context-neutral primitive only for an established cross-context contract.
 
-The approved operation lifecycle enum is defined in `enums/operation-status/operation-status.enum.ts` with `Idle`, `Loading`, `Success`, `Error` and `Cancelled` members preserving the lowercase runtime values. `OperationStatus<E>` uses these members as discriminants; only `Error` carries the mandatory `error: E`. This exception does not change domain `UserRole` or `UserStatus` string-literal unions.
+The approved operation lifecycle enum is defined in `enums/operation-status/operation-status.enum.ts` with `Idle`, `Loading`, `Success`, `Error` and `Cancelled` members preserving the lowercase runtime values. `OperationStatus<E>` uses these members as discriminants; only `Error` carries the mandatory `error: E`. The separately approved Users-owned `UserRoleEnum` preserves `admin` and `member`; `UserRole` aliases it and application re-exports the same enum. `UserStatus` remains a string-literal union.

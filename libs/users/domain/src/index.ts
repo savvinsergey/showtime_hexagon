@@ -16,3 +16,4 @@ export type { UserRoleChanged } from './lib/events/user-role-changed/user-role-c
 export { UserErrorsEnum } from './lib/enums/user-errors/user-errors.enum';
 export { UserFieldNameByErrorConst } from './lib/constants/user-field-names-by-error/user-field-name-by-error.const';
 export { UsersEventsEnum } from './lib/enums/users-events/users-events.enum';
+export { UserRoleEnum } from './lib/enums';

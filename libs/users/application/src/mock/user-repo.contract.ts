@@ -1,6 +1,6 @@
 import { ErrorKindEnum } from '@showtime/shared/kernel';
 import { describe, it, expect } from 'vitest';
-import { asUserId, UsersDomainService } from '@showtime/users/domain';
+import { asUserId, UserRoleEnum, UsersDomainService } from '@showtime/users/domain';
 import type { UserRepositoryPort as UserRepoPort } from '../lib/ports/driven/user-repository/user-repo.port';
 
 type RepoFactory = () => UserRepoPort | Promise<UserRepoPort>;
@@ -15,7 +15,7 @@ export function userRepoContract(name: string, createPort: RepoFactory): void {
     it('Scenario: Create takes a draft and returns a user with id', async () => {
       const port = await createPort();
       const draft = UsersDomainService.createUserDraft(
-        { email: 'ada@example.com', fullName: 'Ada Lovelace', role: 'member' },
+        { email: 'ada@example.com', fullName: 'Ada Lovelace', role: UserRoleEnum.Member },
         '2026-01-31T10:15:30.000Z',
       );
       if (!draft.ok) throw new Error('Invalid contract fixture.');
@@ -57,7 +57,7 @@ export function userRepoContract(name: string, createPort: RepoFactory): void {
           {
             email: `${name.toLowerCase()}@example.com`,
             fullName: name,
-            role: 'member',
+            role: UserRoleEnum.Member,
           },
           '2026-01-31T10:15:30.000Z',
         );
@@ -89,7 +89,7 @@ export function userRepoContract(name: string, createPort: RepoFactory): void {
         {
           email: 'ada@example.com',
           fullName: 'Ada Lovelace',
-          role: 'member',
+          role: UserRoleEnum.Member,
         },
         '2026-01-31T10:15:30.000Z',
       );

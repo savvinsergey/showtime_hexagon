@@ -7,7 +7,7 @@ import {
   type OperationStatus,
   type UseCaseCall,
 } from '@showtime/shared/kernel';
-import type { User as DomainUser, UserId } from '@showtime/users/domain';
+import { UserRoleEnum, type User as DomainUser, type UserId } from '@showtime/users/domain';
 import type {
   NewUser,
   UpdateUser,
@@ -30,6 +30,13 @@ describe('users-application scaffold', () => {
     expectTypeOf<typeof import('./index').UsersErrorKindEnum>();
   });
 
+  it('Scenario: Role enum preserves wire values', () => {
+    expect(usersEntry.UserRoleEnum).toBe(UserRoleEnum);
+    expect(JSON.stringify(usersEntry.UserRoleEnum)).toBe('{"Admin":"admin","Member":"member"}');
+    expectTypeOf<NewUser['role']>().toEqualTypeOf<string>();
+    expectTypeOf<UpdateUser['role']>().toEqualTypeOf<string>();
+  });
+
   it('loads the public entry point', () => {
     expect(usersEntry).toBeDefined();
   });
@@ -39,6 +46,7 @@ describe('users-application scaffold', () => {
       new Set([
         'CLOCK',
         'ErrorKindEnum',
+        'UserRoleEnum',
         'USERS_APPLICATION',
         'USERS_STATE',
         'USER_REPOSITORY',

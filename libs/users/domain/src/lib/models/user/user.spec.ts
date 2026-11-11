@@ -1,4 +1,11 @@
-import { asUserId, parseEmail, parseFullName, type User, type UserDraft } from '../../../index';
+import {
+  UserRoleEnum,
+  asUserId,
+  parseEmail,
+  parseFullName,
+  type User,
+  type UserDraft,
+} from '../../../index';
 
 /**
  * Builds a validated plain fixture without inventing a production model factory.
@@ -11,7 +18,7 @@ function userFixture(): User {
     id: asUserId('u-1'),
     email: email.value,
     fullName: fullName.value,
-    role: 'member',
+    role: UserRoleEnum.Member,
     status: 'active',
   });
 }
@@ -58,5 +65,20 @@ describe('User', () => {
     });
     // @ts-expect-error -- UserDraft excludes the backend-assigned identifier
     expect(draft.id).toBeUndefined();
+  });
+});
+
+describe('enum-backed user types', () => {
+  it('Scenario: Typed users require role enum members', () => {
+    const user: User = { ...userFixture(), role: UserRoleEnum.Admin };
+    const draft: UserDraft = { ...user, role: UserRoleEnum.Member };
+    expectTypeOf<User['role']>().toEqualTypeOf<UserRoleEnum>();
+    expectTypeOf<UserDraft['role']>().toEqualTypeOf<UserRoleEnum>();
+    // @ts-expect-error -- typed persisted users require a role enum member
+    const rawUser: User = { ...user, role: 'admin' };
+    // @ts-expect-error -- typed drafts require a role enum member
+    const rawDraft: UserDraft = { ...draft, role: 'member' };
+    expect(rawUser.role).toBe('admin');
+    expect(rawDraft.role).toBe('member');
   });
 });

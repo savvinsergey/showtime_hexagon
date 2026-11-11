@@ -1,3 +1,4 @@
+import { UserRoleEnum } from '@showtime/users/domain';
 import { ErrorKindEnum } from '@showtime/shared/kernel';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
@@ -25,7 +26,7 @@ describe('DeactivateUserUseCase', () => {
       {
         email: 'ada@example.com',
         fullName: 'Ada Lovelace',
-        role: 'member',
+        role: UserRoleEnum.Member,
       },
       '2026-01-31T10:15:30.000Z',
     );
