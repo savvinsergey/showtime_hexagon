@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { err, type Result } from '@showtime/shared/kernel';
+import { err, type Result, type UseCaseAbstract } from '@showtime/shared/kernel';
 import { UsersDomainService, type User } from '@showtime/users/domain';
 import { CLOCK } from '@showtime/shared/kernel';
 import type { NewUser, UsersError } from '../../../models';
@@ -10,7 +10,7 @@ import { toUsersValidationError } from '../../domain-error/to-users-validation-e
  * Validates and persists registration; status and list reloads belong to the driving facade.
  */
 @Injectable()
-export class CreateUserUseCase {
+export class CreateUserUseCase implements UseCaseAbstract<NewUser, User, UsersError> {
   private readonly repository = inject(USER_REPOSITORY);
   private readonly clock = inject(CLOCK);
 
@@ -22,7 +22,11 @@ export class CreateUserUseCase {
   async execute(input: NewUser): Promise<Result<User, UsersError>> {
     const now = this.clock.now();
     const draft = UsersDomainService.createUserDraft(input, now);
-    if (!draft.ok) return err(toUsersValidationError(draft.error));
+
+    if (!draft.ok) {
+      return err(toUsersValidationError(draft.error));
+    }
+
     const saved = await this.repository.create(draft.value);
     if (saved.ok) {
       // Registration becomes a fact only after persistence assigns the identity.

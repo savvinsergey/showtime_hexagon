@@ -9,3 +9,4 @@ export { CLOCK } from './lib/tokens/clock/clock.token';
 export { systemClock } from './lib/constants/clock/clock';
 export { OperationStatusEnum } from './lib/enums/operation-status/operation-status.enum';
 export { ErrorKindEnum } from './lib/enums/error-kind/error-kind.enum';
+export { UseCaseAbstract } from './lib/types/use-case-abstract/use-case-abstract';

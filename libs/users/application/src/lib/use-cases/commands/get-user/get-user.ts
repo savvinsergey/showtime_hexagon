@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import type { Result } from '@showtime/shared/kernel';
+import type { Result, UseCaseAbstract } from '@showtime/shared/kernel';
 import type { User, UserId } from '@showtime/users/domain';
 import type { UsersError } from '../../../models';
 import { USER_REPOSITORY } from '../../../ports/driven';
@@ -8,7 +8,7 @@ import { USER_REPOSITORY } from '../../../ports/driven';
  * Reads one user without changing the current page or its operation status.
  */
 @Injectable()
-export class GetUserUseCase {
+export class GetUserUseCase implements UseCaseAbstract<UserId, User, UsersError> {
   private readonly repository = inject(USER_REPOSITORY);
 
   /**
