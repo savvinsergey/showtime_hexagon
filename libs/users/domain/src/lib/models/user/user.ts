@@ -1,8 +1,4 @@
-import type { Email } from '../../value-objects/email/email';
-import type { FullName } from '../../value-objects/full-name/full-name';
-import type { UserId } from '../../value-objects/user-id/user-id';
-import type { UserRole } from '../../value-objects/user-role/user-role';
-import type { UserStatus } from '../../value-objects/user-status/user-status';
+import type { Email, FullName, UserId, UserRole, UserStatus } from '../../value-objects';
 
 /**
  * Serializable user shared across layers without class instances or mutable fields.

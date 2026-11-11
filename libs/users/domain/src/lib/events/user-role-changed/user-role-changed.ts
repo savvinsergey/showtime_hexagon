@@ -1,5 +1,5 @@
 import type { DomainEvent } from '@showtime/shared/kernel';
-import type { UserId } from '../../value-objects/user-id/user-id';
+import type { UserId } from '../../value-objects';
 
 /**
  * A user received a recognized role.

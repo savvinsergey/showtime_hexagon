@@ -1,13 +1,14 @@
 import { domainError, err, ok, type Result } from '@showtime/shared/kernel';
-import type { Email } from '../../value-objects/email/email';
-import type { FullName } from '../../value-objects/full-name/full-name';
+import type { Email, FullName } from '../../value-objects';
 import { isUserRole } from '../../value-objects/user-role/user-role';
-import type { User, UserDraft } from '../../models/user/user';
-import type { UserRegistered } from '../../events/user-registered/user-registered';
-import type { UserActivated } from '../../events/user-activated/user-activated';
-import type { UserDeactivated } from '../../events/user-deactivated/user-deactivated';
-import type { UserRenamed } from '../../events/user-renamed/user-renamed';
-import type { UserRoleChanged } from '../../events/user-role-changed/user-role-changed';
+import type { User, UserDraft } from '../../models';
+import type {
+  UserRegistered,
+  UserActivated,
+  UserDeactivated,
+  UserRenamed,
+  UserRoleChanged,
+} from '../../events';
 import { UserErrorsEnum } from '../../enums/user-errors/user-errors.enum';
 
 type DraftInput = Readonly<{ email: string; fullName: string; role: string }>;
