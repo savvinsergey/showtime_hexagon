@@ -13,3 +13,5 @@ export type { UserActivated } from './lib/events/user-activated/user-activated';
 export type { UserDeactivated } from './lib/events/user-deactivated/user-deactivated';
 export type { UserRenamed } from './lib/events/user-renamed/user-renamed';
 export type { UserRoleChanged } from './lib/events/user-role-changed/user-role-changed';
+export { UserErrorsEnum } from './lib/enums/user-errors/user-errors.enum';
+export { UserFieldNameByErrorConst } from './lib/constants/user-field-names-by-error/user-field-name-by-error.const';

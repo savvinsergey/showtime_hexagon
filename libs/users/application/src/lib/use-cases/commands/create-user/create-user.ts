@@ -4,7 +4,7 @@ import { UsersDomainService, type User } from '@showtime/users/domain';
 import { CLOCK } from '@showtime/shared/kernel';
 import type { NewUser, UsersError } from '../../../models';
 import { USER_REPOSITORY } from '../../../ports/driven';
-import { toUsersValidationError } from '../../domain-error/to-users-validation-error';
+import { toUsersValidationError } from '../../../utils/domain-error/to-users-validation-error';
 
 /**
  * Validates and persists registration; status and list reloads belong to the driving facade.

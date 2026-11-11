@@ -1,6 +1,7 @@
 import { ErrorKindEnum } from '@showtime/shared/kernel';
 import type { DomainError } from '@showtime/shared/kernel';
 import type { UsersError } from '../../models';
+import { UserErrorsEnum, UserFieldNameByErrorConst } from '@showtime/users/domain';
 
 /**
  * Translates structural failures without exposing domain error objects to consumers.
@@ -10,21 +11,8 @@ import type { UsersError } from '../../models';
 export function toUsersValidationError(
   error: DomainError,
 ): Extract<UsersError, { kind: ErrorKindEnum.Validation }> {
-  let field: 'email' | 'fullName' | 'role' | undefined;
-  switch (error.code) {
-    case 'invalid-email': {
-      field = 'email';
-      break;
-    }
-    case 'invalid-full-name': {
-      field = 'fullName';
-      break;
-    }
-    case 'invalid-role': {
-      field = 'role';
-      break;
-    }
-  }
+  const code = Object.values(UserErrorsEnum).find(knownCode => knownCode === error.code);
+  const field = code === undefined ? undefined : UserFieldNameByErrorConst[code];
   return {
     kind: ErrorKindEnum.Validation,
     message: error.message,

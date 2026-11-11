@@ -8,6 +8,7 @@ import type { UserActivated } from '../../events/user-activated/user-activated';
 import type { UserDeactivated } from '../../events/user-deactivated/user-deactivated';
 import type { UserRenamed } from '../../events/user-renamed/user-renamed';
 import type { UserRoleChanged } from '../../events/user-role-changed/user-role-changed';
+import { UserErrorsEnum } from '../../enums/user-errors/user-errors.enum';
 
 type DraftInput = Readonly<{ email: string; fullName: string; role: string }>;
 
@@ -36,7 +37,9 @@ export function parseEmail(raw: string): Result<Email> {
   const value = raw.trim();
   return isEmail(value)
     ? ok(value as Email)
-    : err(domainError('invalid-email', 'Email must contain a local part and a domain.'));
+    : err(
+        domainError(UserErrorsEnum.InvalidEmail, 'Email must contain a local part and a domain.'),
+      );
 }
 
 /**
@@ -48,7 +51,7 @@ export function parseFullName(raw: string): Result<FullName> {
   const value = raw.trim();
   return isFullName(value)
     ? ok(value as FullName)
-    : err(domainError('invalid-full-name', 'Full name must not be empty.'));
+    : err(domainError(UserErrorsEnum.InvalidFullName, 'Full name must not be empty.'));
 }
 
 /**
@@ -63,7 +66,7 @@ function createUserDraft(input: DraftInput, _now: string): Result<UserDraft> {
   const fullName = parseFullName(input.fullName);
   if (!fullName.ok) return fullName;
   if (!isUserRole(input.role)) {
-    return err(domainError('invalid-role', 'Role must be admin or member.'));
+    return err(domainError(UserErrorsEnum.InvalidRole, 'Role must be admin or member.'));
   }
   return ok(
     Object.freeze({
@@ -147,7 +150,7 @@ function rename(user: User, rawFullName: string, now: string): Result<UserChange
  */
 function changeRole(user: User, rawRole: string, now: string): Result<UserChange<UserRoleChanged>> {
   if (!isUserRole(rawRole)) {
-    return err(domainError('invalid-role', 'Role must be admin or member.'));
+    return err(domainError(UserErrorsEnum.InvalidRole, 'Role must be admin or member.'));
   }
   const event: UserRoleChanged = Object.freeze({
     type: 'users.user-role-changed',
