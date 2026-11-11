@@ -7,7 +7,12 @@ import {
   type OperationStatus,
   type UseCaseCall,
 } from '@showtime/shared/kernel';
-import { UserRoleEnum, type User as DomainUser, type UserId } from '@showtime/users/domain';
+import {
+  UserStatusEnum,
+  UserRoleEnum,
+  type User as DomainUser,
+  type UserId,
+} from '@showtime/users/domain';
 import type {
   NewUser,
   UpdateUser,
@@ -47,6 +52,7 @@ describe('users-application scaffold', () => {
         'CLOCK',
         'ErrorKindEnum',
         'UserRoleEnum',
+        'UserStatusEnum',
         'USERS_APPLICATION',
         'USERS_STATE',
         'USER_REPOSITORY',
@@ -90,4 +96,11 @@ describe('users-application scaffold', () => {
   it('exports the shared kernel clock token by identity', () => {
     expect(usersEntry.CLOCK).toBe(CLOCK);
   });
+});
+
+it('Scenario: Status enum preserves serialized values', () => {
+  expect(usersEntry.UserStatusEnum).toBe(UserStatusEnum);
+  expect(JSON.stringify(usersEntry.UserStatusEnum)).toBe(
+    '{"Active":"active","Inactive":"inactive"}',
+  );
 });

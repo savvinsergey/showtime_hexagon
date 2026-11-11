@@ -1,3 +1,4 @@
+import { UserStatusEnum } from '@showtime/users/domain';
 import { UserRoleEnum } from '@showtime/users/domain';
 import { ErrorKindEnum } from '@showtime/shared/kernel';
 import { provideZonelessChangeDetection } from '@angular/core';
@@ -44,9 +45,9 @@ describe('DeactivateUserUseCase', () => {
     const save = vi.spyOn(TestBed.inject(UserRepoMock), 'save');
     const result = await TestBed.inject(DeactivateUserUseCase).execute(user.id);
 
-    expect(result).toEqual({ ok: true, value: { ...user, status: 'inactive' } });
-    expect(save).toHaveBeenCalledExactlyOnceWith({ ...user, status: 'inactive' });
-    expect(user.status).toBe('active');
+    expect(result).toEqual({ ok: true, value: { ...user, status: UserStatusEnum.Inactive } });
+    expect(save).toHaveBeenCalledExactlyOnceWith({ ...user, status: UserStatusEnum.Inactive });
+    expect(user.status).toBe(UserStatusEnum.Active);
   });
 
   it('preserves lookup failures without calling save', async () => {

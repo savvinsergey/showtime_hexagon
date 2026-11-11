@@ -1,3 +1,4 @@
+import { UserStatusEnum } from '@showtime/users/domain';
 import { UserRoleEnum } from '@showtime/users/domain';
 import { ErrorKindEnum } from '@showtime/shared/kernel';
 import { provideZonelessChangeDetection } from '@angular/core';
@@ -37,7 +38,7 @@ describe('CreateUserUseCase', () => {
 
     if (!result.ok) return expect.unreachable('Expected persisted user');
     expect(result.value.id).toBeTruthy();
-    expect(result.value).toMatchObject({ ...input, status: 'active' });
+    expect(result.value).toMatchObject({ ...input, status: UserStatusEnum.Active });
   });
 
   it('Scenario: Invalid email on create is validation', async () => {

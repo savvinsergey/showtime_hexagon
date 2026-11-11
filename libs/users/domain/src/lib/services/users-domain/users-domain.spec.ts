@@ -1,3 +1,4 @@
+import { UserStatusEnum } from '../../../index';
 import {
   UserRoleEnum,
   asUserId,
@@ -12,7 +13,7 @@ const input = { email: 'ada@example.com', fullName: 'Ada Lovelace', role: UserRo
 /**
  * Gives transition tests a validated persisted user without reading a clock.
  */
-function userFixture(status: User['status'] = 'active'): User {
+function userFixture(status: User['status'] = UserStatusEnum.Active): User {
   const draft = UsersDomainService.createUserDraft(input, now);
   if (!draft.ok) throw new Error('Invalid test fixture');
   return Object.freeze({ ...draft.value, id: asUserId('u-1'), status });
@@ -33,7 +34,7 @@ describe('UsersDomainService', () => {
   it('Scenario: Valid input becomes an active draft', () => {
     const result = UsersDomainService.createUserDraft(input, now);
 
-    expect(result).toEqual({ ok: true, value: { ...input, status: 'active' } });
+    expect(result).toEqual({ ok: true, value: { ...input, status: UserStatusEnum.Active } });
     if (!result.ok) return expect.unreachable('Expected a draft');
     expect(Object.isFrozen(result.value)).toBe(true);
   });
@@ -89,9 +90,9 @@ describe('UsersDomainService', () => {
     const original = userFixture();
     const change = UsersDomainService.deactivate(original, now);
 
-    expect(change.user).toEqual({ ...original, status: 'inactive' });
+    expect(change.user).toEqual({ ...original, status: UserStatusEnum.Inactive });
     expect(change.user).not.toBe(original);
-    expect(original.status).toBe('active');
+    expect(original.status).toBe(UserStatusEnum.Active);
     expect(change.events).toEqual([
       { type: 'users.user-deactivated', userId: 'u-1', occurredAt: now },
     ]);
@@ -99,12 +100,12 @@ describe('UsersDomainService', () => {
   });
 
   it('Scenario: Activate sets active and emits an event', () => {
-    const original = userFixture('inactive');
+    const original = userFixture(UserStatusEnum.Inactive);
     const change = UsersDomainService.activate(original, now);
 
-    expect(change.user).toEqual({ ...original, status: 'active' });
+    expect(change.user).toEqual({ ...original, status: UserStatusEnum.Active });
     expect(change.user).not.toBe(original);
-    expect(original.status).toBe('inactive');
+    expect(original.status).toBe(UserStatusEnum.Inactive);
     expect(change.events).toEqual([
       { type: 'users.user-activated', userId: 'u-1', occurredAt: now },
     ]);
@@ -178,7 +179,7 @@ describe('raw role compatibility', () => {
     const change = UsersDomainService.changeRole(original, rawRole, now);
     if (!draft.ok || !change.ok) return expect.unreachable('Expected valid raw roles');
     expect(draft.value.role).toBe(expected);
-    expect(draft.value.status).toBe('active');
+    expect(draft.value.status).toBe(UserStatusEnum.Active);
     expect(change.value.user.role).toBe(expected);
     expect(change.value.events).toEqual([
       { type: 'users.user-role-changed', userId: original.id, occurredAt: now },

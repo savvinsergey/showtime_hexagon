@@ -1,3 +1,4 @@
+import { UserStatusEnum } from '@showtime/users/domain';
 import { ErrorKindEnum } from '@showtime/shared/kernel';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
@@ -84,7 +85,7 @@ describe('UsersApplication driving port', () => {
 
     expect(call.status()).toEqual({ status: 'loading' });
     const result = await call.result;
-    expect(result).toMatchObject({ ok: true, value: { ...input, status: 'active' } });
+    expect(result).toMatchObject({ ok: true, value: { ...input, status: UserStatusEnum.Active } });
     expect(call.status()).toEqual({ status: 'success' });
   });
 

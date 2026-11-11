@@ -1,3 +1,4 @@
+import { UserStatusEnum } from '../../enums/user-status/user-status.enum';
 import { UsersEventsEnum } from '../../enums/users-events/users-events.enum';
 import { domainError, err, ok, type Result } from '@showtime/shared/kernel';
 import type { Email, FullName } from '../../value-objects';
@@ -75,7 +76,7 @@ function createUserDraft(input: DraftInput, _now: string): Result<UserDraft> {
       email: email.value,
       fullName: fullName.value,
       role: input.role,
-      status: 'active',
+      status: UserStatusEnum.Active,
     }),
   );
 }
@@ -98,7 +99,7 @@ function userRegistered(user: User, now: string): UserRegistered {
  */
 function activate(user: User, now: string): UserChange<UserActivated> {
   return Object.freeze({
-    user: Object.freeze({ ...user, status: 'active' }),
+    user: Object.freeze({ ...user, status: UserStatusEnum.Active }),
     events: Object.freeze([
       Object.freeze({
         type: UsersEventsEnum.UserActivated as const,
@@ -117,7 +118,7 @@ function activate(user: User, now: string): UserChange<UserActivated> {
  */
 function deactivate(user: User, now: string): UserChange<UserDeactivated> {
   return Object.freeze({
-    user: Object.freeze({ ...user, status: 'inactive' }),
+    user: Object.freeze({ ...user, status: UserStatusEnum.Inactive }),
     events: Object.freeze([
       Object.freeze({
         type: UsersEventsEnum.UserDeactivated as const,

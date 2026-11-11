@@ -15,4 +15,4 @@ export {
   type UsersApplicationPort,
 } from './lib/ports/driving/users-app/users-app.port';
 export { provideUsersApplication } from './lib/providers/provide-users-app';
-export { UserRoleEnum, type User } from '@showtime/users/domain';
+export { UserRoleEnum, UserStatusEnum, type User } from '@showtime/users/domain';
