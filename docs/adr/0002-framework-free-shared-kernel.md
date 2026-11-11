@@ -31,6 +31,7 @@ Use one Nx library tagged `type:kernel` and `scope:shared`, with the single publ
 - Domain and framework-free kernel implementations may consume only named symbols with no transitive Angular/RxJS dependency. Lint follows imports/re-exports through intermediary modules and renamed symbols. Namespace imports and export-all from the mixed barrel are conservatively rejected there.
 - The public barrel may re-export Angular contracts. Angular core is permitted only in tokens and UseCaseCall, with core testing helpers in their specs. RxJS remains forbidden throughout kernel.
 - Context-neutral shared contracts belong in kernel; entities, context-specific errors and integration events stay with their owner.
+- The approved `ErrorKindEnum` classification lives in `enums/error-kind/error-kind.enum.ts` and is exported through the kernel entry. Its `Validation`, `NotFound`, `Conflict`, `Forbidden`, `Network` and `Unknown` members preserve `validation`, `not-found`, `conflict`, `forbidden`, `network` and `unknown`. Contexts own their error payloads; the shared vocabulary introduces no generic error model or context dependency.
 
 ## Consequences
 

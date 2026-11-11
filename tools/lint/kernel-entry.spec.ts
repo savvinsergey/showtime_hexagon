@@ -56,6 +56,17 @@ describe('Unified kernel framework boundary', () => {
 });
 
 describe('Kernel source organization and transitive purity', () => {
+  it('Shared classification remains pure', async () => {
+    const visited = new Set<string>();
+    assert.equal(reachesFramework('@showtime/shared/kernel', path.join(workspace, domain), ['ErrorKindEnum'], visited), false);
+    const enumFile = path.join(workspace, 'libs/shared/kernel/src/lib/enums/error-kind/error-kind.enum.ts');
+    assert.ok(visited.has(`${enumFile}:ErrorKindEnum`));
+    assert.ok([...visited].every(key => key.startsWith(path.join(workspace, 'libs/shared/kernel/src/'))));
+    const implementationDependencies = new Set<string>();
+    assert.equal(reachesFramework('./lib/enums/error-kind/error-kind.enum', path.join(workspace, 'libs/shared/kernel/src/index.ts'), ['ErrorKindEnum'], implementationDependencies), false);
+    assert.deepEqual([...implementationDependencies], [`${enumFile}:ErrorKindEnum`]);
+    assert.deepEqual(await boundaryErrors(domain, "import { ErrorKindEnum } from '@showtime/shared/kernel';"), []);
+  });
   it('rejects Angular symbols re-exported through a workspace intermediary', async () => {
     const directory = mkdtempSync(path.join(workspace, 'tools/lint/kernel-fixture-'));
     try {
