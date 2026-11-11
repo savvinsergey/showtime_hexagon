@@ -2,6 +2,7 @@ import * as usersEntry from './index';
 import type { Signal } from '@angular/core';
 import {
   CLOCK,
+  ErrorKindEnum,
   OperationStatusEnum,
   type OperationStatus,
   type UseCaseCall,
@@ -18,6 +19,17 @@ import type {
 } from './index';
 
 describe('users-application scaffold', () => {
+  it('Scenario: Application exposes the kernel enum identity', () => {
+    expect(usersEntry.ErrorKindEnum).toBe(ErrorKindEnum);
+    expectTypeOf<UsersError['kind']>().toEqualTypeOf<ErrorKindEnum>();
+  });
+
+  it('Scenario: Old enum name is removed', () => {
+    expect(usersEntry).not.toHaveProperty('UsersErrorKindEnum');
+    // @ts-expect-error -- migrate callers to the shared ErrorKindEnum export
+    expectTypeOf<typeof import('./index').UsersErrorKindEnum>();
+  });
+
   it('loads the public entry point', () => {
     expect(usersEntry).toBeDefined();
   });
@@ -26,7 +38,7 @@ describe('users-application scaffold', () => {
     expect(new Set(Object.keys(usersEntry))).toEqual(
       new Set([
         'CLOCK',
-        'UsersErrorKindEnum',
+        'ErrorKindEnum',
         'USERS_APPLICATION',
         'USERS_STATE',
         'USER_REPOSITORY',

@@ -1,7 +1,12 @@
 /**
  * Public contracts for users application orchestration.
  */
-export { CLOCK, type OperationStatus, type UseCaseCall } from '@showtime/shared/kernel';
+export {
+  CLOCK,
+  ErrorKindEnum,
+  type OperationStatus,
+  type UseCaseCall,
+} from '@showtime/shared/kernel';
 export type { NewUser } from './lib/models/new-user/new-user';
 export type { UpdateUser } from './lib/models/update-user/update-user';
 export type { UsersQuery } from './lib/models/users-query/users-query';
@@ -18,4 +23,3 @@ export {
 } from './lib/ports/driving/users-app/users-app.port';
 export { provideUsersApplication } from './lib/providers/provide-users-app';
 export type { User } from '@showtime/users/domain';
-export { UsersErrorKindEnum } from './lib/enums/users-error-kind/users-error-kind.enum';

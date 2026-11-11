@@ -1,28 +1,28 @@
-import { UsersErrorKindEnum } from '../../enums/users-error-kind/users-error-kind.enum';
+import { ErrorKindEnum } from '@showtime/shared/kernel';
 import type { UsersError } from './users-error';
 
 describe('UsersError', () => {
   const errors: readonly UsersError[] = [
     {
-      kind: UsersErrorKindEnum.Validation,
+      kind: ErrorKindEnum.Validation,
       message: 'Invalid',
       fieldIssues: { email: 'Email', fullName: 'Name', role: 'Role' },
     },
-    { kind: UsersErrorKindEnum.NotFound, message: 'Missing' },
-    { kind: UsersErrorKindEnum.Conflict, message: 'Conflict' },
-    { kind: UsersErrorKindEnum.Forbidden, message: 'Forbidden' },
-    { kind: UsersErrorKindEnum.Network, message: 'Offline' },
-    { kind: UsersErrorKindEnum.Unknown, message: 'Failed', cause: { diagnostic: 'failure' } },
+    { kind: ErrorKindEnum.NotFound, message: 'Missing' },
+    { kind: ErrorKindEnum.Conflict, message: 'Conflict' },
+    { kind: ErrorKindEnum.Forbidden, message: 'Forbidden' },
+    { kind: ErrorKindEnum.Network, message: 'Offline' },
+    { kind: ErrorKindEnum.Unknown, message: 'Failed', cause: { diagnostic: 'failure' } },
   ];
 
   it('Scenario: Enum members construct all error variants', () => {
-    expect(errors.map(error => error.kind)).toEqual(Object.values(UsersErrorKindEnum));
-    expectTypeOf<UsersError['kind']>().toEqualTypeOf<UsersErrorKindEnum>();
+    expect(errors.map(error => error.kind)).toEqual(Object.values(ErrorKindEnum));
+    expectTypeOf<UsersError['kind']>().toEqualTypeOf<ErrorKindEnum>();
   });
 
   it('Scenario: Validation narrowing retains field issues', () => {
     const error: UsersError = errors[0];
-    if (error.kind !== UsersErrorKindEnum.Validation) return expect.unreachable();
+    if (error.kind !== ErrorKindEnum.Validation) return expect.unreachable();
     expectTypeOf(error.fieldIssues).toEqualTypeOf<
       Readonly<Partial<Record<'email' | 'fullName' | 'role', string>>> | undefined
     >();
@@ -33,10 +33,10 @@ describe('UsersError', () => {
 
   it('Scenario: Unknown narrowing retains optional cause', () => {
     const error: UsersError = errors[5];
-    if (error.kind !== UsersErrorKindEnum.Unknown) return expect.unreachable();
+    if (error.kind !== ErrorKindEnum.Unknown) return expect.unreachable();
     expectTypeOf(error.cause).toEqualTypeOf<unknown>();
     expect(error.cause).toEqual({ diagnostic: 'failure' });
-    const withoutCause: UsersError = { kind: UsersErrorKindEnum.Unknown, message: 'Failed' };
+    const withoutCause: UsersError = { kind: ErrorKindEnum.Unknown, message: 'Failed' };
     expect(withoutCause.cause).toBeUndefined();
     // @ts-expect-error -- unknown errors do not expose validation fields
     expectTypeOf(error.fieldIssues);

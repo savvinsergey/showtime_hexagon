@@ -1,4 +1,4 @@
-import { UsersErrorKindEnum } from '../../../enums/users-error-kind/users-error-kind.enum';
+import { ErrorKindEnum } from '@showtime/shared/kernel';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { err, fixedClock } from '@showtime/shared/kernel';
@@ -45,7 +45,7 @@ describe('CreateUserUseCase', () => {
 
     expect(result).toMatchObject({
       ok: false,
-      error: { kind: UsersErrorKindEnum.Validation, fieldIssues: { email: expect.any(String) } },
+      error: { kind: ErrorKindEnum.Validation, fieldIssues: { email: expect.any(String) } },
     });
     expect(result).not.toHaveProperty('error.code');
     expect(create).not.toHaveBeenCalled();
@@ -60,17 +60,17 @@ describe('CreateUserUseCase', () => {
 
     expect(result).toMatchObject({
       ok: false,
-      error: { kind: UsersErrorKindEnum.Validation, fieldIssues: { [field]: expect.any(String) } },
+      error: { kind: ErrorKindEnum.Validation, fieldIssues: { [field]: expect.any(String) } },
     });
     expect(create).not.toHaveBeenCalled();
   });
 
-  it.each([UsersErrorKindEnum.Conflict, UsersErrorKindEnum.Unknown] as const)(
+  it.each([ErrorKindEnum.Conflict, ErrorKindEnum.Unknown] as const)(
     'preserves repository %s details',
     async kind => {
       const cause = { diagnostic: 'repository failure' };
       const failure: UsersError =
-        kind === UsersErrorKindEnum.Unknown
+        kind === ErrorKindEnum.Unknown
           ? { kind, message: 'Failed', cause }
           : { kind, message: 'Already exists' };
       vi.spyOn(TestBed.inject(UserRepoMock), 'create').mockResolvedValue(err(failure));

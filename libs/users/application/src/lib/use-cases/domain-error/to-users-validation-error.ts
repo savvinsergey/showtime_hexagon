@@ -1,4 +1,4 @@
-import { UsersErrorKindEnum } from '../../enums/users-error-kind/users-error-kind.enum';
+import { ErrorKindEnum } from '@showtime/shared/kernel';
 import type { DomainError } from '@showtime/shared/kernel';
 import type { UsersError } from '../../models/users-error/users-error';
 
@@ -9,7 +9,7 @@ import type { UsersError } from '../../models/users-error/users-error';
  */
 export function toUsersValidationError(
   error: DomainError,
-): Extract<UsersError, { kind: UsersErrorKindEnum.Validation }> {
+): Extract<UsersError, { kind: ErrorKindEnum.Validation }> {
   let field: 'email' | 'fullName' | 'role' | undefined;
   switch (error.code) {
     case 'invalid-email': {
@@ -26,7 +26,7 @@ export function toUsersValidationError(
     }
   }
   return {
-    kind: UsersErrorKindEnum.Validation,
+    kind: ErrorKindEnum.Validation,
     message: error.message,
     ...(field && { fieldIssues: { [field]: error.message } }),
   };

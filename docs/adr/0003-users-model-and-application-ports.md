@@ -41,7 +41,11 @@ use-case implementations remain internal. Application re-exports the User type f
 
 The shared kernel owns the generic call/status contracts. Users ports and facade use
 `UseCaseCall<T, UsersError>` and `OperationStatus<UsersError>` explicitly. The error union
-belongs to Users. Application use-cases import the shared `CLOCK` token from
+belongs to Users, including messages, validation field issues and diagnostic causes.
+The shared kernel owns `ErrorKindEnum`; UsersError uses its members as discriminants.
+Application re-exports that same enum for screen consumers. `UsersErrorKindEnum` and its
+application-owned definition are removed; callers migrate to `ErrorKindEnum`.
+Application use-cases import the shared `CLOCK` token from
 `@showtime/shared/kernel`, so a fixed-clock override applies to each use-case.
 
 Port mocks and reusable contract suites live in application/mock, restricted to test/mock imports.

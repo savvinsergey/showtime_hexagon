@@ -1,4 +1,4 @@
-import { UsersErrorKindEnum } from '../lib/enums/users-error-kind/users-error-kind.enum';
+import { ErrorKindEnum } from '@showtime/shared/kernel';
 import { describe, it, expect } from 'vitest';
 import { asUserId, UsersDomainService } from '@showtime/users/domain';
 import type { UserRepositoryPort as UserRepoPort } from '../lib/ports/driven/user-repository/user-repo.port';
@@ -45,7 +45,7 @@ export function userRepoContract(name: string, createPort: RepoFactory): void {
       const port = await createPort();
       expect(await port.findById(asUserId('missing'))).toMatchObject({
         ok: false,
-        error: { kind: UsersErrorKindEnum.NotFound },
+        error: { kind: ErrorKindEnum.NotFound },
       });
     });
 
@@ -95,7 +95,7 @@ export function userRepoContract(name: string, createPort: RepoFactory): void {
       );
       if (!draft.ok) throw new Error('Invalid contract fixture.');
       const result = await port.save({ ...draft.value, id: asUserId('missing') });
-      expect(result).toMatchObject({ ok: false, error: { kind: UsersErrorKindEnum.NotFound } });
+      expect(result).toMatchObject({ ok: false, error: { kind: ErrorKindEnum.NotFound } });
       expect(await port.findAll({ page: 1, pageSize: 10 })).toEqual({
         ok: true,
         value: { users: [], total: 0 },

@@ -1,4 +1,4 @@
-import { UsersErrorKindEnum } from '../lib/enums/users-error-kind/users-error-kind.enum';
+import { ErrorKindEnum } from '@showtime/shared/kernel';
 import { err, ok, type Result } from '@showtime/shared/kernel';
 import { asUserId, type User, type UserDraft, type UserId } from '@showtime/users/domain';
 import type { UserRepositoryPort as UserRepoPort } from '../lib/ports/driven/user-repository/user-repo.port';
@@ -32,9 +32,7 @@ export class UserRepositoryMock implements UserRepoPort {
    */
   async findById(id: UserId): Promise<Result<User, UsersError>> {
     const user = this.records.get(id);
-    return user
-      ? ok(user)
-      : err({ kind: UsersErrorKindEnum.NotFound, message: 'User was not found.' });
+    return user ? ok(user) : err({ kind: ErrorKindEnum.NotFound, message: 'User was not found.' });
   }
 
   /**
@@ -55,7 +53,7 @@ export class UserRepositoryMock implements UserRepoPort {
    */
   async save(user: User): Promise<Result<User, UsersError>> {
     if (!this.records.has(user.id))
-      return err({ kind: UsersErrorKindEnum.NotFound, message: 'User was not found.' });
+      return err({ kind: ErrorKindEnum.NotFound, message: 'User was not found.' });
     const saved = Object.freeze({ ...user });
     this.records.set(saved.id, saved);
     return ok(saved);
