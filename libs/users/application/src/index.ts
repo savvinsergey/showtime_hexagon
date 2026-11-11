@@ -7,16 +7,9 @@ export {
   type OperationStatus,
   type UseCaseCall,
 } from '@showtime/shared/kernel';
-export type { NewUser } from './lib/models/new-user/new-user';
-export type { UpdateUser } from './lib/models/update-user/update-user';
-export type { UsersQuery } from './lib/models/users-query/users-query';
-export type { UsersPage } from './lib/models/users-page/users-page';
-export type { UsersError } from './lib/models/users-error/users-error';
-export {
-  USER_REPOSITORY,
-  type UserRepositoryPort,
-} from './lib/ports/driven/user-repository/user-repo.port';
-export { USERS_STATE, type UsersStatePort } from './lib/ports/driven/users-state/users-state.port';
+export type { NewUser, UpdateUser, UsersQuery, UsersPage, UsersError } from './lib/models';
+export { USER_REPOSITORY, type UserRepositoryPort } from './lib/ports/driven';
+export { USERS_STATE, type UsersStatePort } from './lib/ports/driven';
 export {
   USERS_APPLICATION,
   type UsersApplicationPort,

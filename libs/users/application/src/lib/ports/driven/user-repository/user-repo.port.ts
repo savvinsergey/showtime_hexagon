@@ -1,9 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import type { Result } from '@showtime/shared/kernel';
 import type { User, UserDraft, UserId } from '@showtime/users/domain';
-import type { UsersError } from '../../../models/users-error/users-error';
-import type { UsersPage } from '../../../models/users-page/users-page';
-import type { UsersQuery } from '../../../models/users-query/users-query';
+import type { UsersError, UsersPage, UsersQuery } from '../../../models';
 
 /**
  * Persistence boundary shared by users queries and commands.

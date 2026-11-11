@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import type { User } from '@showtime/users/domain';
-import type { UsersStatePort } from '../lib/ports/driven/users-state/users-state.port';
+import type { UsersStatePort } from '../lib/ports/driven';
 
 /**
  * Plain-signal in-memory implementation of {@link UsersStatePort} for tests.

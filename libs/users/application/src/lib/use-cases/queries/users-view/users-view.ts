@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { USERS_STATE } from '../../../ports/driven/users-state/users-state.port';
+import { USERS_STATE } from '../../../ports/driven';
 
 /**
  * Exposes page reads through the state boundary without selecting a concrete store.

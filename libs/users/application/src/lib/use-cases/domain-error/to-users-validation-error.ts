@@ -1,6 +1,6 @@
 import { ErrorKindEnum } from '@showtime/shared/kernel';
 import type { DomainError } from '@showtime/shared/kernel';
-import type { UsersError } from '../../models/users-error/users-error';
+import type { UsersError } from '../../models';
 
 /**
  * Translates structural failures without exposing domain error objects to consumers.

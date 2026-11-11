@@ -1,9 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import type { Result } from '@showtime/shared/kernel';
-import type { UsersError } from '../../../models/users-error/users-error';
-import type { UsersPage } from '../../../models/users-page/users-page';
-import type { UsersQuery } from '../../../models/users-query/users-query';
-import { USER_REPOSITORY } from '../../../ports/driven/user-repository/user-repo.port';
+import type { UsersError, UsersPage, UsersQuery } from '../../../models';
+import { USER_REPOSITORY } from '../../../ports/driven';
 
 /**
  * Reads a requested page without writing state before the facade arbitrates request freshness.

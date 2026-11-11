@@ -1,11 +1,7 @@
 import { InjectionToken, type Signal } from '@angular/core';
 import type { OperationStatus, UseCaseCall } from '@showtime/shared/kernel';
 import type { User, UserId } from '@showtime/users/domain';
-import type { NewUser } from '../../../models/new-user/new-user';
-import type { UpdateUser } from '../../../models/update-user/update-user';
-import type { UsersError } from '../../../models/users-error/users-error';
-import type { UsersQuery } from '../../../models/users-query/users-query';
-import type { UsersPage } from '../../../models/users-page/users-page';
+import type { NewUser, UpdateUser, UsersError, UsersQuery, UsersPage } from '../../../models';
 
 /**
  * One driving boundary for screens; consumers render statuses and react to result promises.

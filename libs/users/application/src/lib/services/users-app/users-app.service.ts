@@ -13,19 +13,18 @@ import {
 } from '@showtime/shared/kernel';
 import type { Result } from '@showtime/shared/kernel';
 import type { User, UserId } from '@showtime/users/domain';
-import type { NewUser } from '../../models/new-user/new-user';
-import type { UpdateUser } from '../../models/update-user/update-user';
-import type { UsersQuery } from '../../models/users-query/users-query';
-import type { UsersPage } from '../../models/users-page/users-page';
-import type { UsersError } from '../../models/users-error/users-error';
-import type { UsersApplicationPort as UsersAppPort } from '../../ports/driving/users-app/users-app.port';
-import { USERS_STATE } from '../../ports/driven/users-state/users-state.port';
-import { CreateUserUseCase } from '../../use-cases/commands/create-user/create-user';
-import { GetUserUseCase } from '../../use-cases/commands/get-user/get-user';
-import { LoadUsersUseCase } from '../../use-cases/commands/load-users/load-users';
-import { UpdateUserUseCase } from '../../use-cases/commands/update-user/update-user';
-import { DeactivateUserUseCase } from '../../use-cases/commands/deactivate-user/deactivate-user';
-import { UsersViewUseCase } from '../../use-cases/queries/users-view/users-view';
+import type { NewUser, UpdateUser, UsersQuery, UsersPage, UsersError } from '../../models';
+import type { UsersApplicationPort as UsersAppPort } from '../../ports/driving';
+import { USERS_STATE } from '../../ports/driven';
+
+import {
+  CreateUserUseCase,
+  GetUserUseCase,
+  LoadUsersUseCase,
+  UpdateUserUseCase,
+  DeactivateUserUseCase,
+} from '../../use-cases/commands';
+import { UsersViewUseCase } from '../../use-cases/queries';
 
 /**
  * Coordinates operation lifecycles and latest-list writes behind the single driving port.

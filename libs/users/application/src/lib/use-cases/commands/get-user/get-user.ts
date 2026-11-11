@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import type { Result } from '@showtime/shared/kernel';
 import type { User, UserId } from '@showtime/users/domain';
-import type { UsersError } from '../../../models/users-error/users-error';
-import { USER_REPOSITORY } from '../../../ports/driven/user-repository/user-repo.port';
+import type { UsersError } from '../../../models';
+import { USER_REPOSITORY } from '../../../ports/driven';
 
 /**
  * Reads one user without changing the current page or its operation status.

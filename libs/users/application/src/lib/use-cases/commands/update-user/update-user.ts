@@ -2,9 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { err, type Result } from '@showtime/shared/kernel';
 import { UsersDomainService, type User } from '@showtime/users/domain';
 import { CLOCK } from '@showtime/shared/kernel';
-import type { UpdateUser } from '../../../models/update-user/update-user';
-import type { UsersError } from '../../../models/users-error/users-error';
-import { USER_REPOSITORY } from '../../../ports/driven/user-repository/user-repo.port';
+import type { UpdateUser, UsersError } from '../../../models';
+import { USER_REPOSITORY } from '../../../ports/driven';
 import { toUsersValidationError } from '../../domain-error/to-users-validation-error';
 
 /**
