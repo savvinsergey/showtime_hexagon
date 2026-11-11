@@ -86,7 +86,7 @@ describe('CreateUserUseCase', () => {
 
   it('uses the injected clock and preserves the successful repository result', async () => {
     const repo = TestBed.inject(UserRepoMock);
-    const draft = UsersDomainService.createUserDraft(input, timestamp);
+    const draft = UsersDomainService.createUserDraft(input);
     if (!draft.ok) return expect.unreachable('Expected draft');
     const persisted = await repo.create(draft.value);
     vi.spyOn(repo, 'create').mockResolvedValue(persisted);

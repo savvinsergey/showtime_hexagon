@@ -63,7 +63,7 @@ describe('UsersApplication driving port', () => {
    * Seeds persistence directly so command tests do not accidentally trigger facade reloads.
    */
   async function seedUser(): Promise<User> {
-    const draft = UsersDomainService.createUserDraft(input, timestamp);
+    const draft = UsersDomainService.createUserDraft(input);
     if (!draft.ok) throw new Error('Invalid fixture');
     const saved = await repo.create(draft.value);
     if (!saved.ok) throw new Error('Expected persisted fixture');

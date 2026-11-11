@@ -21,7 +21,7 @@ export class CreateUserUseCase implements UseCaseAbstract<NewUser, User, UsersEr
    */
   async execute(input: NewUser): Promise<Result<User, UsersError>> {
     const now = this.clock.now();
-    const draft = UsersDomainService.createUserDraft(input, now);
+    const draft = UsersDomainService.createUserDraft(input);
 
     if (!draft.ok) {
       return err(toUsersValidationError(draft.error));

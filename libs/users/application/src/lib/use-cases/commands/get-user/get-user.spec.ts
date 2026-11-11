@@ -32,14 +32,11 @@ describe('GetUserUseCase', () => {
 
   it('returns the requested persisted user without changing list state', async () => {
     const repo = TestBed.inject(UserRepoMock);
-    const draft = UsersDomainService.createUserDraft(
-      {
-        email: 'ada@example.com',
-        fullName: 'Ada Lovelace',
-        role: UserRoleEnum.Member,
-      },
-      '2026-01-31T10:15:30.000Z',
-    );
+    const draft = UsersDomainService.createUserDraft({
+      email: 'ada@example.com',
+      fullName: 'Ada Lovelace',
+      role: UserRoleEnum.Member,
+    });
     if (!draft.ok) return expect.unreachable('Expected fixture draft');
     const saved = await repo.create(draft.value);
     if (!saved.ok) return expect.unreachable('Expected persisted fixture');

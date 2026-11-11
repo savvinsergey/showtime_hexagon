@@ -14,10 +14,11 @@ export function userRepoContract(name: string, createPort: RepoFactory): void {
   describe(`${name}: repository contract`, () => {
     it('Scenario: Create takes a draft and returns a user with id', async () => {
       const port = await createPort();
-      const draft = UsersDomainService.createUserDraft(
-        { email: 'ada@example.com', fullName: 'Ada Lovelace', role: UserRoleEnum.Member },
-        '2026-01-31T10:15:30.000Z',
-      );
+      const draft = UsersDomainService.createUserDraft({
+        email: 'ada@example.com',
+        fullName: 'Ada Lovelace',
+        role: UserRoleEnum.Member,
+      });
       if (!draft.ok) throw new Error('Invalid contract fixture.');
       const result = await port.create(draft.value);
       expect(result.ok).toBe(true);
@@ -53,14 +54,11 @@ export function userRepoContract(name: string, createPort: RepoFactory): void {
       const port = await createPort();
       const ids: string[] = [];
       for (const name of ['Ada', 'Grace', 'Katherine']) {
-        const draft = UsersDomainService.createUserDraft(
-          {
-            email: `${name.toLowerCase()}@example.com`,
-            fullName: name,
-            role: UserRoleEnum.Member,
-          },
-          '2026-01-31T10:15:30.000Z',
-        );
+        const draft = UsersDomainService.createUserDraft({
+          email: `${name.toLowerCase()}@example.com`,
+          fullName: name,
+          role: UserRoleEnum.Member,
+        });
         if (!draft.ok) throw new Error('Invalid contract fixture.');
         const created = await port.create(draft.value);
         if (!created.ok) throw new Error('Expected creation to succeed.');
@@ -85,14 +83,11 @@ export function userRepoContract(name: string, createPort: RepoFactory): void {
 
     it('returns not-found when saving a missing user without inserting it', async () => {
       const port = await createPort();
-      const draft = UsersDomainService.createUserDraft(
-        {
-          email: 'ada@example.com',
-          fullName: 'Ada Lovelace',
-          role: UserRoleEnum.Member,
-        },
-        '2026-01-31T10:15:30.000Z',
-      );
+      const draft = UsersDomainService.createUserDraft({
+        email: 'ada@example.com',
+        fullName: 'Ada Lovelace',
+        role: UserRoleEnum.Member,
+      });
       if (!draft.ok) throw new Error('Invalid contract fixture.');
       const result = await port.save({ ...draft.value, id: asUserId('missing') });
       expect(result).toMatchObject({ ok: false, error: { kind: ErrorKindEnum.NotFound } });

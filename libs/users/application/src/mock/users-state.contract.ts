@@ -13,10 +13,11 @@ export function usersStateContract(name: string, createPort: StateFactory): void
   describe(`${name}: state contract`, () => {
     it('Scenario: Set page replaces the list', async () => {
       const port = await createPort();
-      const draft = UsersDomainService.createUserDraft(
-        { email: 'ada@example.com', fullName: 'Ada Lovelace', role: UserRoleEnum.Member },
-        '2026-01-31T10:15:30.000Z',
-      );
+      const draft = UsersDomainService.createUserDraft({
+        email: 'ada@example.com',
+        fullName: 'Ada Lovelace',
+        role: UserRoleEnum.Member,
+      });
       if (!draft.ok) throw new Error('Invalid contract fixture.');
       const first = Object.freeze({ ...draft.value, id: asUserId('u-1') });
       const second = Object.freeze({ ...draft.value, id: asUserId('u-2') });

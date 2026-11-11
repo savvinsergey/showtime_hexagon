@@ -1,4 +1,4 @@
-import { UserErrorsEnum } from '../../enums/user-errors/user-errors.enum';
+import { UserErrorsEnum } from '../../enums';
 
 /**
  * Associates each Users validation code with the raw input field that can be corrected.

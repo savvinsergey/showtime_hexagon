@@ -77,19 +77,19 @@ A user id SHALL be a branded string with no format check in the domain. Mixing i
 - **THEN** type checking fails (status is only `active` or `inactive`)
 
 ### Requirement: Draft is built from raw input
-Given raw `email`, `fullName` and `role` plus an ISO time, the domain SHALL return a `Result` of `UserDraft` with `status` `active`, or a domain error. It SHALL NOT read a clock; time is an argument.
+Given raw `email`, `fullName` and `role`, the domain SHALL return a `Result` of `UserDraft` with `status` `active`, or a domain error. Draft creation SHALL NOT require a time argument or read a clock.
 
 #### Scenario: Valid input becomes an active draft
-- **WHEN** valid email, full name and role `member` are submitted with a time
+- **WHEN** valid email, full name and role `member` are submitted
 - **THEN** the result is a draft with those values, `status` `active`, and no `id`
 
 #### Scenario: Invalid input does not produce a draft
 - **WHEN** the email is invalid and the other fields are valid
 - **THEN** the result is a domain error and no draft is returned
 
-#### Scenario: Time is taken from the argument
-- **WHEN** the same input is submitted with two different ISO times
-- **THEN** both calls succeed without reading system time (the domain does not call `Date` or a clock)
+#### Scenario: Draft creation does not require time
+- **WHEN** valid raw input is submitted without a time argument
+- **THEN** draft creation succeeds without reading system time (the domain does not call `Date` or a clock)
 
 ### Requirement: Named transitions return a new user and events
 `activate`, `deactivate`, `rename` and `changeRole` SHALL return a new `User` (or a `Result` when the new value can fail) plus domain events. They SHALL NOT call I/O or change the original record.

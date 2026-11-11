@@ -14,7 +14,7 @@ const input = { email: 'ada@example.com', fullName: 'Ada Lovelace', role: UserRo
  * Gives transition tests a validated persisted user without reading a clock.
  */
 function userFixture(status: User['status'] = UserStatusEnum.Active): User {
-  const draft = UsersDomainService.createUserDraft(input, now);
+  const draft = UsersDomainService.createUserDraft(input);
   if (!draft.ok) throw new Error('Invalid test fixture');
   return Object.freeze({ ...draft.value, id: asUserId('u-1'), status });
 }
@@ -32,7 +32,7 @@ function expectFrozenChange(change: UserChange<unknown>): void {
 
 describe('UsersDomainService', () => {
   it('Scenario: Valid input becomes an active draft', () => {
-    const result = UsersDomainService.createUserDraft(input, now);
+    const result = UsersDomainService.createUserDraft(input);
 
     expect(result).toEqual({ ok: true, value: { ...input, status: UserStatusEnum.Active } });
     if (!result.ok) return expect.unreachable('Expected a draft');
@@ -40,46 +40,45 @@ describe('UsersDomainService', () => {
   });
 
   it('Scenario: Draft omits id', () => {
-    const result = UsersDomainService.createUserDraft(input, now);
+    const result = UsersDomainService.createUserDraft(input);
 
     if (!result.ok) return expect.unreachable('Expected a draft');
     expect(result.value).not.toHaveProperty('id');
   });
 
   it('Scenario: Known role is accepted', () => {
-    const result = UsersDomainService.createUserDraft({ ...input, role: 'admin' }, now);
+    const result = UsersDomainService.createUserDraft({ ...input, role: 'admin' });
 
     expect(result).toMatchObject({ ok: true, value: { role: 'admin' } });
   });
 
   it('Scenario: Unknown role is rejected', () => {
-    const result = UsersDomainService.createUserDraft({ ...input, role: 'superuser' }, now);
+    const result = UsersDomainService.createUserDraft({ ...input, role: 'superuser' });
 
     expect(result).toMatchObject({ ok: false, error: { code: 'invalid-role' } });
     expect(result).not.toHaveProperty('value');
   });
 
   it('Scenario: Invalid input does not produce a draft', () => {
-    const result = UsersDomainService.createUserDraft({ ...input, email: 'invalid' }, now);
+    const result = UsersDomainService.createUserDraft({ ...input, email: 'invalid' });
 
     expect(result).toMatchObject({ ok: false, error: { code: 'invalid-email' } });
     expect(result).not.toHaveProperty('value');
   });
 
   it('rejects an empty name before producing a draft', () => {
-    expect(UsersDomainService.createUserDraft({ ...input, fullName: ' ' }, now)).toMatchObject({
+    expect(UsersDomainService.createUserDraft({ ...input, fullName: ' ' })).toMatchObject({
       ok: false,
       error: { code: 'invalid-full-name' },
     });
   });
 
-  it('Scenario: Time is taken from the argument', () => {
+  it('Scenario: Draft creation does not require time', () => {
     const dateRead = vi.spyOn(globalThis, 'Date').mockImplementation(() => {
       throw new Error('Domain must not read the system clock');
     });
     try {
-      expect(UsersDomainService.createUserDraft(input, now).ok).toBe(true);
-      expect(UsersDomainService.createUserDraft(input, '2027-01-01T00:00:00.000Z').ok).toBe(true);
+      expect(UsersDomainService.createUserDraft(input).ok).toBe(true);
       expect(dateRead).not.toHaveBeenCalled();
     } finally {
       dateRead.mockRestore();
@@ -175,7 +174,7 @@ describe('raw role compatibility', () => {
     ['member', UserRoleEnum.Member],
   ])('Scenario: Raw supported roles still validate (%s)', (rawRole, expected) => {
     const original = userFixture();
-    const draft = UsersDomainService.createUserDraft({ ...input, role: rawRole }, now);
+    const draft = UsersDomainService.createUserDraft({ ...input, role: rawRole });
     const change = UsersDomainService.changeRole(original, rawRole, now);
     if (!draft.ok || !change.ok) return expect.unreachable('Expected valid raw roles');
     expect(draft.value.role).toBe(expected);
@@ -191,7 +190,7 @@ describe('raw role compatibility', () => {
   it.each(['', ' ', 'superuser'])('Scenario: Invalid roles remain rejected (%j)', role => {
     const original = userFixture();
     const results = [
-      UsersDomainService.createUserDraft({ ...input, role }, now),
+      UsersDomainService.createUserDraft({ ...input, role }),
       UsersDomainService.changeRole(original, role, now),
     ];
     for (const result of results) {

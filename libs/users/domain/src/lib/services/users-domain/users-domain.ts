@@ -1,5 +1,4 @@
-import { UserStatusEnum } from '../../enums/user-status/user-status.enum';
-import { UsersEventsEnum } from '../../enums/users-events/users-events.enum';
+import { UserStatusEnum, UsersEventsEnum, UserErrorsEnum } from '../../enums';
 import { domainError, err, ok, type Result } from '@showtime/shared/kernel';
 import type { Email, FullName } from '../../value-objects';
 import { isUserRole } from '../../value-objects/user-role/user-role';
@@ -11,7 +10,6 @@ import type {
   UserRenamed,
   UserRoleChanged,
 } from '../../events';
-import { UserErrorsEnum } from '../../enums/user-errors/user-errors.enum';
 
 type DraftInput = Readonly<{ email: string; fullName: string; role: string }>;
 
@@ -60,17 +58,21 @@ export function parseFullName(raw: string): Result<FullName> {
 /**
  * Validates raw data before persistence assigns an identity.
  * @param input - Raw values submitted for registration.
- * @param _now - Explicit operation time; drafts have no timestamp field.
  * @returns A frozen active draft, or the first structural error.
  */
-function createUserDraft(input: DraftInput, _now: string): Result<UserDraft> {
+function createUserDraft(input: DraftInput): Result<UserDraft> {
   const email = parseEmail(input.email);
   if (!email.ok) return email;
+
   const fullName = parseFullName(input.fullName);
-  if (!fullName.ok) return fullName;
+  if (!fullName.ok) {
+    return fullName;
+  }
+
   if (!isUserRole(input.role)) {
     return err(domainError(UserErrorsEnum.InvalidRole, 'Role must be admin or member.'));
   }
+
   return ok(
     Object.freeze({
       email: email.value,

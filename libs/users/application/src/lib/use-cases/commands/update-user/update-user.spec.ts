@@ -22,14 +22,11 @@ describe('UpdateUserUseCase', () => {
         { provide: CLOCK, useValue: fixedClock('2026-01-31T10:15:30.000Z') },
       ],
     });
-    const draft = UsersDomainService.createUserDraft(
-      {
-        email: 'ada@example.com',
-        fullName: 'Ada Lovelace',
-        role: UserRoleEnum.Member,
-      },
-      '2026-01-31T10:15:30.000Z',
-    );
+    const draft = UsersDomainService.createUserDraft({
+      email: 'ada@example.com',
+      fullName: 'Ada Lovelace',
+      role: UserRoleEnum.Member,
+    });
     if (!draft.ok) throw new Error('Invalid fixture');
     const saved = await TestBed.inject(UserRepoMock).create(draft.value);
     if (!saved.ok) throw new Error('Expected persisted fixture');
