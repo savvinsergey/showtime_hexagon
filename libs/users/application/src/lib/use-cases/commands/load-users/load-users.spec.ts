@@ -1,3 +1,4 @@
+import { UsersErrorKindEnum } from '../../../enums/users-error-kind/users-error-kind.enum';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { err, ok } from '@showtime/shared/kernel';
@@ -29,7 +30,7 @@ describe('LoadUsersUseCase', () => {
   });
 
   it('returns repository failure details unchanged', async () => {
-    const failure = err({ kind: 'network' as const, message: 'Offline' });
+    const failure = err({ kind: UsersErrorKindEnum.Network as const, message: 'Offline' });
     vi.spyOn(TestBed.inject(UserRepoMock), 'findAll').mockResolvedValue(failure);
 
     expect(await TestBed.inject(LoadUsersUseCase).execute({ page: 1, pageSize: 10 })).toBe(failure);

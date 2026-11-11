@@ -1,3 +1,4 @@
+import { UsersErrorKindEnum } from '../../../enums/users-error-kind/users-error-kind.enum';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { err, fixedClock } from '@showtime/shared/kernel';
@@ -49,7 +50,7 @@ describe('DeactivateUserUseCase', () => {
 
   it('preserves lookup failures without calling save', async () => {
     const repo = TestBed.inject(UserRepoMock);
-    const failure = err({ kind: 'network' as const, message: 'Offline' });
+    const failure = err({ kind: UsersErrorKindEnum.Network as const, message: 'Offline' });
     vi.spyOn(repo, 'findById').mockResolvedValue(failure);
     const save = vi.spyOn(repo, 'save');
 
@@ -58,7 +59,7 @@ describe('DeactivateUserUseCase', () => {
   });
 
   it('preserves a backend forbidden result after the domain transition', async () => {
-    const failure = err({ kind: 'forbidden' as const, message: 'Not allowed' });
+    const failure = err({ kind: UsersErrorKindEnum.Forbidden as const, message: 'Not allowed' });
     vi.spyOn(TestBed.inject(UserRepoMock), 'save').mockResolvedValue(failure);
 
     expect(await TestBed.inject(DeactivateUserUseCase).execute(user.id)).toBe(failure);

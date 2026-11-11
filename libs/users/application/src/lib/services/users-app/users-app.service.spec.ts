@@ -1,3 +1,4 @@
+import { UsersErrorKindEnum } from '../../enums/users-error-kind/users-error-kind.enum';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { err, fixedClock, ok, type Result } from '@showtime/shared/kernel';
@@ -88,7 +89,7 @@ describe('UsersApplication driving port', () => {
   });
 
   it('Scenario: Failed create reports error', async () => {
-    const failure: UsersError = { kind: 'conflict', message: 'Already exists' };
+    const failure: UsersError = { kind: UsersErrorKindEnum.Conflict, message: 'Already exists' };
     vi.spyOn(repo, 'create').mockResolvedValue(err(failure));
     const call = app.create(input);
 
@@ -115,8 +116,22 @@ describe('UsersApplication driving port', () => {
     const create = vi.spyOn(repo, 'create');
     const call = app.create({ ...input, email: 'invalid' });
 
-    expect(await call.result).toMatchObject({ ok: false, error: { kind: 'validation' } });
-    expect(call.status()).toMatchObject({ status: 'error', error: { kind: 'validation' } });
+    expect(await call.result).toMatchObject({
+      ok: false,
+      error: {
+        kind: UsersErrorKindEnum.Validation,
+        message: 'Email must contain a local part and a domain.',
+        fieldIssues: { email: 'Email must contain a local part and a domain.' },
+      },
+    });
+    expect(call.status()).toMatchObject({
+      status: 'error',
+      error: {
+        kind: UsersErrorKindEnum.Validation,
+        message: 'Email must contain a local part and a domain.',
+        fieldIssues: { email: 'Email must contain a local part and a domain.' },
+      },
+    });
     expect(create).not.toHaveBeenCalled();
   });
 
@@ -124,20 +139,30 @@ describe('UsersApplication driving port', () => {
     const call = app.get(asUserId('missing'));
 
     expect(call.status()).toEqual({ status: 'loading' });
-    expect(await call.result).toMatchObject({ ok: false, error: { kind: 'not-found' } });
-    expect(call.status()).toMatchObject({ status: 'error', error: { kind: 'not-found' } });
+    expect(await call.result).toMatchObject({
+      ok: false,
+      error: { kind: UsersErrorKindEnum.NotFound, message: 'User was not found.' },
+    });
+    expect(call.status()).toMatchObject({
+      status: 'error',
+      error: { kind: UsersErrorKindEnum.NotFound, message: 'User was not found.' },
+    });
     expect(app.listStatus()).toEqual({ status: 'idle' });
   });
 
   it('Scenario: Unknown kind has an optional cause', async () => {
     const cause = new Error('Repository unavailable');
-    const failure: UsersError = { kind: 'unknown', message: 'Lookup failed', cause };
+    const failure: UsersError = {
+      kind: UsersErrorKindEnum.Unknown,
+      message: 'Lookup failed',
+      cause,
+    };
     vi.spyOn(repo, 'findById').mockResolvedValue(err(failure));
 
     const call = app.get(asUserId('u-1'));
     const result = await call.result;
 
-    if (result.ok || result.error.kind !== 'unknown')
+    if (result.ok || result.error.kind !== UsersErrorKindEnum.Unknown)
       return expect.unreachable('Expected unknown error');
     expect(result.error.cause).toBe(cause);
     expect(call.status()).toEqual({ status: 'error', error: failure });
@@ -181,7 +206,7 @@ describe('UsersApplication driving port', () => {
   it('Scenario: Failed create does not reload', async () => {
     await app.load({ page: 1, pageSize: 10 }).result;
     vi.spyOn(repo, 'create').mockResolvedValue(
-      err({ kind: 'conflict', message: 'Already exists' }),
+      err({ kind: UsersErrorKindEnum.Conflict, message: 'Already exists' }),
     );
     const findAll = vi.spyOn(repo, 'findAll');
 
@@ -233,7 +258,7 @@ describe('UsersApplication driving port', () => {
     const second = app.load({ page: 2, pageSize: 1 });
     newer.resolve(ok({ users: [], total: 2 }));
     await second.result;
-    older.resolve(err({ kind: 'network', message: 'Stale failure' }));
+    older.resolve(err({ kind: UsersErrorKindEnum.Network, message: 'Stale failure' }));
     await first.result;
 
     expect(first.status()).toEqual({ status: 'cancelled' });
@@ -251,7 +276,7 @@ describe('UsersApplication driving port', () => {
     expect(result.ok).toBe(true);
     expect(call.status()).toEqual({ status: 'success' });
     expect(app.listStatus()).toEqual({ status: 'loading' });
-    const failure: UsersError = { kind: 'network', message: 'Reload failed' };
+    const failure: UsersError = { kind: UsersErrorKindEnum.Network, message: 'Reload failed' };
     reload.resolve(err(failure));
     await reload.promise;
     expect(app.listStatus()).toEqual({ status: 'error', error: failure });

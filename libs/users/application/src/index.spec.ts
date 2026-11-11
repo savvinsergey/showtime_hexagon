@@ -26,6 +26,7 @@ describe('users-application scaffold', () => {
     expect(new Set(Object.keys(usersEntry))).toEqual(
       new Set([
         'CLOCK',
+        'UsersErrorKindEnum',
         'USERS_APPLICATION',
         'USERS_STATE',
         'USER_REPOSITORY',

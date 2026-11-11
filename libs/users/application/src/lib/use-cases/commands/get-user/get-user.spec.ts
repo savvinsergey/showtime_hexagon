@@ -1,3 +1,4 @@
+import { UsersErrorKindEnum } from '../../../enums/users-error-kind/users-error-kind.enum';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { asUserId, UsersDomainService } from '@showtime/users/domain';
@@ -25,7 +26,7 @@ describe('GetUserUseCase', () => {
 
     const result = await TestBed.inject(GetUserUseCase).execute(id);
 
-    expect(result).toMatchObject({ ok: false, error: { kind: 'not-found' } });
+    expect(result).toMatchObject({ ok: false, error: { kind: UsersErrorKindEnum.NotFound } });
     expect(findById).toHaveBeenCalledExactlyOnceWith(id);
   });
 

@@ -18,3 +18,4 @@ export {
 } from './lib/ports/driving/users-app/users-app.port';
 export { provideUsersApplication } from './lib/providers/provide-users-app';
 export type { User } from '@showtime/users/domain';
+export { UsersErrorKindEnum } from './lib/enums/users-error-kind/users-error-kind.enum';

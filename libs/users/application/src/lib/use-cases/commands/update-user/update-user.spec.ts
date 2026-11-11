@@ -1,3 +1,4 @@
+import { UsersErrorKindEnum } from '../../../enums/users-error-kind/users-error-kind.enum';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { err, fixedClock } from '@showtime/shared/kernel';
@@ -69,7 +70,7 @@ describe('UpdateUserUseCase', () => {
 
     expect(result).toMatchObject({
       ok: false,
-      error: { kind: 'validation', fieldIssues: { fullName: expect.any(String) } },
+      error: { kind: UsersErrorKindEnum.Validation, fieldIssues: { fullName: expect.any(String) } },
     });
     expect(save).not.toHaveBeenCalled();
   });
@@ -85,7 +86,7 @@ describe('UpdateUserUseCase', () => {
 
     expect(result).toMatchObject({
       ok: false,
-      error: { kind: 'validation', fieldIssues: { role: expect.any(String) } },
+      error: { kind: UsersErrorKindEnum.Validation, fieldIssues: { role: expect.any(String) } },
     });
     expect(save).not.toHaveBeenCalled();
     expect(await repo.findById(user.id)).toEqual({ ok: true, value: user });
@@ -93,7 +94,7 @@ describe('UpdateUserUseCase', () => {
 
   it('preserves lookup failures and never saves after them', async () => {
     const repo = TestBed.inject(UserRepoMock);
-    const failure = err({ kind: 'not-found' as const, message: 'Missing' });
+    const failure = err({ kind: UsersErrorKindEnum.NotFound as const, message: 'Missing' });
     vi.spyOn(repo, 'findById').mockResolvedValue(failure);
     const save = vi.spyOn(repo, 'save');
 
@@ -108,7 +109,7 @@ describe('UpdateUserUseCase', () => {
   });
 
   it('preserves a backend conflict after valid frontend input', async () => {
-    const failure = err({ kind: 'conflict' as const, message: 'Record changed' });
+    const failure = err({ kind: UsersErrorKindEnum.Conflict as const, message: 'Record changed' });
     vi.spyOn(TestBed.inject(UserRepoMock), 'save').mockResolvedValue(failure);
 
     expect(
