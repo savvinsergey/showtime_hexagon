@@ -22,4 +22,34 @@
 - Reviewer approved; tester verified six scenarios; cycles 0. Developer Nx lint green; Nx test 58/11 files and strict spec tsc green. Tester actual tests 58/11 + strict pass. Temporary redundant test assertion removed to exact reviewed green state; canceled native recheck not retried. Protected conventions retry explicitly authorized and applied.
 - Coverage: application identity/old-name -> index.spec.ts :: same-named scenarios; narrowing/unsupported kinds/serialization -> users-error.spec.ts; propagation -> users-app.service.spec.ts :: Invalid email on create is validation, Not-found is reported as kind, Unknown kind has an optional cause, plus use-case/mock tests.
 - User-owned service/models/driven barrels preserved; enums barrel sole old export replaced as explicitly planned (no unrelated content).
-- Pending commit: pre-HEAD be82c33bbffede69330ec516447cd5d5ec054c61; SHA256 {"libs/users/application/src/index.spec.ts": "1d18a8dabdaad0c3c2a739e3fa8c4e93190c62d4a829666d8fde8fa8e6c63b39", "libs/users/application/src/index.ts": "593d149565fb3b95edc88f3daec611c53e7a7983e855e273379041fe7ffa74e1", "libs/users/application/src/lib/enums/users-error-kind/users-error-kind.enum.spec.ts": "DELETED", "libs/users/application/src/lib/enums/users-error-kind/users-error-kind.enum.ts": "DELETED", "libs/users/application/src/lib/models/users-error/users-error.spec.ts": "173c43c4a13841fbbee800dfb2dd2c93cd86e4d49df917183ec39c27920b2e84", "libs/users/application/src/lib/models/users-error/users-error.ts": "66a9632b98f27561cceaa19e13165f81f544ef86a6ff6ff6cc8178b9e1c1348b", "libs/users/application/src/lib/services/users-app/users-app.service.spec.ts": "2f626591244c9200b2f25b8a58079543875d63cabaf90eb8b4857682357673af", "libs/users/application/src/lib/use-cases/commands/create-user/create-user.spec.ts": "f571f737aa1b2eadfd0a39fb45fc3802e687a782066c1311da4deaa49078ce59", "libs/users/application/src/lib/use-cases/commands/deactivate-user/deactivate-user.spec.ts": "b94c0680aec9add9f815095235d777536391d28c5976482190d4a5aa10de2813", "libs/users/application/src/lib/use-cases/commands/get-user/get-user.spec.ts": "a96c6a252057f0a1e82b6d185ac9dc3bb0eedc2010584c2ceb675c0d12bf4086", "libs/users/application/src/lib/use-cases/commands/load-users/load-users.spec.ts": "b3490ec58ed6d2d5c110676669c72497c2653270ade1be93d897ae5eeb5334f6", "libs/users/application/src/lib/use-cases/commands/update-user/update-user.spec.ts": "1d13fd2a9cf0eb33459244806452ac379ebdca96868125646723efcc65f15b20", "libs/users/application/src/lib/use-cases/domain-error/to-users-validation-error.ts": "f2a557a7eef26930bf395f5d5696696808c569d59f106c2b2b50625b31799ef3", "libs/users/application/src/mock/user-repo.contract.ts": "f28d59e1ad7b7d2eac3d2e1e3025a24fc4d29cba6307cc96c74b50f70fe9a622", "libs/users/application/src/mock/user-repo.mock.ts": "fcb1035f4213b93b925da7d9ff85255aa19277e3addb4e1da0a2594029b73901", ".agents/rules/engineering-conventions.md": "bcb74e336baacf0900af3a33c23cd4330a135b21771c6ae78afd510a5abeffa6", "docs/adr/0003-users-model-and-application-ports.md": "b21040620e2ff9bd408cece82b8de7895cdde3aa6e6301b2425a449a65fd7927", "libs/users/application/src/lib/enums/index.ts": "5f73c225f09bee6e6b02806d627932aba0fb5705a76901fb55333fc7844b4a18"}
+- Commit: c4326df; hooks lint/format/commitlint green.
+
+- Final-run: in progress.
+
+## Final-run evidence
+- Nx lint/test PASS: shared-kernel 34, users-application 58, users-domain 56 (six tasks, no cache). Strict kernel/application spec tsc PASS. Tags PASS. No public build targets; internal test-build exercised through harness, shell:test excluded. Existing domain unused _now warning.
+- Boundary tests 125/126: tools/lint/kernel-entry.spec.ts:106 fails because obsolete untracked libs/shared/kernel/src/angular/index.ts exists. Tester initial status already showed it; Nov5 file timestamps, creator unknown, absent initial snapshot. Not produced by current fixtures. No edits/deletion. Waiting dispatcher/user scope decision before boundary closure/acceptance.
+
+- Final-run closure GREEN: user authorized obsolete untracked angular backup; /tmp/showtime-obsolete-kernel-angular-fol9hhjl/angular/index.ts, SHA256 before=after 129e83b1b31990e8951f8179613f0bf418a296cd062b95b0fe4025a3a781ffcf. Boundary-only rerun 126/126 + tags PASS. All earlier Nx/strict checks remain green.
+- Acceptance: in progress.
+
+## Final report
+- Analyst ACCEPT: all nine current scenarios satisfied; ST-0001 and ST-0002 complete; no required fixes.
+- Local commits: be82c33 shared kernel enum; c4326df breaking Users migration. Branch change/users-domain-application.
+- Final verification: Nx lint/test shared-kernel34/users-application58/users-domain56; strict spec compilation kernel/application; 126 boundary tests and project tags all PASS. Public build targets absent; harness-only test-build and empty shell:test excluded as designed.
+- No review findings. Existing nonblocking domain _now lint warning; ST1 commit footer blank-line warning.
+- User edits preserved; hook formatting of unrelated untracked models barrel restored. Progress report remains intentionally uncommitted after final acceptance.
+- No archive (already declined), push, release, tags or versions. Future archive must reconcile superseded older enum requirements.
+- Host telemetry input/cached/model counters unavailable; wait timeout counts not reliably available.
+
+## Authorized consolidated archive — 2026-11-12
+
+User approved latest-authoritative consolidated sync and archive in reverse creation order.
+Archive target: openspec/changes/archive/2026-11-12-shared-error-kind-enum
+Work branch: change/users-domain-application; commit: on; no push or release.
+Read-only analyst APPROVE: current shared ErrorKindEnum, role/status enums, mixed kernel
+symbol purity, shared runner/completedStatus, status-identity race protection and no draft
+time parameter are retained. Superseded historical delta contracts remain historical.
+Main specs validation: 5 passed, 0 failed; two existing long-requirement warnings.
+Future resource-based infrastructure handling remains a planning decision, no runtime migration.
+Backups and CLI snapshots: /tmp/showtime-archive-2026-11-12.
