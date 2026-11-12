@@ -6,7 +6,7 @@
 
 ## 2. Users adoption
 
-- [ ] ST-0002 (after: ST-0001) Replace Users facade run/resolveCall with the shared helper for get/create/update/deactivate. Keep success reload callback and latest-query selection local; retain list resolution/cancellation and completedStatus where still needed. Preserve public JSDoc/signatures and keep implementation classes private. Extend facade regression tests only where coverage is missing, including latest query selected at mutation completion and success before reload. Verify uncached application lint/tests and strict spec typecheck; inspect public barrel and production imports. (covers: shared-kernel/Users mutation reload behavior is preserved; shared-kernel/Read and race behavior is preserved; shared-kernel/Reload failure does not undo persistence)
+- [x] ST-0002 (after: ST-0001) Replace Users facade run/resolveCall with the shared helper for get/create/update/deactivate. Keep success reload callback and latest-query selection local; retain list resolution/cancellation and completedStatus where still needed. Preserve public JSDoc/signatures and keep implementation classes private. Extend facade regression tests only where coverage is missing, including latest query selected at mutation completion and success before reload. Verify uncached application lint/tests and strict spec typecheck; inspect public barrel and production imports. (covers: shared-kernel/Users mutation reload behavior is preserved; shared-kernel/Read and race behavior is preserved; shared-kernel/Reload failure does not undo persistence)
 
 ## Workflow follow-up
 

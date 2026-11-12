@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import {
   OperationStatusEnum,
+  runUseCase,
   type OperationStatus,
   type UseCaseCall,
 } from '@showtime/shared/kernel';
@@ -71,29 +72,23 @@ export class UsersApplicationService implements UsersAppPort {
     status: WritableSignal<OperationStatus<UsersError>>,
   ): Promise<Result<UsersPage, UsersError>> {
     const outcome = await this.loadUsers.execute(query);
-    if (generation !== this.loadGeneration) return outcome;
-    if (outcome.ok) this.state.setPage(outcome.value.users, outcome.value.total);
+    if (generation !== this.loadGeneration) {
+      return outcome;
+    }
+
+    if (outcome.ok) {
+      this.state.setPage(outcome.value.users, outcome.value.total);
+    }
+
     status.set(this.completedStatus(outcome));
+
     return outcome;
   }
 
-  private async resolveCall<T>(
-    execute: () => Promise<Result<T, UsersError>>,
-    status: WritableSignal<OperationStatus<UsersError>>,
-    shouldReload: boolean,
-  ): Promise<Result<T, UsersError>> {
-    const outcome = await execute();
-    status.set(this.completedStatus(outcome));
-    if (shouldReload && outcome.ok && this.lastQuery) this.load(this.lastQuery);
-    return outcome;
-  }
-
-  private run<T>(
-    execute: () => Promise<Result<T, UsersError>>,
-    shouldReload = false,
-  ): UseCaseCall<T, UsersError> {
-    const status = signal<OperationStatus<UsersError>>({ status: OperationStatusEnum.Loading });
-    return { status: status.asReadonly(), result: this.resolveCall(execute, status, shouldReload) };
+  private reloadLastQuery(): void {
+    if (this.lastQuery) {
+      this.load(this.lastQuery);
+    }
   }
 
   /**
@@ -102,14 +97,20 @@ export class UsersApplicationService implements UsersAppPort {
    * @returns An independent call whose status is cancelled when superseded.
    */
   load(query: UsersQuery): UseCaseCall<UsersPage, UsersError> {
-    if (this.activeLoad?.().status === OperationStatusEnum.Loading)
+    if (this.activeLoad?.().status === OperationStatusEnum.Loading) {
       this.activeLoad.set({ status: OperationStatusEnum.Cancelled });
+    }
+
     const generation = ++this.loadGeneration;
     this.lastQuery = { ...query };
+
     const status = signal<OperationStatus<UsersError>>({ status: OperationStatusEnum.Loading });
+
     this.activeLoad = status;
     this.currentListStatus.set(status.asReadonly());
+
     const result = this.resolveLoad(this.lastQuery, generation, status);
+
     return { status: status.asReadonly(), result };
   }
 
@@ -119,7 +120,7 @@ export class UsersApplicationService implements UsersAppPort {
    * @returns This lookup's status and result.
    */
   get(id: UserId): UseCaseCall<User, UsersError> {
-    return this.run(() => this.getUser.execute(id));
+    return runUseCase(() => this.getUser.execute(id));
   }
 
   /**
@@ -128,7 +129,10 @@ export class UsersApplicationService implements UsersAppPort {
    * @returns Persistence status/result unaffected by reload errors.
    */
   create(input: NewUser): UseCaseCall<User, UsersError> {
-    return this.run(() => this.createUser.execute(input), true);
+    return runUseCase(
+      () => this.createUser.execute(input),
+      () => this.reloadLastQuery(),
+    );
   }
 
   /**
@@ -137,7 +141,10 @@ export class UsersApplicationService implements UsersAppPort {
    * @returns Persistence status/result unaffected by reload errors.
    */
   update(input: UpdateUser): UseCaseCall<User, UsersError> {
-    return this.run(() => this.updateUser.execute(input), true);
+    return runUseCase(
+      () => this.updateUser.execute(input),
+      () => this.reloadLastQuery(),
+    );
   }
 
   /**
@@ -146,6 +153,9 @@ export class UsersApplicationService implements UsersAppPort {
    * @returns Persistence status/result unaffected by reload errors.
    */
   deactivate(id: UserId): UseCaseCall<User, UsersError> {
-    return this.run(() => this.deactivateUser.execute(id), true);
+    return runUseCase(
+      () => this.deactivateUser.execute(id),
+      () => this.reloadLastQuery(),
+    );
   }
 }

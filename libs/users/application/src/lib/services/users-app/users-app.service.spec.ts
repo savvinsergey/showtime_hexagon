@@ -208,6 +208,53 @@ describe('UsersApplication driving port', () => {
     },
   );
 
+  it.each(['create', 'update', 'deactivate'] as const)(
+    'Scenario: %s selects the latest query after persistence and succeeds before reload',
+    async command => {
+      const user = await seedUser();
+      await app.load({ page: 1, pageSize: 10 }).result;
+      const persistence = deferred<Result<User, UsersError>>();
+      vi.spyOn(repo, command === 'create' ? 'create' : 'save').mockReturnValue(persistence.promise);
+      const calls = {
+        create: () => app.create(input),
+        update: () =>
+          app.update({ id: user.id, fullName: 'Grace Hopper', role: UserRoleEnum.Admin }),
+        deactivate: () => app.deactivate(user.id),
+      };
+      const call = calls[command]();
+      const latestQuery = { page: 2, pageSize: 5 };
+      await app.load(latestQuery).result;
+      const reload = deferred<Result<UsersPage, UsersError>>();
+      const findAll = vi.spyOn(repo, 'findAll').mockImplementation(query => {
+        expect(call.status()).toEqual({ status: 'success' });
+        expect(query).toEqual(latestQuery);
+        return reload.promise;
+      });
+
+      persistence.resolve(ok(user));
+      const result = await call.result;
+
+      expect(result).toEqual(ok(user));
+      expect(findAll).toHaveBeenCalledExactlyOnceWith(latestQuery);
+      expect(app.listStatus()).toEqual({ status: 'loading' });
+      reload.resolve(ok({ users: [user], total: 1 }));
+      await reload.promise;
+    },
+  );
+
+  it('Scenario: Read and race behavior is preserved for lookup', async () => {
+    const user = await seedUser();
+    await app.load({ page: 1, pageSize: 10 }).result;
+    const findAll = vi.spyOn(repo, 'findAll');
+
+    const call = app.get(user.id);
+    expect(call.status()).toEqual({ status: 'loading' });
+    expect(await call.result).toEqual(ok(user));
+    expect(call.status()).toEqual({ status: 'success' });
+    expect(findAll).not.toHaveBeenCalled();
+    expect(app.listStatus()).toEqual({ status: 'success' });
+  });
+
   it('Scenario: Failed create does not reload', async () => {
     await app.load({ page: 1, pageSize: 10 }).result;
     vi.spyOn(repo, 'create').mockResolvedValue(
