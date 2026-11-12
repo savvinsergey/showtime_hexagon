@@ -45,7 +45,6 @@ export class UsersApplicationService implements UsersAppPort {
     signal<OperationStatus<UsersError>>({ status: OperationStatusEnum.Idle }),
   );
   private activeLoad: WritableSignal<OperationStatus<UsersError>> | undefined;
-  private loadGeneration = 0;
   private lastQuery: UsersQuery | undefined;
 
   /**
@@ -63,11 +62,10 @@ export class UsersApplicationService implements UsersAppPort {
 
   private async resolveLoad(
     query: UsersQuery,
-    generation: number,
     status: WritableSignal<OperationStatus<UsersError>>,
   ): Promise<Result<UsersPage, UsersError>> {
     const outcome = await this.loadUsers.execute(query);
-    if (generation !== this.loadGeneration) {
+    if (this.activeLoad !== status) {
       return outcome;
     }
 
@@ -96,17 +94,17 @@ export class UsersApplicationService implements UsersAppPort {
       this.activeLoad.set({ status: OperationStatusEnum.Cancelled });
     }
 
-    const generation = ++this.loadGeneration;
     this.lastQuery = { ...query };
 
     const status = signal<OperationStatus<UsersError>>({ status: OperationStatusEnum.Loading });
+    const readonlyStatus = status.asReadonly();
 
     this.activeLoad = status;
-    this.currentListStatus.set(status.asReadonly());
+    this.currentListStatus.set(readonlyStatus);
 
-    const result = this.resolveLoad(this.lastQuery, generation, status);
+    const result = this.resolveLoad(this.lastQuery, status);
 
-    return { status: status.asReadonly(), result };
+    return { status: readonlyStatus, result };
   }
 
   /**
