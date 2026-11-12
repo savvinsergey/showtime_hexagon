@@ -10,6 +10,8 @@ const workspace = fileURLToPath(new URL('../../', import.meta.url));
 const domain = 'libs/users/domain/src/index.ts';
 const pure = 'libs/shared/kernel/src/lib/types/id/id.ts';
 const integration = 'libs/shared/kernel/src/lib/tokens/clock/clock.token.ts';
+const runner = 'libs/shared/kernel/src/lib/utils/run-use-case/run-use-case.ts';
+const otherUtility = 'libs/shared/kernel/src/lib/utils/run-use-case/other.ts';
 const eslint = new ESLint({ cwd: workspace });
 
 async function boundaryErrors(filePath: string, source: string) {
@@ -21,6 +23,22 @@ async function boundaryErrors(filePath: string, source: string) {
 
 describe('Unified kernel framework boundary', () => {
   const rejected = [
+    ...[domain, pure, otherUtility].flatMap(file => [
+      [file, "import { runUseCase } from '@showtime/shared/kernel';"],
+      [file, "import { runUseCase as run } from '@showtime/shared/kernel';"],
+      [file, "import type { runUseCase as Run } from '@showtime/shared/kernel';"],
+      [file, "export { runUseCase as run } from '@showtime/shared/kernel';"],
+      [file, "export type { runUseCase as Run } from '@showtime/shared/kernel';"],
+    ]),
+    [otherUtility, "import { signal } from '@angular/core';"],
+    [otherUtility.replace('.ts', '.spec.ts'), "import { TestBed } from '@angular/core/testing';"],
+    [runner, "import { TestBed } from '@angular/core/testing';"],
+    ...[runner, runner.replace('.ts', '.spec.ts')].flatMap(file => [
+      [file, "export { Location } from '@angular/common';"],
+      [file, "export { toSignal } from '@angular/core/rxjs-interop';"],
+      [file, "import { of } from 'rxjs';"],
+      [file, "export { map } from 'rxjs/operators';"],
+    ]),
     [domain, "import { signal } from '@angular/core';"],
     [domain, "import { CLOCK as clock } from '@showtime/shared/kernel';"],
     [domain, "import type { UseCaseCall as Call } from '@showtime/shared/kernel';"],
@@ -42,6 +60,11 @@ describe('Unified kernel framework boundary', () => {
     });
   }
   for (const [file, source] of [
+    [runner, "import { signal } from '@angular/core';"],
+    [runner.replace('.ts', '.spec.ts'), "import { TestBed } from '@angular/core/testing';"],
+    [otherUtility, "import { ok, ErrorKindEnum } from '@showtime/shared/kernel';"],
+    ['libs/users/application/src/index.ts', "import { runUseCase } from '@showtime/shared/kernel';"],
+    ['libs/shared/kernel/src/index.ts', "export { runUseCase } from './lib/utils/run-use-case/run-use-case';"],
     [domain, "import type { Result, Clock, OperationStatus } from '@showtime/shared/kernel';"],
     [domain, "export { fixedClock as testClock } from '@showtime/shared/kernel';"],
     [pure, "import type { Clock } from '@showtime/shared/kernel';"],
@@ -56,6 +79,29 @@ describe('Unified kernel framework boundary', () => {
 });
 
 describe('Kernel source organization and transitive purity', () => {
+  it('Pure consumer cannot import the runner through a renamed intermediary', async () => {
+    const directory = mkdtempSync(path.join(workspace, 'tools/lint/kernel-fixture-'));
+    try {
+      const bridge = path.join(directory, 'bridge.ts');
+      writeFileSync(bridge, "export { runUseCase as run } from '@showtime/shared/kernel';\n");
+      for (const consumer of [domain, pure, otherUtility]) {
+        const reference = path.relative(path.dirname(path.join(workspace, consumer)), bridge).replace(/\.ts$/, '');
+        for (const source of [
+          `import { run as execute } from '${reference}';`,
+          `import type { run as Run } from '${reference}';`,
+          `export { run as execute } from '${reference}';`,
+          `export type { run as Run } from '${reference}';`,
+        ]) assert.ok((await boundaryErrors(consumer, source)).length, source);
+      }
+      writeFileSync(bridge, "export { ok as run } from '@showtime/shared/kernel';\n");
+      for (const consumer of [domain, pure, otherUtility]) {
+        const reference = path.relative(path.dirname(path.join(workspace, consumer)), bridge).replace(/\.ts$/, '');
+        assert.deepEqual(await boundaryErrors(consumer, `import { run as execute } from '${reference}';`), []);
+      }
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
+  });
   it('Shared classification remains pure', async () => {
     const visited = new Set<string>();
     assert.equal(reachesFramework('@showtime/shared/kernel', path.join(workspace, domain), ['ErrorKindEnum'], visited), false);
@@ -89,7 +135,7 @@ describe('Kernel source organization and transitive purity', () => {
       assert.equal(reachesFramework('@showtime/shared/kernel', from, [name]), false);
     });
   }
-  for (const name of ['CLOCK', 'UseCaseCall']) {
+  for (const name of ['CLOCK', 'UseCaseCall', 'runUseCase']) {
     it(`${name} transitively reaches Angular`, () => {
       assert.equal(reachesFramework('@showtime/shared/kernel', from, [name]), true);
     });

@@ -34,7 +34,8 @@ new models and domain events; they do not perform I/O or publish events. Structu
 on the client; uniqueness, permissions and record-dependent rules remain backend responsibilities.
 
 Application owns one driving UsersApplicationPort and repository/state driven ports. Its internal
-facade delegates to use-cases and owns per-call statuses, latest-list arbitration and mutation reloads.
+facade delegates to use-cases and the shared `runUseCase` lifecycle helper, while owning
+latest-list arbitration and mutation reloads.
 State holds page data only. Concrete adapters bind at the composition root, never inside feature or
 application. The application barrel exposes consumer models and adapter contracts, while facade and
 use-case implementations remain internal. Application re-exports the User type for screen consumers.

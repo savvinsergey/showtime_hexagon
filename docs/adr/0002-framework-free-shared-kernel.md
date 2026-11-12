@@ -27,9 +27,10 @@ Use one Nx library tagged `type:kernel` and `scope:shared`, with the single publ
 
 - Export pure `Result<T, E>`, `ok`, `err`, `DomainError`, `Id<Brand>`, `DomainEvent`, `Clock`, `systemClock`, `fixedClock` and `OperationStatus<E>` and the pure `OperationStatusEnum` alongside Angular application contracts.
 - Export one root-provided `CLOCK` token backed by `systemClock`, and `UseCaseCall<T, E>` with a read-only status signal and a promised result. Application supplies its own error type. Domain receives time as an argument.
-- Organize `src/lib` by purpose: `types/`, `enums/`, `tokens/`, `constants/`. Each entity has one named folder and colocated tests. `Clock`/`fixedClock` live in `types/clock`, `CLOCK` in `tokens/clock`, `systemClock` in `constants/clock`.
+- Organize `src/lib` by purpose: `types/`, `enums/`, `tokens/`, `constants/`, `utils/`. Each entity has one named folder and colocated tests. `Clock`/`fixedClock` live in `types/clock`, `CLOCK` in `tokens/clock`, `systemClock` in `constants/clock`.
 - Domain and framework-free kernel implementations may consume only named symbols with no transitive Angular/RxJS dependency. Lint follows imports/re-exports through intermediary modules and renamed symbols. Namespace imports and export-all from the mixed barrel are conservatively rejected there.
-- The public barrel may re-export Angular contracts. Angular core is permitted only in tokens and UseCaseCall, with core testing helpers in their specs. RxJS remains forbidden throughout kernel.
+- The public barrel may re-export Angular contracts. Angular core is permitted only in tokens, UseCaseCall and the named `utils/run-use-case/run-use-case.ts` helper, with core testing helpers in their colocated specs. Other utilities remain framework-free. RxJS remains forbidden throughout kernel.
+- Export `runUseCase<T, E>` for independent call lifecycles; its synchronous success hook leaves context reload policy with the caller. Its resolver stays private.
 - Context-neutral shared contracts belong in kernel; entities, context-specific errors and integration events stay with their owner.
 - The approved `ErrorKindEnum` classification lives in `enums/error-kind/error-kind.enum.ts` and is exported through the kernel entry. Its `Validation`, `NotFound`, `Conflict`, `Forbidden`, `Network` and `Unknown` members preserve `validation`, `not-found`, `conflict`, `forbidden`, `network` and `unknown`. Contexts own their error payloads; the shared vocabulary introduces no generic error model or context dependency.
 

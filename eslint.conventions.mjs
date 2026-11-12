@@ -196,7 +196,11 @@ export const pureConventions = [
 export const kernelAngularConventions = [
   {
     basePath: kernelRoot,
-    files: ['src/lib/tokens/**/*.ts', 'src/lib/types/use-case-call/**/*.ts'],
+    files: [
+      'src/lib/tokens/**/*.ts', 'src/lib/types/use-case-call/**/*.ts',
+      'src/lib/utils/run-use-case/run-use-case.ts',
+      'src/lib/utils/run-use-case/run-use-case.spec.ts',
+    ],
     rules: {
       'workspace/kernel-entry': ['error', 'angular'],
       'no-restricted-imports': restrictedImports({ restrictMock: true, kernelAngular: true }),
@@ -204,7 +208,10 @@ export const kernelAngularConventions = [
   },
   {
     basePath: kernelRoot,
-    files: ['src/lib/tokens/**/*.spec.ts', 'src/lib/types/use-case-call/**/*.spec.ts'],
+    files: [
+      'src/lib/tokens/**/*.spec.ts', 'src/lib/types/use-case-call/**/*.spec.ts',
+      'src/lib/utils/run-use-case/run-use-case.spec.ts',
+    ],
     rules: {
       'no-restricted-imports': restrictedImports({ restrictMock: false, kernelAngular: true }),
     },
