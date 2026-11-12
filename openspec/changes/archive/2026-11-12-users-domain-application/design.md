@@ -34,7 +34,7 @@ Domain must stay framework-free (`pureConventions`). Application needs `inject`,
 
 ### Anemic `User` plus one domain service
 
-`User` is `Readonly<{ id: UserId; email: Email; fullName: FullName; role: UserRole; status: UserStatus }>`. `UserDraft` is `Omit<User, 'id'>`. Value types: `Email` / `FullName` (smart constructors → `Result`), `UserId` (`asUserId` cast), `UserRole` = `UserRoleEnum` (`Admin = 'admin'`, `Member = 'member'`), `UserStatus` = `'active' | 'inactive'` (type guards, no constructor).
+`User` is `Readonly<{ id: UserId; email: Email; fullName: FullName; role: UserRole; status: UserStatus }>`. `UserDraft` is `Omit<User, 'id'>`. Value types: `Email` / `FullName` (smart constructors → `Result`), `UserId` (`asUserId` cast), `UserRole` = `UserRoleEnum` (`Admin = 'admin'`, `Member = 'member'`), `UserStatus` = `UserStatusEnum` (`Active = 'active'`, `Inactive = 'inactive'`) (type guards, no constructor).
 
 `UsersDomainService` is a stateless object of functions (no `inject`): `createUserDraft`, `userRegistered`, `activate`, `deactivate`, `rename`, `changeRole`. Structural validators stay private in that file. No `policies/` folder.
 
@@ -52,7 +52,7 @@ Alternatives considered: combining domain/application would couple structural ru
 
 ### Statuses on the facade
 
-Each Users command returns `UseCaseCall<T, UsersError>`. Its status and `listStatus` use `OperationStatus<UsersError>`. The facade allocates an independent signal per call. Race: a generation counter on `load`; a stale result is `cancelled` and skips `setPage`. After successful `create` / `update` / `deactivate`, the service calls `load` with the last query (no-op reload if `load` was never called).
+Each Users command returns `UseCaseCall<T, UsersError>`. Its status and `listStatus` use `OperationStatus<UsersError>`. The facade delegates independent command-call lifecycles to the shared `runUseCase` helper; list-call signals remain local. Race: a generation counter on `load`; a stale result is `cancelled` and skips `setPage`. After successful `create` / `update` / `deactivate`, the service calls `load` with the last query (no-op reload if `load` was never called).
 
 The facade owns list request arbitration and is the only place that authorizes a loaded page to be written. Internal load use-cases return repository results without writing state before this check. Superseding a load marks the previous call cancelled immediately; its eventual result cannot change state or the latest `listStatus`. Cancellation is a call status, not a new `UsersError` kind. Mutation success reflects persistence; a subsequent reload failure is reported by `listStatus` and does not retroactively turn a saved mutation into failure.
 
@@ -64,9 +64,9 @@ Use-cases orchestrate promised port results directly under the explicit `UseCase
 
 Keep one Nx project and one public entry, `@showtime/shared/kernel`. Export pure primitives and `OperationStatus<E>` and the pure `OperationStatusEnum` alongside the root `CLOCK` token and `UseCaseCall<T, E>`. The call contract exposes a read-only `Signal<OperationStatus<E>>` and a `Promise<Result<T, E>>`.
 
-Group definitions by purpose under `src/lib/types/`, `enums/`, `tokens/` and `constants/`, with one named folder and colocated tests per entity. `Clock` and `fixedClock` remain in `types/clock`, `CLOCK` lives in `tokens/clock`, and `systemClock` in `constants/clock`. The barrel exports these authoritative definitions.
+Group definitions by purpose under `src/lib/types/`, `enums/`, `tokens/`, `constants/` and `utils/`, with one named folder and colocated tests per entity. `Clock` and `fixedClock` remain in `types/clock`, `CLOCK` lives in `tokens/clock`, and `systemClock` in `constants/clock`. The barrel exports these authoritative definitions.
 
-Nx tags enforce project boundaries; lint additionally follows named symbols and their transitive dependencies, including renamed imports and intermediary re-exports. Domain and framework-free kernel sources cannot reach Angular or RxJS. Namespace imports and export-all from the mixed barrel are conservatively rejected there. Angular core is permitted only in tokens and the `UseCaseCall` contract, with core testing helpers in their specs. RxJS is forbidden throughout kernel. The public barrel may re-export the Angular contracts.
+Nx tags enforce project boundaries; lint additionally follows named symbols and their transitive dependencies, including renamed imports and intermediary re-exports. Domain and framework-free kernel sources cannot reach Angular or RxJS. Namespace imports and export-all from the mixed barrel are conservatively rejected there. Angular core is permitted only in tokens, the `UseCaseCall` contract and the named `utils/run-use-case/run-use-case.ts` helper, with core testing helpers in their colocated specs. Other utilities remain framework-free. RxJS is forbidden throughout kernel. The public barrel may re-export the Angular contracts.
 
 This keeps one token identity and one call contract without a secondary alias or an additional project. A cross-context neutral contract belongs in kernel; context-specific errors, events and ports stay with their owner.
 
@@ -160,4 +160,4 @@ None. Role/status literals, draft default `active`, and the update shape are fix
 - [ADR-0002](../../../docs/adr/0002-framework-free-shared-kernel.md): one public entry exports shared contracts with symbol-level purity enforcement.
 - [ADR-0003](../../../docs/adr/0003-users-model-and-application-ports.md): immutable plain users models, pure domain behavior, and application-owned ports with composition-root binding.
 
-The approved operation lifecycle enum is defined in `enums/operation-status/operation-status.enum.ts` with `Idle`, `Loading`, `Success`, `Error` and `Cancelled` members preserving the lowercase runtime values. `OperationStatus<E>` uses these members as discriminants; only `Error` carries the mandatory `error: E`. The separately approved Users-owned `UserRoleEnum` preserves `admin` and `member`; `UserRole` aliases it and application re-exports the same enum. `UserStatus` remains a string-literal union.
+The approved operation lifecycle enum is defined in `enums/operation-status/operation-status.enum.ts` with `Idle`, `Loading`, `Success`, `Error` and `Cancelled` members preserving the lowercase runtime values. `OperationStatus<E>` uses these members as discriminants; only `Error` carries the mandatory `error: E`. The separately approved Users-owned `UserRoleEnum` preserves `admin` and `member`; `UserRole` aliases it and application re-exports the same enum. The approved Users-owned `UserStatusEnum` preserves `active` and `inactive`; `UserStatus` aliases it and application re-exports the same enum.

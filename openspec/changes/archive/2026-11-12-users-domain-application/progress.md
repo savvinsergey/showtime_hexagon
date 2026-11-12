@@ -144,25 +144,51 @@ User authorized the accepted enum correction commit; commit: on. Archive and pus
 Review, tester and analyst evidence above applies. This checkpoint is included in the task commit;
 its successful commit is identifiable by the message and pre-commit HEAD below.
 
-Pending commit record (reconcile against history after commit; no follow-up journal-only commit):
-```json
-{
-  "task": "ST-0006",
-  "pre_commit_head": "da6064c9c07c24a7a26f70d84e43c154f6f785b3",
-  "files": {
-    ".agents/rules/engineering-conventions.md": "ce028413d574b62b62b316eb0ab3d54c7127cfd0aa6c4d70f6b0e58e7fda69d4",
-    "docs/adr/0002-framework-free-shared-kernel.md": "c36360854610ab12051c18aaba124b368c0038c81ea761d8374255a143b8c05d",
-    "libs/shared/kernel/src/index.ts": "1da08d22e5d2dcf8b41fc32b5b9f842f7895b53b9ef6d31ac848b87a0b434840",
-    "libs/shared/kernel/src/lib/types/operation-status/operation-status.spec.ts": "a1fc700ffbf7521d077a1d1eb89823a338580bb0120a7fbd0de0d2239e90cc21",
-    "libs/shared/kernel/src/lib/types/operation-status/operation-status.ts": "b27e0bd62846816a9f9761d301fd6daaf51aaa839c99bd68e25f9b4436fb7c2e",
-    "libs/shared/kernel/src/lib/types/use-case-call/use-case-call.spec.ts": "a884afac81dd71bb00c8a7d98163491cfc9af3973845e5a172a938d0b0348d5d",
-    "libs/shared/kernel/src/lib/enums/operation-status/operation-status.enum.ts": "7f5a94b16db766c9efb2b2a86f213657a31539be056b58a09828472fdb7bb244",
-    "libs/shared/kernel/src/lib/enums/operation-status/operation-status.enum.spec.ts": "a1870005b3caf201d114a9375177a8c7ee7409283a5a0a4cfad29f1f614110ef",
-    "libs/users/application/src/index.spec.ts": "937ff3ea40af1807f03b899ba7110659e2cabc628d198f55d151147e7f623298",
-    "libs/users/application/src/lib/services/users-app/users-app.service.ts": "3fec72404a3a30734dae32fbb69114987e5112fc8807724459884ec01c50b192",
-    "openspec/changes/users-domain-application/design.md": "491f47735c5e7a0bf589f58f1c470a5b952b071f8f7212d45a2147267b1426b4",
-    "openspec/changes/users-domain-application/specs/shared-kernel/spec.md": "f180e6c1297fc11e8b13a767cb28b33e5de44f82ec706205f710fe066c904a6b"
-  },
-  "message": "refactor(shared-kernel): centralize operation lifecycle enum\n\nST-0006 use the shared enum for generic operation status contracts\n\nChange: users-domain-application\n"
-}
-```
+Commit reconciled on 2026-11-11: 23830cd807bdc833275a6de2139389679d9e0dd7
+(refactor(shared-kernel): centralize operation lifecycle enum). Its parent is the recorded
+pre-commit HEAD da6064c9c07c24a7a26f70d84e43c154f6f785b3; message and exact task path
+set match the checkpoint, including this journal. The commit is an ancestor of current HEAD
+c4326df9fb867625d0f4a5a32d2a3d2fa0e4842c. Saved pre-hook fingerprints match seven source/document
+files; five committed TypeScript files have different fingerprints from that checkpoint.
+The committed enum contracts and consumer changes were inspected; the recorded task commit
+already exists, so no duplicate commit or repeated accepted stages are required.
+Pending record cleared. All 13 tasks remain checked; existing review/test/analyst ACCEPT evidence
+above remains the final evidence for this change. Later commits and unrelated working/index
+changes were preserved. User explicitly declined archive for this continuation; no push or archive.
+This recovery journal update is intentionally uncommitted; no follow-up journal-only commit.
+
+## Authorized consolidated archive — 2026-11-12
+
+User approved latest-authoritative consolidated sync and archive in reverse creation order.
+Archive target: openspec/changes/archive/2026-11-12-users-domain-application
+Work branch: change/users-domain-application; commit: on; no push or release.
+Read-only analyst APPROVE: current shared ErrorKindEnum, role/status enums, mixed kernel
+symbol purity, shared runner/completedStatus, status-identity race protection and no draft
+time parameter are retained. Superseded historical delta contracts remain historical.
+Main specs validation: 5 passed, 0 failed; two existing long-requirement warnings.
+Future resource-based infrastructure handling remains a planning decision, no runtime migration.
+Backups and CLI snapshots: /tmp/showtime-archive-2026-11-12.
+
+## Archive checkpoint — four items complete
+
+Commit mode on; branch change/users-domain-application; archive baseline 602e3a9.
+Analyst APPROVE consolidated sync; first archive commit includes all updated main specs.
+Completed in exact authorized order: shared-use-case-runner 3473043;
+users-domain-status-enum 7f80ce3; users-domain-role-enum 26540f5;
+shared-error-kind-enum b0839a1. All local; hooks passed; index empty.
+Next archive: users-application-error-kind-enum, then users-domain-application,
+using recorded 2026-11-12 targets. Do not repeat sync or accepted runtime checks.
+Then verify redundant users-foundation against existing 2026-10-28 archive and
+backup /tmp/showtime-archive-2026-11-12/users-foundation-redundant before removing
+the active duplicate; retain existing archive unchanged. User authorized this reconciliation.
+Infrastructure planning note docs/users-infrastructure-planning-notes.md remains whole
+task-owned and uncommitted; include scoped commit if authorized handoff scope retained.
+Unrelated workflow/conventions/AGENTS/.gitignore fingerprints preserved against
+/tmp/showtime-archive-2026-11-12/resume-safeguards/before.json. Never stage these.
+Final validation/list still required after remaining archives. No pending commit.
+Telemetry counters unavailable; no runtime tests for docs-only archive.
+
+Final archive continuation: first five archives committed (fifth b4365d0). All six
+confirmed moves use the recorded 2026-11-12 targets. Consolidated main specs retain
+the latest accepted contracts; historical deltas are not replayed. Final remaining
+reconciliation and validation will be reported by the dispatcher.
