@@ -9,6 +9,7 @@ import {
 import {
   OperationStatusEnum,
   runUseCase,
+  completedStatus,
   type OperationStatus,
   type UseCaseCall,
 } from '@showtime/shared/kernel';
@@ -60,12 +61,6 @@ export class UsersApplicationService implements UsersAppPort {
    */
   readonly listStatus = computed(() => this.currentListStatus()());
 
-  private completedStatus<T>(outcome: Result<T, UsersError>): OperationStatus<UsersError> {
-    return outcome.ok
-      ? { status: OperationStatusEnum.Success }
-      : { status: OperationStatusEnum.Error, error: outcome.error };
-  }
-
   private async resolveLoad(
     query: UsersQuery,
     generation: number,
@@ -80,7 +75,7 @@ export class UsersApplicationService implements UsersAppPort {
       this.state.setPage(outcome.value.users, outcome.value.total);
     }
 
-    status.set(this.completedStatus(outcome));
+    status.set(completedStatus(outcome));
 
     return outcome;
   }

@@ -3,6 +3,7 @@ import { OperationStatusEnum } from '../../enums/operation-status/operation-stat
 import type { OperationStatus } from '../../types/operation-status/operation-status';
 import type { Result } from '../../types/result/result';
 import type { UseCaseCall } from '../../types/use-case-call/use-case-call';
+import { completedStatus } from '../completed-status/completed-status';
 
 /**
  * Starts a one-shot operation with an independent, read-only progress signal.
@@ -28,11 +29,12 @@ async function resolveCall<T, E>(
   onSuccess?: (value: T) => void,
 ): Promise<Result<T, E>> {
   const outcome = await execute();
-  status.set(
-    outcome.ok
-      ? { status: OperationStatusEnum.Success }
-      : { status: OperationStatusEnum.Error, error: outcome.error },
-  );
-  if (outcome.ok) onSuccess?.(outcome.value);
+
+  status.set(completedStatus(outcome));
+
+  if (outcome.ok) {
+    onSuccess?.(outcome.value);
+  }
+
   return outcome;
 }

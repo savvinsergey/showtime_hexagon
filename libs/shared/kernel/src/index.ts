@@ -11,3 +11,4 @@ export { OperationStatusEnum } from './lib/enums/operation-status/operation-stat
 export { ErrorKindEnum } from './lib/enums/error-kind/error-kind.enum';
 export { UseCaseAbstract } from './lib/types/use-case-abstract/use-case-abstract';
 export { runUseCase } from './lib/utils/run-use-case/run-use-case';
+export { completedStatus } from './lib/utils/completed-status/completed-status';
