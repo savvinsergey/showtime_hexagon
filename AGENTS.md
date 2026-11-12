@@ -69,7 +69,7 @@
 ## Shared host integration
 - Before designing, coding, reviewing or testing, read `.agents/rules/engineering-conventions.md`; consult relevant sections of `.agents/rules/engineering-examples.md` as needed.
 - Shared role bodies live in `.agents/roles`. Host adapters load them explicitly.
-- In Codex the main agent executes the orchestrator role for `ship` and launches specialists sequentially. Do not spawn an additional orchestrator layer. This host rule overrides references to delegating the orchestrator or the Cursor Build button above. Explicit user approval or invoking the ship skill authorizes implementation.
+- In Codex read `.agents/codex-workflow.md` for `ship`. The main agent launches an `orchestrator` subagent with `fork_turns: "none"` and relays its statuses and user decisions. Only that orchestrator launches specialists, sequentially. After four completed tasks with work remaining, it saves state and returns `CONTINUE`; the main agent starts a fresh orchestrator without inheriting chat history. Explicit user approval or invoking the ship skill authorizes implementation.
 - Cursor slash commands map to shared skills; in Codex use `$ship`, `$fix`, `$release` or explicitly request those workflows.
 - Direct OpenSpec implementation requests enter `ship`; apply guidance is used inside its developer stage, without bypassing review, tests or acceptance.
 - Discover available host tools; permissions, model selection and background execution use host-native configuration.

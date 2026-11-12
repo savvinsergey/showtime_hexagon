@@ -172,7 +172,7 @@ In both branches, never create the root as a side effect: do not run `openspec i
    mkdir -p "<planningHome.changesDir>/archive"
    ```
 
-   Generate the target name: use the change name as-is when it already starts with a `YYYY-MM-DD-` prefix; otherwise prepend the current date as `YYYY-MM-DD-<change-name>`. Never stack a second date (same rule as `openspec archive`).
+   For a confirmed `/ship` archive, use the exact target already saved in `progress.md`, including on retries across dates. Otherwise generate the target name: use the change name as-is when it already starts with a `YYYY-MM-DD-` prefix; otherwise prepend the current date as `YYYY-MM-DD-<change-name>`. Never stack a second date (same rule as `openspec archive`).
 
    **Check if target already exists:**
    - If yes: Fail with error, suggest renaming existing archive or using different date
