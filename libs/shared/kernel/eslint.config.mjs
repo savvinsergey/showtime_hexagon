@@ -1,6 +1,6 @@
 import nx from '@nx/eslint-plugin';
 import baseConfig from '../../../eslint.config.mjs';
-import { pureConventions } from '../../../eslint.conventions.mjs';
+import { kernelAngularConventions, pureConventions } from '../../../eslint.conventions.mjs';
 
 export default [
   // Angular presets only register the plugins that the shared conventions reference; the kernel stays framework-free.
@@ -9,4 +9,6 @@ export default [
   ...baseConfig,
   // Framework-free layer: `@angular/*` and `rxjs` imports are forbidden.
   ...pureConventions,
+  ...kernelAngularConventions,
+  { files: ['**/src/index.ts'], rules: { 'workspace/kernel-entry': ['error', 'barrel'] } },
 ];

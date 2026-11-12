@@ -1,0 +1,154 @@
+import {
+  Injectable,
+  computed,
+  inject,
+  signal,
+  type Signal,
+  type WritableSignal,
+} from '@angular/core';
+import {
+  OperationStatusEnum,
+  runUseCase,
+  completedStatus,
+  type OperationStatus,
+  type UseCaseCall,
+} from '@showtime/shared/kernel';
+import type { Result } from '@showtime/shared/kernel';
+import type { User, UserId } from '@showtime/users/domain';
+import type { NewUser, UpdateUser, UsersQuery, UsersPage, UsersError } from '../../models';
+import type { UsersApplicationPort as UsersAppPort } from '../../ports/driving';
+import { USERS_STATE } from '../../ports/driven';
+
+import {
+  CreateUserUseCase,
+  GetUserUseCase,
+  LoadUsersUseCase,
+  UpdateUserUseCase,
+  DeactivateUserUseCase,
+} from '../../use-cases/commands';
+import { UsersViewUseCase } from '../../use-cases/queries';
+
+/**
+ * Coordinates operation lifecycles and latest-list writes behind the single driving port.
+ */
+@Injectable()
+// eslint-disable-next-line unicorn/name-replacements -- UsersApplicationService is the approved internal facade name.
+export class UsersApplicationService implements UsersAppPort {
+  private readonly createUser = inject(CreateUserUseCase);
+  private readonly getUser = inject(GetUserUseCase);
+  private readonly loadUsers = inject(LoadUsersUseCase);
+  private readonly updateUser = inject(UpdateUserUseCase);
+  private readonly deactivateUser = inject(DeactivateUserUseCase);
+  private readonly view = inject(UsersViewUseCase);
+  private readonly state = inject(USERS_STATE);
+  private readonly currentListStatus = signal<Signal<OperationStatus<UsersError>>>(
+    signal<OperationStatus<UsersError>>({ status: OperationStatusEnum.Idle }),
+  );
+  private activeLoad: WritableSignal<OperationStatus<UsersError>> | undefined;
+  private lastQuery: UsersQuery | undefined;
+
+  /**
+   * Last successfully loaded page.
+   */
+  readonly users = this.view.users;
+  /**
+   * Matching total across pages.
+   */
+  readonly total = this.view.total;
+  /**
+   * Latest load's lifecycle, including automatic mutation reloads.
+   */
+  readonly listStatus = computed(() => this.currentListStatus()());
+
+  private async resolveLoad(
+    query: UsersQuery,
+    status: WritableSignal<OperationStatus<UsersError>>,
+  ): Promise<Result<UsersPage, UsersError>> {
+    const outcome = await this.loadUsers.execute(query);
+    if (this.activeLoad !== status) {
+      return outcome;
+    }
+
+    if (outcome.ok) {
+      this.state.setPage(outcome.value.users, outcome.value.total);
+    }
+
+    status.set(completedStatus(outcome));
+
+    return outcome;
+  }
+
+  private reloadLastQuery(): void {
+    if (this.lastQuery) {
+      this.load(this.lastQuery);
+    }
+  }
+
+  /**
+   * Loads a page and grants only the newest request permission to replace state.
+   * @param query - Query to remember for successful mutation reloads.
+   * @returns An independent call whose status is cancelled when superseded.
+   */
+  load(query: UsersQuery): UseCaseCall<UsersPage, UsersError> {
+    if (this.activeLoad?.().status === OperationStatusEnum.Loading) {
+      this.activeLoad.set({ status: OperationStatusEnum.Cancelled });
+    }
+
+    this.lastQuery = { ...query };
+
+    const status = signal<OperationStatus<UsersError>>({ status: OperationStatusEnum.Loading });
+    const readonlyStatus = status.asReadonly();
+
+    this.activeLoad = status;
+    this.currentListStatus.set(readonlyStatus);
+
+    const result = this.resolveLoad(this.lastQuery, status);
+
+    return { status: readonlyStatus, result };
+  }
+
+  /**
+   * Reads an identity independently of list loading.
+   * @param id - User identity.
+   * @returns This lookup's status and result.
+   */
+  get(id: UserId): UseCaseCall<User, UsersError> {
+    return runUseCase(() => this.getUser.execute(id));
+  }
+
+  /**
+   * Persists registration and starts the remembered-query reload after success.
+   * @param input - Raw registration values.
+   * @returns Persistence status/result unaffected by reload errors.
+   */
+  create(input: NewUser): UseCaseCall<User, UsersError> {
+    return runUseCase(
+      () => this.createUser.execute(input),
+      () => this.reloadLastQuery(),
+    );
+  }
+
+  /**
+   * Persists replacement values and starts the remembered-query reload after success.
+   * @param input - Identity and raw replacement values.
+   * @returns Persistence status/result unaffected by reload errors.
+   */
+  update(input: UpdateUser): UseCaseCall<User, UsersError> {
+    return runUseCase(
+      () => this.updateUser.execute(input),
+      () => this.reloadLastQuery(),
+    );
+  }
+
+  /**
+   * Persists deactivation and starts the remembered-query reload after success.
+   * @param id - User identity.
+   * @returns Persistence status/result unaffected by reload errors.
+   */
+  deactivate(id: UserId): UseCaseCall<User, UsersError> {
+    return runUseCase(
+      () => this.deactivateUser.execute(id),
+      () => this.reloadLastQuery(),
+    );
+  }
+}

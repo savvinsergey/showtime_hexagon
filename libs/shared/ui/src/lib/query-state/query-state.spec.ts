@@ -1,11 +1,6 @@
 import { ComponentHarness } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  provideZonelessChangeDetection,
-} from '@angular/core';
+import { Component, input, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { QueryState } from './query-state';
 
@@ -17,7 +12,6 @@ const ERROR_MESSAGE = 'Could not load users';
  */
 @Component({
   selector: 'st-query-state-host',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [QueryState],
   template: `

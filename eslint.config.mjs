@@ -2,6 +2,7 @@ import nx from '@nx/eslint-plugin';
 import sonarjs from 'eslint-plugin-sonarjs';
 import unicorn from 'eslint-plugin-unicorn';
 import eslintConfigPrettier from 'eslint-config-prettier';
+import { conventions } from './eslint.conventions.mjs';
 // eslint-disable-next-line unicorn/name-replacements -- exported name of the rules module
 import { depConstraints } from './eslint.depconstraints.mjs';
 
@@ -44,7 +45,11 @@ export default [
     },
   },
 
-  ...conventions,
+  // Generated spartan sources retain their upstream imports and conventions.
+  ...conventions.map((config) => ({
+    ...config,
+    ignores: [...(config.ignores ?? []), '**/spartan-ui/**'],
+  })),
 
   // Отключает правила ESLint, которые конфликтуют с Prettier.
   // ВАЖНО: Этот конфиг всегда должен быть самым последним в массиве!

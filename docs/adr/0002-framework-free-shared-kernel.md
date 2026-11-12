@@ -1,11 +1,12 @@
-# ADR-0002: Framework-free shared kernel
+# ADR-0002: Single shared kernel entry with symbol-level purity boundaries
 
 - Status: Accepted
 - Date: 2026-10-28
+- Updated: 2026-11-10 (user-approved single public entry)
 
 ## Context
 
-Several bounded contexts need the same domain primitives: `Result`, `DomainError`, branded `Id`, `DomainEvent`, a time source. Without a shared place each context would invent its own, and domains would either duplicate them or depend on each other. The domain layer must stay pure TypeScript (engineering conventions), so the shared place cannot pull in Angular or RxJS, and ADR-0001 only lets `type:domain` depend on `type:domain` and `type:kernel`.
+Several bounded contexts need the same domain primitives: `Result`, `DomainError`, branded `Id`, `DomainEvent`, a time source. Without a shared place each context would invent its own, and domains would either duplicate them or depend on each other. The domain layer must stay pure TypeScript (engineering conventions), so imported domain primitives cannot transitively depend on Angular or RxJS, and ADR-0001 only lets `type:domain` depend on `type:domain` and `type:kernel`.
 
 ## Decision Drivers
 
@@ -22,28 +23,25 @@ Several bounded contexts need the same domain primitives: `Result`, `DomainError
 
 ## Decision
 
-Option 3.
+Use one Nx library tagged `type:kernel` and `scope:shared`, with the single public entry `@showtime/shared/kernel`. This supersedes the earlier secondary Angular entry decision.
 
-- `libs/shared/kernel`: `type:kernel`, `scope:shared`, non-buildable, lint with `pureConventions` (`conventions` plus restricted `@angular/*` and `rxjs`); the same variant is spread by `type:domain` libraries.
-- Primitives are plain data and functions: `Result<T, E>` (discriminated on `ok`, `ok()`/`err()` constructors), `DomainError` (`code`, `message`), `Id<Brand>` (branded string, plain string at runtime), `DomainEvent` (`type`, `occurredAt`, ISO string), `Clock` (`now(): string`) with system and fixed implementations. No classes with hidden state, so every value survives JSON unchanged.
-- `Clock` has no `InjectionToken` in the kernel. The DI token and its provider belong to the application layer (a later change), which is the first layer allowed to use Angular. Domain functions never read a clock; they take `now` as an argument, so `Clock` is consumed only by application code.
-- The kernel grows only when a second context needs a primitive; context-specific errors and events are defined in the context on top of these shapes.
+- Export pure `Result<T, E>`, `ok`, `err`, `DomainError`, `Id<Brand>`, `DomainEvent`, `Clock`, `systemClock`, `fixedClock` and `OperationStatus<E>` and the pure `OperationStatusEnum` alongside Angular application contracts.
+- Export one root-provided `CLOCK` token backed by `systemClock`, and `UseCaseCall<T, E>` with a read-only status signal and a promised result. Application supplies its own error type. Domain receives time as an argument.
+- Organize `src/lib` by purpose: `types/`, `enums/`, `tokens/`, `constants/`, `utils/`. Each entity has one named folder and colocated tests. `Clock`/`fixedClock` live in `types/clock`, `CLOCK` in `tokens/clock`, `systemClock` in `constants/clock`.
+- Domain and framework-free kernel implementations may consume only named symbols with no transitive Angular/RxJS dependency. Lint follows imports/re-exports through intermediary modules and renamed symbols. Namespace imports and export-all from the mixed barrel are conservatively rejected there.
+- The public barrel may re-export Angular contracts. Angular core is permitted only in tokens, UseCaseCall and the named `utils/run-use-case/run-use-case.ts` helper, with core testing helpers in their colocated specs. Other utilities remain framework-free. RxJS remains forbidden throughout kernel.
+- Export `runUseCase<T, E>` for independent call lifecycles; its synchronous success hook leaves context reload policy with the caller. Its resolver stays private.
+- Context-neutral shared contracts belong in kernel; entities, context-specific errors and integration events stay with their owner.
+- The approved `ErrorKindEnum` classification lives in `enums/error-kind/error-kind.enum.ts` and is exported through the kernel entry. Its `Validation`, `NotFound`, `Conflict`, `Forbidden`, `Network` and `Unknown` members preserve `validation`, `not-found`, `conflict`, `forbidden`, `network` and `unknown`. Contexts own their error payloads; the shared vocabulary introduces no generic error model or context dependency.
 
 ## Consequences
 
-Positive:
-- Domain depends on a pure, stable set of primitives; framework imports in kernel or domain fail lint.
-- Contexts share error/result/event shapes without depending on each other.
+A fixed-clock override targets the same token for every context. Consumers share one public path and authoritative definitions. Domain code cannot consume Angular-dependent symbols even though they share the barrel with pure primitives.
 
-Negative:
-- A kernel change affects every context; changes must be backward compatible and small.
-- Application code needs a token wrapper for `Clock` in its own layer.
-- Kernel specs run on `@angular/build:unit-test` (vitest) via a `test-build` target, the same runner as `apps/shell`; this is test tooling only, the runtime code stays framework-free.
-
-Risks:
-- The kernel can become a dumping ground; mitigated by the rule above (second consumer first) and by the framework-free lint.
+Project graphs cannot distinguish pure and Angular-dependent symbols. Pair graph checks with transitive symbol-level lint regressions; the entire barrel is intentionally not framework-free. Named imports are required for framework-free consumers.
 
 ## Follow-ups
 
-- Application change: `CLOCK` token and `provideX()` helper that binds the kernel `Clock` implementations.
-- Revisit if a primitive needs a framework dependency; such code belongs in `util` or the application layer, not in the kernel.
+Run purity probes when changing entry points or path aliases. Add a context-neutral primitive only for an established cross-context contract.
+
+The approved operation lifecycle enum is defined in `enums/operation-status/operation-status.enum.ts` with `Idle`, `Loading`, `Success`, `Error` and `Cancelled` members preserving the lowercase runtime values. `OperationStatus<E>` uses these members as discriminants; only `Error` carries the mandatory `error: E`. The separately approved Users-owned `UserRoleEnum` preserves `admin` and `member`; `UserRole` aliases it and application re-exports the same enum. The approved `users-domain-status-enum` change similarly keeps `UserStatusEnum` in Users domain, preserving `active` and `inactive`; `UserStatus` aliases it and application re-exports the same enum.

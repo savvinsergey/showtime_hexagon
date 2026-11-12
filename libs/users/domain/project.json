@@ -1,0 +1,29 @@
+{
+  "name": "users-domain",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/users/domain/src",
+  "projectType": "library",
+  "tags": ["type:domain", "scope:users"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "buildTarget": "users-domain:test-build",
+        "tsConfig": "libs/users/domain/tsconfig.spec.json",
+        "runner": "vitest",
+        "watch": false
+      }
+    },
+    "test-build": {
+      "executor": "@angular/build:application",
+      "options": {
+        "outputPath": "dist/libs/users/domain",
+        "browser": "libs/users/domain/src/index.ts",
+        "tsConfig": "libs/users/domain/tsconfig.lib.json"
+      }
+    }
+  }
+}

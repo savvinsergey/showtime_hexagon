@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { HlmEmptyImports, HlmSpinnerImports } from '@shared/spartan-ui';
 
 /**
@@ -7,7 +7,6 @@ import { HlmEmptyImports, HlmSpinnerImports } from '@shared/spartan-ui';
  */
 @Component({
   selector: 'st-query-state',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [HlmEmptyImports, HlmSpinnerImports],
   templateUrl: './query-state.html',

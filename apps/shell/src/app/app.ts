@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 /**
@@ -9,7 +9,6 @@ import { RouterModule } from '@angular/router';
   imports: [RouterModule],
   selector: 'st-shell',
   template: '<router-outlet></router-outlet>',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
   protected title = 'shell';
