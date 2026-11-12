@@ -21,7 +21,7 @@
 - Repository details -> commands/create-user/create-user.spec.ts :: preserves repository %s details; facade Failed create reports error / Unknown kind has an optional cause.
 - Fix cycles: 0; protected conventions write completed with explicit retry authorization.
 
-## Pending commit
+## Completed commit record
 - task: ST-0001
 - pre-commit HEAD: 23830cd807bdc833275a6de2139389679d9e0dd7
 - proposed message: refactor(users-application)!: centralize error kinds in an enum
@@ -47,3 +47,36 @@
   - openspec/changes/users-application-error-kind-enum/proposal.md: 26d39227e2535fb7c136d1c2ac28e71d692b462dc0146927e43fa2d8b1c03a68
   - openspec/changes/users-application-error-kind-enum/specs/users-application/spec.md: 0aad0838420da7d9080b63375a71f859e4e4182c7245f59bd73ee47b505b00ad
   - mutable checklist/journal: openspec/changes/users-application-error-kind-enum/tasks.md, openspec/changes/users-application-error-kind-enum/progress.md
+
+- ST-0001 committed: ba9087a; pending record cleared; hooks passed. Commitlint footer-leading-blank warning nonblocking.
+
+## Final run
+- Passed at ba9087a; start 23830cd807bdc833275a6de2139389679d9e0dd7.
+- Complete 22-path task scope plus journal; unrelated working edits excluded.
+- Nx affected -t test lint build with explicit files, skipNxCache, static output: users-application only, no consumers.
+- 57 tests in 12 files and lint passed uncached. No applicable build; internal test-build excluded, empty shell:test outside scope.
+- Initial socket EPERM resolved through native escalation; no failures/edits.
+
+## Acceptance and final report
+- Analyst: ACCEPT at ba9087a; all eight scenarios satisfied, no required fixes or scope creep.
+- ST-0001 [x], review/test fix cycles 0; commit ba9087a.
+- Summary: public application-owned regular error-kind enum; six original runtime strings retained; member union/producers/mock/tests migrated; narrow conventions exception.
+- Breaking TypeScript API: construct UsersError.kind with UsersErrorKindEnum members.
+- Checks: application lint, 57 tests/12 files, strict spec typechecks, final affected checks all passed.
+- Warnings: nonblocking commitlint footer-leading-blank and existing Husky deprecation warnings.
+- No unresolved risks or follow-ups beyond the declared TypeScript consumer migration.
+- User declined archive of both active changes; no archive/sync/push performed. Local branch remains change/users-domain-application.
+- Post-commit verification/acceptance journal retained uncommitted; unrelated initial working files preserved.
+- Telemetry: model/input/cached token counters unavailable; empty waits not measured separately by host.
+
+## Authorized consolidated archive — 2026-11-12
+
+User approved latest-authoritative consolidated sync and archive in reverse creation order.
+Archive target: openspec/changes/archive/2026-11-12-users-application-error-kind-enum
+Work branch: change/users-domain-application; commit: on; no push or release.
+Read-only analyst APPROVE: current shared ErrorKindEnum, role/status enums, mixed kernel
+symbol purity, shared runner/completedStatus, status-identity race protection and no draft
+time parameter are retained. Superseded historical delta contracts remain historical.
+Main specs validation: 5 passed, 0 failed; two existing long-requirement warnings.
+Future resource-based infrastructure handling remains a planning decision, no runtime migration.
+Backups and CLI snapshots: /tmp/showtime-archive-2026-11-12.
