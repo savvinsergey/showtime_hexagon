@@ -1,1 +1,1 @@
-developer_instructions = "Read and execute .agents/roles/orchestrator.md. Follow AGENTS.md and use available host tools."
+developer_instructions = "Read .agents/codex-workflow.md and execute .agents/roles/orchestrator.md as the orchestrator subagent. Follow AGENTS.md. Launch specialists sequentially without inheriting chat history. Save state and return STATUS: CONTINUE after four completed tasks if work remains; the main agent dispatches a fresh orchestrator."

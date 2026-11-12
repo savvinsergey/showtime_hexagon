@@ -8,6 +8,7 @@ Companion to `.agents/rules/engineering-conventions.md` (the rules). The example
 - reviewer: only a section you need to settle a doubtful pattern.
 - tester: section 17 (tests), plus 2 and 4 for what to fake.
 - architect: sections 1-4, 6-7, 14, 18.
+- imports and public API: section 21 (local group barrels).
 
 ---
 
@@ -544,3 +545,34 @@ protected readonly visibleShows = computed(() =>
   <st-show-card [show]="show" (addToCart)="add(show.id)" />
 }
 ```
+
+## 21. Local group barrels and explicit public API
+
+Bad: consumers outside a group repeat its implementation paths.
+
+```ts
+import type { NewUser } from '../../models/new-user/new-user';
+import type { UsersError } from '../../models/users-error/users-error';
+import { USER_REPOSITORY } from '../../ports/driven/user-repository/user-repo.port';
+```
+
+Good: group barrels re-export local members; consumers use named imports.
+
+```ts
+// lib/models/index.ts
+export * from './new-user/new-user';
+export * from './users-error/users-error';
+
+// lib/ports/driven/index.ts
+export * from './user-repository/user-repo.port';
+
+// lib/services/users-app/users-app.service.ts
+import type { NewUser, UsersError } from '../../models';
+import { USER_REPOSITORY } from '../../ports/driven';
+
+// src/index.ts: explicit public API, no internal use-case or facade classes.
+export type { NewUser, UsersError } from './lib/models';
+export { USER_REPOSITORY, type UserRepositoryPort } from './lib/ports/driven';
+```
+
+Members use direct relative imports within their own group instead of importing its barrel; colocated tests may import the implementation directly. External consumers use the library's public alias. A group barrel does not make its members public outside the library.
